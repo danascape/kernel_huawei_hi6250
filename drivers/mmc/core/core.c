@@ -330,7 +330,7 @@ static void __mmc_start_request(struct mmc_host *host, struct mmc_request *mrq)
 		int tries = 500; /* Wait aprox 500ms at maximum */
 
 		while (host->ops->card_busy(host) && --tries)
-			mdelay(1);
+			mmc_delay(1);
 
 		if (tries == 0) {
 			mrq->cmd->error = -EBUSY;/*lint !e570*/

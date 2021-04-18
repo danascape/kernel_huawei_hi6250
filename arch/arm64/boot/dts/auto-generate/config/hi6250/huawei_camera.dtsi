@@ -410,33 +410,6 @@
 		hisi,is_fpga = <0>;
 		status = "disabled";
 	};
-	
-	huawei,hi846BACH2_BACK {
-		compatible = "huawei,hi846BACH2_BACK";
-		huawei,sensor_name = "HI846BACH2_BACK_VENDOR";
-		huawei,sensor_index = <0>;
-		huawei,i2c_index = <0>;
-		huawei,csi_index = <0>;
-		huawei,pd_valid = <1>;
-		huawei,reset_valid = <1>;
-		huawei,vcmpd_valid = <0>;
-
-		hisi,is_fpga = <0>;
-		status = "ok";
-	};
-
-	huawei,hi846BACH2_FRONT {
-		compatible = "huawei,hi846BACH2_FRONT";
-		huawei,sensor_name = "HI846BACH2_FRONT_VENDOR";
-		huawei,sensor_index = <1>;
-		huawei,i2c_index = <1>;
-		huawei,csi_index = <1>;
-		huawei,pd_valid = <1>;
-		huawei,reset_valid = <1>;
-		huawei,vcmpd_valid = <0>;
-		hisi,is_fpga = <0>;
-		status = "ok";
-	};
 
 	huawei,imx219HDN {
 		compatible = "huawei,imx219HDN";
@@ -516,54 +489,6 @@
         huawei,reset_valid = <1>;
         huawei,vcmpd_valid = <0>;
 
-        hisi,is_fpga = <0>;
-        status = "disabled";
-    };
-    huawei,sp2509AGASSI2 {
-        compatible = "huawei,sp2509AGASSI2";
-        huawei,sensor_name = "sp2509AGASSI2";
-        huawei,sensor_index = <1>;
-        huawei,i2c_index = <1>;
-        huawei,csi_index = <1>;
-        huawei,pd_valid = <1>;
-        huawei,reset_valid = <1>;
-        huawei,vcmpd_valid = <0>;
-        hisi,is_fpga = <0>;
-        status = "disabled";
-    };
-    huawei,gc2375AGASSI2 {
-        compatible = "huawei,gc2375AGASSI2";
-        huawei,sensor_name = "gc2375AGASSI2";
-        huawei,sensor_index = <1>;
-        huawei,i2c_index = <1>;
-        huawei,csi_index = <1>;
-        huawei,pd_valid = <1>;
-        huawei,reset_valid = <1>;
-        huawei,vcmpd_valid = <0>;
-        hisi,is_fpga = <0>;
-        status = "disabled";
-    };
-    huawei,gc5025AGASSI2BACK {
-        compatible = "huawei,gc5025AGASSI2BACK";
-        huawei,sensor_name = "gc5025AGASSI2BACK";
-        huawei,sensor_index = <0>;
-        huawei,i2c_index = <0>;
-        huawei,csi_index = <0>;
-        huawei,pd_valid = <1>;
-        huawei,reset_valid = <1>;
-        huawei,vcmpd_valid = <0>;
-        hisi,is_fpga = <0>;
-        status = "disabled";
-    };
-    huawei,hi556AGASSI2BACK {
-        compatible = "huawei,hi556AGASSI2BACK";
-        huawei,sensor_name = "hi556AGASSI2BACK";
-        huawei,sensor_index = <0>;
-        huawei,i2c_index = <0>;
-        huawei,csi_index = <0>;
-        huawei,pd_valid = <1>;
-        huawei,reset_valid = <1>;
-        huawei,vcmpd_valid = <0>;
         hisi,is_fpga = <0>;
         status = "disabled";
     };

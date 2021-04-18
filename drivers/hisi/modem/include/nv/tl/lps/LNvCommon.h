@@ -50,7 +50,6 @@ enum NV_ITEM_ID_ENUM
     EN_NV_ID_IMS_CONTROL                            = 0x791A,/* IMS总开关 NV, jiaguocai for IMS support flag, 2016-10-11*/
     EN_NV_ID_IMS_SIP_TIMER                          = 0x791B,/* SIP定制器, Added by s00193151 for KT, 2016-12-05 */
     EN_NV_ID_IMS_EMC_CAT_URN_CONFIG                 = 0x791C,
-    EN_NV_ID_IMS_USER_AGENT_CONFIG                  = 0x791D,
     EN_NV_ID_IMS_END                                = 0x797C,/* IMS END */
     EN_NV_ID_LNAS_EMM_BEGIN                         = 0x797D,/* EMM BEGIN */
     EN_NV_ID_LNAS_EMM_HO_TAU_DELAY_CTRL_CONFIG      = 0x797E,/* TAU REQ delay*/
@@ -559,9 +558,9 @@ enum NV_ITEM_ID_ENUM
     EN_NV_ID_EMM_T3346_CTRL_CONFIG                  = 0xD5c9,
 
     EN_NV_ID_NAS_APN_SWITCH_CONFIG                  = 0xD5ca,
-
+    
     EN_NV_ID_RRC_MMP_CONFIG                         = 0xD5CB,
-
+    
     EN_NV_ID_LTE_TX_UL_AMPR_NS05                    = 0xD759,
     EN_NV_ID_LTE_TX_CA_AMPR                         = 0xD760,
     EN_NV_ID_LTE_TX_CFR                             = 0xD761,
@@ -1216,8 +1215,7 @@ enum NV_ITEM_ID_ENUM
     EN_NV_ID_CA_OPTIMIZE_CTR                        = 0xBDFF,
     EN_NV_ID_VOLTE_OPTIMIZE_CTR                     = 0xBE00,
     EN_NV_ID_UE_CAP_V1320                           = 0xBE01,
-    EN_NV_ID_UE_CAP_V1330                           = 0xBE02,
-    EN_NV_ID_VOLTE_END_EVAB1B2_CTR_INFO             = 0xBF9B
+    EN_NV_ID_UE_CAP_V1330                           = 0xBE02
 };
 typedef unsigned long NV_ITEM_ID_ENUM_UINT32;
 

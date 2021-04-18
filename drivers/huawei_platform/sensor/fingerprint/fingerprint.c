@@ -22,9 +22,6 @@
 #include <media/huawei/hw_extern_pmic.h>
 #include <linux/slab.h>
 #include <linux/atomic.h>
-#ifdef CONFIG_HISI_ACCURATE_DELAY
-#include <linux/accurate_delay.h>
-#endif
 #include "fingerprint.h"
 #if defined (CONFIG_TEE_TUI)
 #include "tui.h"
@@ -42,7 +39,6 @@ struct dsm_dev dsm_fingerprint =
     .buff_size = 1024,
 };
 struct dsm_client *fingerprint_dclient = NULL;
-static DEFINE_MUTEX(ic_name_lock);
 
 static fp_sensor_info g_fp_sensor_info[] = {
         {0x021b, "FPC1021B"},
@@ -100,7 +96,6 @@ static int fp_fiq_flg = 0;
 struct regulator *fp_ex_regulator = NULL;
 #define FINGERPRINT_EXTERN_LDO_NUM "fingreprint_ldo"
 #define FINGERPRINT_EXTERN_LDO_NAME "EXTERN_LDO"
-extern unsigned int get_pd_charge_flag(void);
 extern int tp_gpio_num;
 /**
  * sysf node to check the interrupt status of the sensor, the interrupt
@@ -441,7 +436,6 @@ static void fingerprint_update_vendor_info(struct fp_data* fingerprint)
         hwlog_err("the pointer is null");
         return;
     }
-    mutex_lock(&ic_name_lock);
     if(FP_RETURN_SUCCESS == fingerprint_get_module_name(fingerprint, module_name, FP_MAX_MODULE_INFO_LEN))
     {
         dsm_fingerprint.module_name = module_name;
@@ -459,7 +453,6 @@ static void fingerprint_update_vendor_info(struct fp_data* fingerprint)
         if(NULL == ic_name)
         {
             hwlog_err("malloc failed!\n");
-            mutex_unlock(&ic_name_lock);
             return;
         }
         snprintf(ic_name, FP_MAX_SENSOR_ID_LEN, "%x", fingerprint->sensor_id);
@@ -468,7 +461,6 @@ static void fingerprint_update_vendor_info(struct fp_data* fingerprint)
         kfree(ic_name);
         dsm_fingerprint.ic_name = NULL;
     }
-    mutex_unlock(&ic_name_lock);
 }
 #endif
 
@@ -710,13 +702,6 @@ int fingerprint_get_dts_data(struct device* dev, struct fp_data* fp_data)
         fp_data->irq_gpio = -EINVAL;
         hwlog_err("%s failed to get irq gpio from device tree\n", __func__);
         goto exit;
-    }
-
-    ret = of_property_read_u32(np, "fingerprint,cs_gpio", (unsigned int *)(&fp_data->cs0_gpio));//UG
-    if (ret)
-    {
-        fp_data->cs0_gpio = -EINVAL;
-        hwlog_err("%s failed to get cs0_gpio from device tree\n", __func__);
     }
 
     ret = of_property_read_u32(np, "fingerprint,power_en_gpio", (unsigned int *)(&fp_data->power_en_gpio));
@@ -1179,57 +1164,6 @@ static int fingerprint_power_en_gpio_init(struct fp_data* fingerprint)
 
 }
 
-static int fingerprint_poweroff_pd_charge(struct fp_data* fingerprint)
-{
-	int max_cnt = 100; /* max times that try to close the power */
-	int error = 0;
-	int poweroff_flag = 0;
-
-	error = of_property_read_u32(fingerprint->dev->of_node, "fingerprint,poweroff_when_pd_charge", (unsigned int *)(&poweroff_flag));
-	if (error)
-	{
-		hwlog_info("%s failed to get poweroff_when_pd_charge from device tree, just go on \n", __func__);
-		return -EINVAL;
-	}
-	hwlog_info(" fingerprint deal powerdown charge config: %d charger:%d\n", poweroff_flag, get_pd_charge_flag());
-
-	/*  power off the power when the config value is 1 */
-	if (1 == poweroff_flag)
-	{
-		/* when the state is power down charge the charge_flag is 1 */
-		if (1 == get_pd_charge_flag())
-		{
-		    if (IS_ERR(fp_ex_regulator))
-		    {
-		        hwlog_err("%s:No extern ldo found for fingerprint\n", __func__);
-		        return -EINVAL;
-		    }
-
-		    /* the power may be shared with other modules,so now close the power maybe more then one times */
-		    do
-		    {
-		        hwlog_info("%s regulator flag:%d\n", __func__, regulator_is_enabled(fp_ex_regulator));
-		        if (regulator_is_enabled(fp_ex_regulator))
-		        {
-		            error = regulator_disable(fp_ex_regulator);
-		            if(0 != error)
-		            {
-		                hwlog_err("%s:regulator_disable fail,ret = %d \n", __func__, error);
-		            }
-		            /* break the process when the ldo regulator is close */
-		            if (0 == regulator_is_enabled(fp_ex_regulator))
-		            {
-		                hwlog_info("regulator is close and break \n");
-		                break;
-		            }
-		        }
-		    }while(max_cnt-->0);
-		}
-	}
-
-    return 0;
-}
-
 static int fingerprint_extern_power_en(struct fp_data* fingerprint)
 {
     int error = 0;
@@ -1283,8 +1217,6 @@ static int fingerprint_extern_power_en(struct fp_data* fingerprint)
             {
                 hwlog_err("%s:regulator_enable,ret = %d \n", __func__, error);
             }
-
-            fingerprint_poweroff_pd_charge(fingerprint);
 
             return 0;
         }
@@ -1442,52 +1374,6 @@ error_pinctrl_put:
     return error;
 }
 
-static void fingerprint_custom_timing(struct fp_data* fingerprint)
-{
-    int rc = 0;
-    bool flag = false;
-
-    if (NULL == fingerprint)
-    {
-        hwlog_err("%s failed,the parameters is null\n", __func__);
-        return;
-    }
-
-    flag = of_property_read_bool(fingerprint->dev->of_node, "fingerprint,custom_timing");
-    if (!flag)
-    {
-        hwlog_info("%s custom_timing not need.\n", __func__);
-        return;
-    }
-
-#ifdef CONFIG_HISI_ACCURATE_DELAY
-    accurate_delay_100us(10);//delay 1ms
-#else
-    udelay(1000);
-#endif
-
-    if (-EINVAL != fingerprint->rst_gpio)
-    {
-        rc = gpio_direction_output(fingerprint->rst_gpio, 1);
-        if (rc)
-        {
-            hwlog_err("%s rst1_gpio gpio_direction_output failed\n", __func__);
-            return;
-        }
-    }
-
-    if (-EINVAL != fingerprint->cs0_gpio)
-    {
-        rc = gpio_direction_output(fingerprint->cs0_gpio, 1);
-        if (rc)
-        {
-            hwlog_err("%s cs1_gpio gpio_direction_output failed\n", __func__);
-            return;
-        }
-    }
-
-    return;
-}
 static int fingerprint_probe(struct platform_device* pdev)
 {
     struct device* dev = &pdev->dev;
@@ -1569,7 +1455,6 @@ static int fingerprint_probe(struct platform_device* pdev)
             rc = 0;
         }
     }
-    fingerprint_custom_timing(fingerprint);
 
 #if defined (CONFIG_TEE_TUI_HI3650)
     //when tui init, the fingerprint should know, then the fingerprint driver will not get gpio value
@@ -1757,7 +1642,11 @@ static int fingerprint_suspend(struct device* dev)
     {
         if (!fingerprint->irq_enabled)
         {
-            hwlog_err("irq not enable before suspend, adjust1=%d, irq_enabled=%d",fingerprint->navigation_adjust1, (int)fingerprint->irq_enabled);
+            if (!dsm_client_ocuppy(fingerprint_dclient))
+            {
+                dsm_client_record(fingerprint_dclient,"irq not enable before suspend, adjust1=%d, irq_enabled=%d",fingerprint->navigation_adjust1, (int)fingerprint->irq_enabled);
+                dsm_client_notify(fingerprint_dclient, DSM_FINGERPRINT_WAIT_FOR_FINGER_ERROR_NO);
+            }
         }
     }
 #endif

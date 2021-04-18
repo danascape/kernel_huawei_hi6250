@@ -156,10 +156,10 @@ static int slimbus_dai_module_remove(struct platform_device *pdev)
     struct device *dev = &pdev->dev;
     struct slimbus_dai_data *pdata = platform_get_drvdata(pdev);
 
-    mutex_destroy(&pdata->lock);
-
     devm_kfree(dev, pdata);
-
+    
+    mutex_destroy(&pdata->lock);
+    
     return 0;
 }
 

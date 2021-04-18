@@ -1671,13 +1671,6 @@ static int parade_oem_info_switch(struct ts_oem_info_param *info)
 	int t = 0;
 	int timeout_ms = PARADE_WORK_WAIT_TIMEOUT;
 	TS_LOG_INFO("%s: info[0]=0x%2x, info[1]=0x%2x\n", __func__,info->data[0], info->data[1]);
-
-	if(g_ts_kit_platform_data.chip_data->get_brightness_info_flag == 0)
-        {
-		TS_LOG_INFO("%s:get_brightness_info_flag is 0, will return\n", __func__);
-		return retval; //some ic (cs448) no this function. may print error when boot.
-        }
-
 	retval = parade_check_cmd_status();
 	if(retval)
 		return retval;
@@ -5435,8 +5428,8 @@ static int parade_init_chip(void)
 	cd->force_wait = false;
 	rc = parade_startup(cd, true);
 	if(rc){
-		TS_LOG_ERR("%s: startup failed\n", __func__);
-		//return rc; don't  return error ,wait fw update to recovery.
+		TS_LOG_DEBUG("%s: startup failed\n", __func__);
+		return rc;
 	}
 	if(tskit_parade_data->support_get_tp_color == true){
 		parade_get_color_info(cd);
@@ -5446,7 +5439,7 @@ static int parade_init_chip(void)
 	/*provide panel_id for sensor*/
 	g_ts_kit_platform_data.panel_id = tskit_parade_data->panel_id;
 	TS_LOG_INFO("%s: call parade_init_chip end\n", __func__);
-	return NO_ERR;
+	return rc;
 }
 
 static s16 *create_and_get_u16_array(struct device_node *dev_node,
@@ -5907,45 +5900,6 @@ void parse_need_check_report_descriptor_flag(struct device_node *core_node, stru
 	 TS_LOG_INFO("%s, need_check_report_descriptor_flag = %d \n", __func__, tskit_parade_data->need_check_report_descriptor_flag);
  }
 
-void parade_parse_fw_need_depend_on_lcd(struct device_node *core_node, struct ts_kit_device_data *chip_data)
-{
-	int value = 0;
-
-	if(NULL == core_node || NULL == chip_data || !tskit_parade_data) {
-		TS_LOG_ERR("%s, core_node or chip_data is NULL\n", __func__);
-		return;
-	}
-
-	/*  fw need depend on lcd module */
-	value = parade_get_dts_value(core_node , "fw_need_depend_on_lcd");
-	if (value < 0) {
-		TS_LOG_INFO("%s, get device fw_need_depend_on_lcd failed\n",__func__);
-		value = 0; //default
-	}
-	tskit_parade_data->fw_need_depend_on_lcd = value;
-	TS_LOG_INFO("%s, fw_need_depend_on_lcd = %d \n", __func__, tskit_parade_data->fw_need_depend_on_lcd);
-}
-
-
-void parade_need_delay_after_power_off(struct device_node *core_node, struct ts_kit_device_data *chip_data)
-{
-    int value = 0;
-
-    if(NULL == core_node || NULL == chip_data || !tskit_parade_data) {
-        TS_LOG_ERR("%s, core_node or chip_data is NULL\n", __func__);
-        return;
-    }
-
-    /* check if need delay after power off*/
-    value = parade_get_dts_value(core_node , "parade,need_delay_after_power_off");
-    if (value < 0) {
-        TS_LOG_INFO("%s, get device need_delay_after_power_off failed\n",__func__);
-        value = 0; //default
-    }
-    tskit_parade_data->need_delay_after_power_off = value;
-    TS_LOG_INFO("%s, need_delay_after_power_off = %d \n", __func__, tskit_parade_data->need_delay_after_power_off);
-}
-
  int parade_parse_dts(struct device_node *device, struct ts_kit_device_data *chip_data)
  {
 	if(NULL == device || NULL == chip_data) {
@@ -6187,8 +6141,6 @@ void parade_need_delay_after_power_off(struct device_node *core_node, struct ts_
 	parse_check_irq_state(core_node);
 	parse_before_suspend_flag(core_node);
 	parse_need_set_rst_after_iovcc_flag(core_node);
-	parade_parse_fw_need_depend_on_lcd(core_node, chip_data);
-	parade_need_delay_after_power_off(core_node, chip_data);
 
 	/*read is parade solution*/
 	value = 0;
@@ -7878,17 +7830,6 @@ static void parade_get_fw_name(char *file_name)
 		strncat(file_name, "_", 1);
 		strncat(file_name, tskit_parade_data->module_vendor, MAX_STR_LEN);
 	}
-	if(tskit_parade_data->fw_need_depend_on_lcd && !tskit_parade_data->is_firmware_broken){
-		ret = parade_get_lcd_panel_info();
-		if(ret){
-			TS_LOG_ERR("%s: get lcd panel info faile!\n ",__func__);
-		}
-		ret = get_lcd_module_name();
-		if(!ret){
-			strncat(file_name, "_", 1);
-			strncat(file_name, tskit_parade_data->lcd_module_name, strlen(tskit_parade_data->lcd_module_name));
-		}
-	}
 	if(tskit_parade_data->need_distinguish_lcd){
 		if (get_panel_name_flag_adapter()){
 			strncat(file_name, "_new", strlen("_new"));
@@ -8951,13 +8892,8 @@ static int parade_cmcp_parse_threshold_file(void)
 	char  tmp_filename[4*MAX_STR_LEN] = {0};
 	TS_LOG_INFO("%s enter\n", __func__);
 
-	if(tskit_parade_data->fw_need_depend_on_lcd) {//limit depen on lcd module name
-		snprintf(tmp_filename, sizeof(tmp_filename) -1, "ts/%s_%s_%s_%s_%s_limits.csv",g_ts_kit_platform_data.product_name,
-			PARADE_VENDER_NAME,tskit_parade_data->project_id,tskit_parade_data->module_vendor, tskit_parade_data->lcd_module_name);
-	} else {
-		snprintf(tmp_filename, sizeof(tmp_filename) -1, "ts/%s_%s_%s_%s_limits.csv",g_ts_kit_platform_data.product_name,
-			PARADE_VENDER_NAME,tskit_parade_data->project_id,tskit_parade_data->module_vendor);
-	}
+	snprintf(tmp_filename, sizeof(tmp_filename), "ts/%s_%s_%s_%s_limits.csv",g_ts_kit_platform_data.product_name,
+		PARADE_VENDER_NAME,tskit_parade_data->project_id,tskit_parade_data->module_vendor);
 	TS_LOG_INFO("%s request threshold %s start\n", __func__,tmp_filename );
 
 	retval = request_firmware(&fw_entry, tmp_filename, cd->dev);
@@ -10640,13 +10576,6 @@ static int parade_power_off(void)
 			TS_LOG_INFO("%s vddd switch gpio off\n", __func__);
 			gpio_direction_output(tskit_parade_data->parade_chip_data->vddio_gpio_ctrl, 0);//TODO: need related with dts
 		}
-
-		if((1 == tskit_parade_data->parade_chip_data->vci_regulator_type) || (1 == tskit_parade_data->parade_chip_data->vddio_regulator_type)){
-			if(tskit_parade_data->need_delay_after_power_off){
-				msleep(20);//need delay 20ms for ldo power off completely
-				TS_LOG_INFO("%s need_delay_after_power_off\n", __func__);
-			}
-		}
 	}
 	else{
 		TS_LOG_INFO("%s, power control by LCD, nothing to do\n",__func__);
@@ -10974,8 +10903,7 @@ static int parade_chip_detect(struct ts_kit_platform_data *platform_data)
 		gpio_direction_output(tskit_parade_data->parade_chip_data->ts_platform_data->reset_gpio, 1);
 		gpio_direction_input(tskit_parade_data->parade_chip_data->ts_platform_data->irq_gpio);
 	}else {
-		gpio_direction_input(tskit_parade_data->parade_chip_data->ts_platform_data->reset_gpio);
-		TS_LOG_INFO("%s, set rst & int after iovcc, set reset input when power on\n", __func__);
+		TS_LOG_INFO("%s, set rst & int after iovcc\n", __func__);
 	}
 
 	rc = parade_set_voltage();

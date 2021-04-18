@@ -44,9 +44,6 @@
 #define BFM_QCOM_RAW_LOG_MAGIC (0x12345678)
 #define BFM_QCOM_RAW_PART_OFFSET (512*1024)
 #define BFM_KMSG_TMP_BUF_LEN (3*1024*512)
-#define BFM_BOOT_UP_60_SECOND (60)
-#define BFM_TIME_S_TO_NS (1000*1000*1000)
-
 
 /*----local prototypes----------------------------------------------------------------*/
 
@@ -291,7 +288,7 @@ unsigned int bfmr_capture_log_from_system(char *buf, unsigned int buf_len, bfmr_
         {
             break;
         }
-    case LOG_TYPE_TEXT_KMSG:
+    case LOG_TYPE_KMSG:
         {
             bytes_captured = bfm_capture_kmsg_log(buf, buf_len);
             break;
@@ -302,10 +299,7 @@ unsigned int bfmr_capture_log_from_system(char *buf, unsigned int buf_len, bfmr_
         }
     case LOG_TYPE_BETA_APP_LOGCAT:
         {
-            if (bfm_is_beta_version())
-            {
-                bytes_captured = bfmr_capture_logcat_on_beta_version(buf, buf_len, BFM_LOGCAT_FILE_PATH);
-            }
+            bytes_captured = bfmr_capture_logcat_on_beta_version(buf, buf_len, BFM_LOGCAT_FILE_PATH);
             break;
         }
     case LOG_TYPE_CRITICAL_PROCESS_CRASH:
@@ -647,11 +641,6 @@ int bfm_capture_and_save_do_nothing_bootfail_log(bfm_process_bootfail_param_t *p
             param->bootfail_time = (unsigned long long)bfm_hctosys(param->bootfail_time,false);
             param->dst_type = DST_RAW_PART;
             param->recovery_method = FRM_REBOOT;
-            param->bootup_time = sched_clock()/(BFM_TIME_S_TO_NS);
-            if(param->bootup_time < BFM_BOOT_UP_60_SECOND){
-                BFMR_PRINT_ERR("KERNEL_PRESS10S at param->bootup_time =%d\n", param->bootup_time);
-                return ret;
-            }
             (void)capture_and_save_bootfail_log_tmp(param);
             break;
         }
@@ -917,10 +906,10 @@ void bfmr_update_raw_log_info(bfmr_log_src_t *psrc, bfmr_log_dst_t *pdst, unsign
 {
     bfm_record_info_t *brit;
 
+    BFMR_PRINT_KEY_INFO("start+++logtype %d\n",psrc->log_type);
     if(!psrc || !psrc->log_save_context || !pdst)
       return;
 
-    BFMR_PRINT_KEY_INFO("start+++logtype %d\n",psrc->log_type);
     brit = (bfm_record_info_t *)(psrc->log_save_context);
 
     /*get file name*/
@@ -936,7 +925,7 @@ void bfmr_update_raw_log_info(bfmr_log_src_t *psrc, bfmr_log_dst_t *pdst, unsign
             strncpy(brit->log_name[psrc->log_type], BFM_QCOM_BL2_BOOTFAIL_LOG_NAME, BFMR_SIZE_128-1);
             break;
         }
-    case LOG_TYPE_TEXT_KMSG:
+    case LOG_TYPE_KMSG:
         {
             strncpy(brit->log_name[psrc->log_type], BFM_QCOM_KERNEL_BOOTFAIL_LOG_NAME, BFMR_SIZE_128-1);
             break;

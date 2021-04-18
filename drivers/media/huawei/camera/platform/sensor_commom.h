@@ -80,7 +80,6 @@ struct sensor_cfg_data;
 #define LDO_VOLTAGE_1P1V            1100000
 #define LDO_VOLTAGE_1P13V           1130000
 #define LDO_VOLTAGE_1P2V            1200000
-#define LDO_VOLTAGE_1P25V           1250000
 #define LDO_VOLTAGE_1P27V           1270000
 #define LDO_VOLTAGE_1P5V            1500000
 #define LDO_VOLTAGE_1P8V            1800000

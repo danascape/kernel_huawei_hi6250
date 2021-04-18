@@ -4806,12 +4806,6 @@ uhshcd_rsp_sense_data(struct ufs_hba *hba, struct ufshcd_lrb *lrbp, int scsi_sta
 	}
 #ifdef CONFIG_SCSI_UFS_HIVV_VCMD
 	if (UFS_VENDOR_HIVV == hba->manufacturer_id) {
-		if ((lrbp->ucd_rsp_ptr->sr.sense_data[2] & 0xf) == MEDIUM_ERROR &&
-			(lrbp->ucd_rsp_ptr->sr.sense_data[12] & 0xff) == 0x03 &&
-			(lrbp->ucd_rsp_ptr->sr.sense_data[13] & 0xff) == 0) {
-			dev_err(hba->dev,"1861 write fault\n");
-			BUG_ON(1);
-		}
 		if ((lrbp->ucd_rsp_ptr->sr.sense_data[2] & 0xf) == HIVV_INTERNEL &&
 			(lrbp->ucd_rsp_ptr->sr.sense_data[12] & 0xff) == 0x80 &&
 			(lrbp->ucd_rsp_ptr->sr.sense_data[13] & 0xff) == 0) {

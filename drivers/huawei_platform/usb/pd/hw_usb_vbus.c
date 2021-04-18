@@ -358,13 +358,7 @@ static int hisi_usb_vbus_probe(struct platform_device *pdev)
 	if (hisi_pmic_get_vbus_status()) {
 		hwlog_info("%s: vbus high, issue a charger connect event\n", __func__);
 		/*call combphy switch until dp probe finish*/
-		#ifdef CONFIG_TCPC_CLASS
-		if (!(support_pd && pd_dpm_ignore_vbuson_event()) && !(support_pd && pd_dpm_get_pd_finish_flag())) {
-		#endif
-			schedule_delayed_work(&g_connect_work, msecs_to_jiffies(0));
-		#ifdef CONFIG_TCPC_CLASS
-		}
-		#endif
+		schedule_delayed_work(&g_connect_work, msecs_to_jiffies(0));
 	} else {
 		if (!g_pd_di->pd_source_vbus) {
 			pd_dpm_vbus_notifier_call(g_pd_di, CHARGER_TYPE_NONE, NULL);

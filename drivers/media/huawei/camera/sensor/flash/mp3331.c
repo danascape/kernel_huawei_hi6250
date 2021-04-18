@@ -40,7 +40,6 @@
 #define I_FL                                             0x18   //flash current:760.8mA
 #define I_TX                                             0x08   // I_TX:253.6mA   
 #define I_TOR                                           0x05   // torch current:158.5mA
-#define BASE                                    10
 
 #define MP3331_FLASH_DEFAULT_CUR_LEV          24  //760mA
 #define MP3331_TORCH_DEFAULT_CUR_LEV         5    //158mA
@@ -218,7 +217,7 @@ static int hw_mp3331_flash_mode(struct hw_flash_ctrl_t *flash_ctrl, int data)
 	}
 	else
 	{
-		if( data > MP3331_FLASH_MAX_CUR_LEV * MP3331_CUR_STEP_LEV / BASE){
+		if( data*10 > MP3331_FLASH_MAX_CUR_LEV * MP3331_CUR_STEP_LEV){
 		      current_level = MP3331_FLASH_DEFAULT_CUR_LEV;
 		}
 		else{
@@ -270,7 +269,7 @@ static int hw_mp3331_torch_mode(struct hw_flash_ctrl_t *flash_ctrl, int data)
 	}
 	else
 	{
-		if( data > MP3331_TORCH_MAX_CUR_LEV * MP3331_CUR_STEP_LEV / BASE){
+		if( data*10 > MP3331_TORCH_MAX_CUR_LEV * MP3331_CUR_STEP_LEV){
 		      current_level = MP3331_TORCH_MAX_CUR_LEV;
 		}
 		else{

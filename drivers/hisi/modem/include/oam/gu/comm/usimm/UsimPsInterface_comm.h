@@ -204,10 +204,6 @@ extern "C" {
 #define USIMM_EF_IMSI_COMM_LEN                  (10)
 #define USIMM_EF_AD_MIN_LEN                     (3)
 
-#define USIMM_EF_GID_LEN                        (1)      /* 目前锁网锁卡校验场景只会用到第一个字节 */
-#define USIMM_EF_GID1_LEN                       (3)
-#define USIMM_EF_GID2_LEN                       (3)
-
 #define ARRAYSIZE(array)                        (sizeof(array)/sizeof(array[0]))
 
 #define MFLAB                                   (0x3F)

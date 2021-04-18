@@ -102,9 +102,6 @@ static int focal_esdcheck_func(void);
 static int focal_power_on(void);
 static int focal_power_off(void);
 static void focal_chip_touch_switch(void);
-static int focal_get_raw_data_all(struct ts_rawdata_info *info, struct ts_cmd_node *out_cmd);
-static int rawdata_proc_focal_printf(struct seq_file *m, struct ts_rawdata_info *info,
-					int range_size, int row_size);
 
 extern void focal_param_kree(void);
 
@@ -125,7 +122,7 @@ struct ts_device_ops ts_focal_ops = {
 	.chip_resume = focal_resume,
 	.chip_after_resume = focal_after_resume,
 	.chip_wakeup_gesture_enable_switch = focal_wakeup_gesture_enable_switch,
-	.chip_get_rawdata = focal_get_raw_data_all,
+	.chip_get_rawdata = focal_get_raw_data,
 	.chip_get_debug_data = focal_get_debug_data,
 	.chip_glove_switch = focal_glove_switch,
 	.chip_shutdown = focal_shutdown,
@@ -146,76 +143,7 @@ struct ts_device_ops ts_focal_ops = {
 #endif
 	.chip_wrong_touch = focal_wrong_touch,
 	.chip_touch_switch = focal_chip_touch_switch,
-	.chip_special_rawdata_proc_printf = rawdata_proc_focal_printf,
 };
-
-static int rawdata_proc_focal_printf(struct seq_file *m, struct ts_rawdata_info *info,
-					int range_size, int row_size)
-{
-	int index = 0;
-	int index1 = 0;
-	int indexsum = 0;
-	if((0 == range_size) || (0 == row_size) || (!info)) {
-		TS_LOG_ERR("%s  range_size OR row_size is 0 OR info is NULL\n", __func__);
-		return -EINVAL;
-	}
-	/*every test case row_size is 48,range_size is 30,all 4 test case*/
-	for (index = 0; row_size * index + 2 < (2+row_size*range_size * 4); index++) {
-		/*index =0,0~29 row data is rawdata,rawdata array printf tag*/
-		if (0 == index) {
-			seq_printf(m, "rawdata begin\n");	/*print the title */
-		}
-		for (index1 = 0; index1 < row_size; index1++) {
-			indexsum = 2 + row_size * index + index1;
-			seq_printf(m, "%d,", info->buff[indexsum]);	/*print oneline */
-		}
-		/*index1 = 0;*/
-		seq_printf(m, "\n ");
-		/*index =29,29~58 row data is shortdata,shortdata array printf tag*/
-		if ((range_size - 1) == index) {
-			seq_printf(m, "rawdata end\n");
-			seq_printf(m, "shortdata begin\n");
-		/*index =59,59~88 row data is cbdata,cbdata array printf tag*/
-		} else if ((range_size*2 - 1) == index){
-			seq_printf(m, "shortdata end\n");
-			seq_printf(m, "cbdata begin\n");
-		/*index =89,89~128 row data is cb increase,cb increase data array printf tag*/
-		} else if ((range_size*3 - 1) == index){
-			seq_printf(m, "cbdata end\n");
-			seq_printf(m, "cb increase data begin\n");
-		}
-	}
-	/*index =219,cb increase array printf tag*/
-	seq_printf(m, "cb increase data  end\n");
-	return NO_ERR;
-}
-
-static int focal_get_raw_data_all(struct ts_rawdata_info *info, struct ts_cmd_node *out_cmd)
-{
-	int retval = NO_ERR;
-	TS_LOG_INFO("%s enter\n", __func__);
-
-	if (!info) {
-		TS_LOG_ERR("%s: info is Null\n", __func__);
-		return -ENOMEM;
-	}
-
-	if (!out_cmd) {
-		TS_LOG_ERR("%s: out_cmd is Null\n", __func__);
-		return -ENOMEM;
-	}
-
-
-	if (FOCAL_FT8201 == g_focal_dev_data->ic_type)
-		retval = focal_8201_get_raw_data(info, out_cmd);
-	else
-		retval = focal_get_raw_data(info, out_cmd);
-
-	if (retval < 0)
-		TS_LOG_ERR("failed to get rawdata\n");
-
-	return retval;
-}
 
 inline struct ts_kit_device_data *focal_get_device_data(void)
 {
@@ -458,10 +386,7 @@ int focal_hardware_reset_to_rom_update_model(void)
 				__func__, ret);
 			continue;
 		}
-		/*because before focal write has hardware reset,here need 8ms keeep upgrade status stable*/
-		if (FOCAL_FT8201 == g_focal_dev_data->ic_type) {
-			mdelay(8);
-		}
+
 		ret = focal_read_chip_id_(&g_focal_pdata->chip_id);
 		TS_LOG_INFO("%s:ret = %d , g_focal_pdata->chip_id=%x\n",__func__, ret ,g_focal_pdata->chip_id);
 		if (ret|| (g_focal_pdata->chip_id == 0) ){
@@ -1643,14 +1568,7 @@ static int focal_suspend(void)
 			udelay(FT5X46_RESET_KEEP_LOW_TIME);
 			focal_power_off();
 		} else {
-			/**ft8201 don't self ctrl power,lcd suspend turn off vddio 1.8v,so don't need write 0x03 to oxA5,
-			   but need set reset gpio low**/
-			if (FOCAL_FT8201 != g_focal_dev_data->ic_type) {
-				focal_write_reg(FTS_REG_SLEEP, 0x03);
-			} else {
-				/*ft8201 is incell ic,lcd sequence just need set reset gpio low*/
-				gpio_direction_output(reset_gpio, 0);
-			}
+			focal_write_reg(FTS_REG_SLEEP, 0x03);
 		}
 	}
 
@@ -1701,9 +1619,9 @@ static int focal_resume(void)
 	int reset_gpio = 0;
 
 	reset_gpio = g_focal_dev_data->ts_platform_data->reset_gpio;
-	/*ft8201 lcd need tp to set reset gpio high,so need enter resume logic*/
-	if((FOCAL_FT5X46 != g_focal_dev_data->ic_type) && (FOCAL_FT8201 != g_focal_dev_data->ic_type)){
-		TS_LOG_INFO("%s: tp ic isn't FT5X46 or FT8201, resume needn't do nothing\n", __func__);
+
+	if(FOCAL_FT5X46 != g_focal_dev_data->ic_type){
+		TS_LOG_INFO("%s: tp ic isn't FT5X46, resume needn't do nothing\n", __func__);
 		return ret;
 	}
 
@@ -1740,16 +1658,11 @@ static int focal_resume(void)
 			focal_power_on();
 			udelay(FT5X46_RESET_KEEP_LOW_TIME);
 			gpio_direction_output(reset_gpio, 1);
-		}else{
+		} else {
 			/*exit sleep mode*/
-			if (FOCAL_FT8201 != g_focal_dev_data->ic_type) {
-				ret = focal_gpio_reset();
-				if(NO_ERR != ret){
-					TS_LOG_ERR("%s, %d: have error\n", __func__, __LINE__);
-				}
-			} else {
-				/*ft8201 is incell ic,lcd sequence just need set reset gpio high*/
-				gpio_direction_output(reset_gpio, 1);
+			ret = focal_gpio_reset();
+			if(NO_ERR != ret){
+				TS_LOG_ERR("%s, %d: have error\n", __func__, __LINE__);
 			}
 		}
 	}
@@ -1801,15 +1714,11 @@ static int focal_after_resume(void *feature_info)
 	if(FOCAL_FT5X46 == g_focal_dev_data->ic_type){
 		msleep(FTS_SLEEP_TIME_220);
 	}
-	/*ft8201 lcd and tp need 300ms for fw load time,lcd set 35ms,tp need 265ms*/
-	if(FOCAL_FT8201 == g_focal_dev_data->ic_type){
-		msleep(FTS_SLEEP_TIME_265);
-	}
 
 	for(i=0;i<FTS_RESUME_MAX_TIMES;i++)
 	{
 		ret = focal_read(&cmd, 1, &reg_val, 1);
-		if ((reg_val  == chipid_high) || (reg_val  == FTS_FT86XX_HIGH)) {
+		if (reg_val  == chipid_high) {
 			TS_LOG_INFO("%s:chip id read success, chip id:0x%X, i=%d\n",__func__, reg_val,i);
 			break;
 		}
@@ -2310,7 +2219,6 @@ static void focal_chip_touch_switch(void)
 	unsigned int i = 0, cnt = 0;
 	u8 param =0;
 	struct ts_kit_device_data *focal_dev_data = g_focal_dev_data;
-	struct focal_platform_data *focal_pdata = g_focal_pdata;
 
 	TS_LOG_INFO("%s enter\n", __func__);
 
@@ -2319,6 +2227,10 @@ static void focal_chip_touch_switch(void)
 		goto out;
 	}
 
+	if (TS_SWITCH_TYPE_DOZE != (focal_dev_data->touch_switch_flag & TS_SWITCH_TYPE_DOZE)){
+		TS_LOG_ERR("%s, doze mode does not suppored by this chip\n",__func__);
+		goto out;
+	}
 	/* SWITCH_OPER,ENABLE_DISABLE,PARAM */
 	memcpy(in_data, focal_dev_data->touch_switch_info, MAX_STR_LEN -1);
 	TS_LOG_INFO("%s, in_data:%s\n",__func__, in_data);
@@ -2349,70 +2261,33 @@ static void focal_chip_touch_switch(void)
 	**/
 	param = (u8)time/10;
 
-	switch (stype) {
-		case TS_SWITCH_TYPE_DOZE:
-			if (TS_SWITCH_TYPE_DOZE != (focal_dev_data->touch_switch_flag & TS_SWITCH_TYPE_DOZE)){
-				TS_LOG_ERR("%s, doze mode does not suppored by this chip\n",__func__);
+	if (TS_SWITCH_TYPE_DOZE != (stype & TS_SWITCH_TYPE_DOZE)){
+		TS_LOG_ERR("%s stype not TS_SWITCH_TYPE_DOZE:%d, invalid\n",__func__, stype);
+		goto out;
+	}
+
+	switch (soper){
+		case TS_SWITCH_DOZE_ENABLE:
+			TS_LOG_INFO("%s:enter doze_mode[param:%d]\n", __func__, param);
+			error = focal_write_reg(FTS_REG_DOZE_EN, FTS_DOZE_ENABLE);
+			if(error){
+				TS_LOG_ERR("%s: Failed enable doze_mode: error%d\n", __func__, error);
 				goto out;
 			}
-
-			switch (soper){
-				case TS_SWITCH_DOZE_ENABLE:
-					TS_LOG_INFO("%s:enter doze_mode[param:%d]\n", __func__, param);
-					error = focal_write_reg(FTS_REG_DOZE_EN, FTS_DOZE_ENABLE);
-					if(error){
-						TS_LOG_ERR("%s: Failed enable doze_mode: error%d\n", __func__, error);
-						goto out;
-					}
-					error = focal_write_reg(FTS_REG_DOZE_HOLDOFF_TIME, param);
-					if(error){
-						TS_LOG_ERR("%s: Failed set holdoff time: error%d\n", __func__, error);
-					}
-					break;
-				case TS_SWITCH_DOZE_DISABLE:
-					TS_LOG_INFO("%s:exit doze_mode\n", __func__);
-					error = focal_write_reg(FTS_REG_DOZE_EN, FTS_DOZE_DISABLE);
-					if(error){
-						TS_LOG_ERR("%s: Failed disable doze_mode : error%d\n", __func__, error);
-					}
-					break;
-				default:
-					TS_LOG_ERR("%s: soper unknown:%d, invalid\n", __func__, soper);
-					break;
+			error = focal_write_reg(FTS_REG_DOZE_HOLDOFF_TIME, param);
+			if(error){
+				TS_LOG_ERR("%s: Failed set holdoff time: error%d\n", __func__, error);
 			}
 			break;
-		case TS_SWITCH_TYPE_GAME:
-			if (TS_SWITCH_TYPE_GAME != (focal_dev_data->touch_switch_flag & TS_SWITCH_TYPE_GAME)){
-				TS_LOG_ERR("%s, game mode does not suppored by this chip\n",__func__);
-				goto out;
-			}
-			if (!focal_pdata) {
-					TS_LOG_ERR("%s, Eroor focal paltform data\n",__func__);
-					goto out;
-			}
-
-			switch (soper){
-				case TS_SWITCH_GAME_ENABLE:
-					TS_LOG_INFO("%s: enter game_mode\n", __func__);
-					error = focal_write_reg(focal_pdata->touch_switch_game_reg, 1);
-					if(error){
-						TS_LOG_ERR("%s: Switch to game mode Failed: error%d\n", __func__, error);
-					}
-					break;
-				case TS_SWITCH_GAME_DISABLE:
-					TS_LOG_INFO("%s: exit game_mode\n", __func__);
-					error = focal_write_reg(focal_pdata->touch_switch_game_reg, 0);
-					if (error) {
-						TS_LOG_ERR("%s: Switch to normal mode Failed: error%d\n", __func__, error);
-					}
-					break;
-				default:
-					TS_LOG_ERR("%s: soper unknown:%d, invalid\n", __func__, soper);
-					break;
+		case TS_SWITCH_DOZE_DISABLE:
+			TS_LOG_INFO("%s:exit doze_mode\n", __func__);
+			error = focal_write_reg(FTS_REG_DOZE_EN, FTS_DOZE_DISABLE);
+			if(error){
+				TS_LOG_ERR("%s: Failed disable doze_mode : error%d\n", __func__, error);
 			}
 			break;
 		default:
-			TS_LOG_ERR("%s: stype unknown:%u, invalid\n", __func__, stype);
+			TS_LOG_ERR("%s: soper unknown:%d, invalid\n", __func__, soper);
 			break;
 	}
 
@@ -2826,13 +2701,11 @@ static int focal_chip_detect(struct ts_kit_platform_data *pdata)
 			goto exit_power_off;
 		}
 	} else {
-		if(FOCAL_FT8201 != g_focal_dev_data->ic_type){
-			ret = focal_hardware_reset(FTS_MODEL_FIRST_START);
-			if (ret) {
-				TS_LOG_ERR("%s:hardware reset fail, ret=%d\n",
-					__func__, ret);
-				goto exit_power_off;
-			}
+		ret = focal_hardware_reset(FTS_MODEL_FIRST_START);
+		if (ret) {
+			TS_LOG_ERR("%s:hardware reset fail, ret=%d\n",
+				__func__, ret);
+			goto exit_power_off;
 		}
 	}
 

@@ -17,6 +17,7 @@
 
 #include <mali_kbase.h>
 
+#ifdef CONFIG_HISI_DEBUG_FS
 /** Show callback for the @c gpu_memory debugfs file.
  *
  * This function is called to get the contents of the @c gpu_memory debugfs
@@ -90,3 +91,12 @@ void kbasep_gpu_memory_debugfs_init(struct kbase_device *kbdev)
 	return;
 }
 
+#else
+/*
+ * Stub functions for when debugfs is disabled
+ */
+void kbasep_gpu_memory_debugfs_init(struct kbase_device *kbdev)
+{
+	return;
+}
+#endif

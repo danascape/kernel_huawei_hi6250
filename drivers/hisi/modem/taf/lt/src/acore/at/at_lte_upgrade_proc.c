@@ -56,6 +56,7 @@
 #include "msp_upgrade_proc.h"
 #include "at_lte_common.h"
 #include "ATCmdProc.h"
+#include "ScInterface.h"
 #include "mdrv.h"
 #include <osm.h>
 #include "msp_nv_id.h"
@@ -425,7 +426,6 @@ VOS_UINT32 atSetNVFactoryRestore(VOS_UINT8 ucClientId)
                                          );
     return AT_OK;
 }
-
 
 
 VOS_UINT32 atSetNVFactoryBack(VOS_UINT8 ucClientId)

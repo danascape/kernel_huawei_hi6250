@@ -26,7 +26,6 @@
 #define UFS_VENDOR_SAMSUNG     0x1CE
 #define UFS_VENDOR_HYNIX       0x1AD
 #define UFS_VENDOR_HIVV	   0x8B6
-#define UFS_VENDOR_MICRON      0x12C
 
 /*uniqueu number*/
 #define	UFS_UN_16_DIGITS 16

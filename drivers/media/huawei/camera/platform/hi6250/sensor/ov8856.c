@@ -286,7 +286,6 @@ struct sensor_power_setting ov8856_power_down_setting_dvdd120[] = {
 };
 
 struct mutex ov8856_power_lock;
-atomic_t volatile ov8856_powered = ATOMIC_INIT(0);
 static sensor_t s_ov8856 =
 {
     .intf = { .vtbl = &s_ov8856_vtbl, },
@@ -298,7 +297,6 @@ static sensor_t s_ov8856 =
             .size = ARRAY_SIZE(ov8856_power_down_setting),
             .power_setting = ov8856_power_down_setting,
     },
-    .p_atpowercnt = &ov8856_powered,
 
 };
 
@@ -451,11 +449,10 @@ int ov8856_config(hwsensor_intf_t* si, void  *argp)
 			mutex_lock(&ov8856_power_lock);
 			if(true == power_on_status){
 				ret = si->vtbl->power_down(si);
-				if (0 != ret)
+				if (0 == ret)
 				{
-					cam_err("%s. power_down fail.", __func__);
+					power_on_status = false;
 				}
-				power_on_status = false;
 			}
 			/*lint -e455 -esym(455,*)*/
 			mutex_unlock(&ov8856_power_lock);

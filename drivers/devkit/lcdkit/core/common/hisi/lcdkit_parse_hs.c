@@ -81,7 +81,6 @@ void lcdkit_parse_platform_dts(struct device_node* np,  void* pdata)
     OF_PROPERTY_READ_U8_RETURN(np, "hw,lcdkit-panel-step-support", &pinfo->lcd_uninit_step_support);
 	OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-panel-xcc-set-in-isr-support", &pinfo->xcc_set_in_isr_support, 0);
 	OF_PROPERTY_READ_U32_RETURN(np, "hw,lcdkit-panel-bl-pwm-preci-type", &pinfo->blpwm_precision_type);
-	OF_PROPERTY_READ_U32_RETURN(np, "hw,lcdkit-panel-bl-pwm-preci-no-convert", &pinfo->blpwm_preci_no_convert);
 
     /*effect info*/
     OF_PROPERTY_READ_U8_RETURN(np, "hw,lcdkit-sbl-support", &pinfo->sbl_support);
@@ -215,8 +214,6 @@ void lcdkit_parse_platform_dts(struct device_node* np,  void* pdata)
     OF_PROPERTY_READ_U32_DEFAULT(np, "hw,hw,lcdkit-platform-esd-reg", &g_lcdkit_pri_info.platform_esd_reg, 0xc0);
     OF_PROPERTY_READ_U32_DEFAULT(np, "hw,hw,lcdkit-platform-esd-value", &g_lcdkit_pri_info.platform_esd_value, 0x80);
     OF_PROPERTY_READ_U32_DEFAULT(np, "hw,lcdkit-mipi-rg-vcm-adjust", &pinfo->mipi.rg_vrefsel_vcm_adjust, 0);
-    OF_PROPERTY_READ_U32_DEFAULT(np, "hw,lcdkit-mipi-rg-vcm-clk-adjust", &pinfo->mipi.rg_vrefsel_vcm_clk_adjust, 0);
-    OF_PROPERTY_READ_U32_DEFAULT(np, "hw,lcdkit-mipi-rg-vcm-data-adjust", &pinfo->mipi.rg_vrefsel_vcm_data_adjust, 0);
     OF_PROPERTY_READ_U32_DEFAULT(np, "hw,lcdkit-mipi-phy-mode", &pinfo->mipi.phy_mode, 0);
     OF_PROPERTY_READ_U32_DEFAULT(np, "hw,lcdkit-mipi-lp11_flag", &pinfo->mipi.lp11_flag, 0);
     OF_PROPERTY_READ_U32_DEFAULT(np, "hw,lcdkit-mipi-hs-wr-to-time", &pinfo->mipi.hs_wr_to_time, 0);

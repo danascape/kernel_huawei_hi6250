@@ -45,7 +45,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *
 */
- 
+
 /*****************************************************************************
    1 头文件包含
 *****************************************************************************/
@@ -8824,7 +8824,7 @@ VOS_UINT32 AT_RcvDrvAgentHukSetCnf(VOS_VOID *pMsg)
     VOS_UINT8                               ucIndex;
     VOS_UINT32                              ulResult;
 
-    printk(KERN_ERR "\n AT_RcvDrvAgentHukSetCnf enter\n");
+    printk(KERN_ERR "\n AT_RcvDrvAgentH**SetCnf enter (AT^H**) %u \n", VOS_GetSlice());
 
     /* 初始化 */
     pRcvMsg         = (DRV_AGENT_MSG_STRU *)pMsg;
@@ -8895,7 +8895,7 @@ VOS_UINT32 AT_RcvDrvAgentFacAuthPubkeySetCnf(VOS_VOID *pMsg)
     VOS_UINT8                               ucIndex;
     VOS_UINT32                              ulResult;
 
-    printk(KERN_ERR "\n AT_RcvDrvAgentFacAuthPubkeySetCnf enter \n");
+    printk(KERN_ERR "\n AT_RcvDrvAgentFacAuthPub***SetCnf enter (AT^FACAUTHPUB***/FACAUTHPUB***EX) %u \n", VOS_GetSlice());
 
     /* 初始化 */
     pRcvMsg         = (DRV_AGENT_MSG_STRU *)pMsg;
@@ -8968,7 +8968,7 @@ VOS_UINT32 AT_RcvDrvAgentIdentifyStartSetCnf(VOS_VOID *pMsg)
     VOS_UINT16                              usLength;
     VOS_UINT32                              i;
 
-    printk(KERN_ERR "\n AT_RcvDrvAgentIdentifyStartSetCnf enter\n");
+    printk(KERN_ERR "\n AT_RcvDrvAgentIdentifyS***SetCnf enter (AT^IDENTIFYS***) %u \n", VOS_GetSlice());
 
     /* 初始化 */
     pRcvMsg         = (DRV_AGENT_MSG_STRU *)pMsg;
@@ -9052,7 +9052,7 @@ VOS_UINT32 AT_RcvDrvAgentIdentifyEndSetCnf(VOS_VOID *pMsg)
     VOS_UINT8                               ucIndex;
     VOS_UINT32                              ulResult;
 
-    printk(KERN_ERR "\n AT_RcvDrvAgentIdentifyEndSetCnf enter \n");
+    printk(KERN_ERR "\n AT_RcvDrvAgentIdentify***SetCnf enter (AT^IDENTIFY***) %u \n", VOS_GetSlice());
 
     /* 初始化消息变量 */
     pRcvMsg         = (DRV_AGENT_MSG_STRU *)pMsg;
@@ -9121,7 +9121,7 @@ VOS_UINT32 AT_RcvDrvAgentSimlockDataWriteSetCnf(VOS_VOID *pMsg)
     VOS_UINT8                                   ucIndex;
     VOS_UINT32                                  ulResult;
 
-    printk(KERN_ERR "\n AT_RcvDrvAgentSimlockDataWriteSetCnf enter\n");
+    printk(KERN_ERR "\n AT_RcvDrvAgentSimlockDataW***SetCnf enter (AT^SIMLOCKDATAW***) %u \n", VOS_GetSlice());
 
     /* 初始化消息变量 */
     pRcvMsg         = (DRV_AGENT_MSG_STRU *)pMsg;
@@ -9423,13 +9423,13 @@ VOS_UINT32 AT_PhoneSimlockInfoPrint(
     VOS_UINT8                                   ucGroupIndex    = 0;
     VOS_CHAR                                    acCodeBegin[AT_PERSONALIZATION_CODE_LEN + 1];
     VOS_CHAR                                    acCodeEnd[AT_PERSONALIZATION_CODE_LEN + 1];
-    VOS_UINT32                                  ulCodeBeginRslt;
-    VOS_UINT32                                  ulCodeEndRslt;
+    VOS_UINT32                                  ucCodeBeginRslt;
+    VOS_UINT32                                  ucCodeEndRslt;
 
     TAF_MEM_SET_S(acCodeBegin, sizeof(acCodeBegin), 0x00,   (AT_PERSONALIZATION_CODE_LEN + 1));
     TAF_MEM_SET_S(acCodeEnd, sizeof(acCodeEnd), 0x00,   (AT_PERSONALIZATION_CODE_LEN + 1));
-    ulCodeBeginRslt = VOS_NULL;
-    ulCodeEndRslt   = VOS_NULL;
+    ucCodeBeginRslt = VOS_NULL;
+    ucCodeEndRslt   = VOS_NULL;
 
     for (ucCatIndex = 0; ucCatIndex < DRV_AGENT_SUPPORT_CATEGORY_NUM; ucCatIndex++)
     {
@@ -9482,14 +9482,14 @@ VOS_UINT32 AT_PhoneSimlockInfoPrint(
         {
             for (ucGroupIndex = 0; ucGroupIndex < pstPhoneSimlockInfo->astCategoryInfo[ucCatIndex].ucGroupNum; ucGroupIndex++)
             {
-                ulCodeBeginRslt = AT_SimlockCodeBcd2Str(pstPhoneSimlockInfo->astCategoryInfo[ucCatIndex].enCategory,
+                ucCodeBeginRslt = AT_SimlockCodeBcd2Str(pstPhoneSimlockInfo->astCategoryInfo[ucCatIndex].enCategory,
                                                         pstPhoneSimlockInfo->astCategoryInfo[ucCatIndex].astLockCode[ucGroupIndex].aucPhLockCodeBegin,
                                                         acCodeBegin);
-                ulCodeEndRslt   = AT_SimlockCodeBcd2Str(pstPhoneSimlockInfo->astCategoryInfo[ucCatIndex].enCategory,
+                ucCodeEndRslt   = AT_SimlockCodeBcd2Str(pstPhoneSimlockInfo->astCategoryInfo[ucCatIndex].enCategory,
                                                         pstPhoneSimlockInfo->astCategoryInfo[ucCatIndex].astLockCode[ucGroupIndex].aucPhLockCodeEnd,
                                                         acCodeEnd);
-                if ( (VOS_OK == ulCodeBeginRslt)
-                  && (VOS_OK == ulCodeEndRslt) )
+                if ( (VOS_OK == ucCodeBeginRslt)
+                  && (VOS_OK == ucCodeEndRslt) )
                 {
                     usLength += (VOS_UINT16)At_sprintf(AT_CMD_MAX_LEN,
                                                        (VOS_CHAR *)pgucAtSndCodeAddr,
@@ -9509,6 +9509,7 @@ VOS_UINT32 AT_PhoneSimlockInfoPrint(
     *pusLength = usLength;
     return VOS_OK;
 }
+
 /*****************************************************************************
  函 数 名  : AT_RcvDrvAgentPhoneSimlockInfoQryCnf
  功能描述  : ^PHONESIMLOCKINFO命令查询回复处理函数
@@ -9529,17 +9530,15 @@ VOS_UINT32 AT_PhoneSimlockInfoPrint(
 *****************************************************************************/
 VOS_UINT32 AT_RcvDrvAgentPhoneSimlockInfoQryCnf(VOS_VOID *pMsg)
 {
-    DRV_AGENT_MSG_STRU                                     *pRcvMsg;
-    DRV_AGENT_PHONESIMLOCKINFO_QRY_CNF_STRU                *pstEvent;
-    VOS_UINT8                                               ucIndex;
-    VOS_UINT32                                              ulResult;
-    VOS_UINT16                                              usLength;
+    DRV_AGENT_MSG_STRU                         *pRcvMsg;
+    DRV_AGENT_PHONESIMLOCKINFO_QRY_CNF_STRU    *pstEvent;
+    VOS_UINT8                                   ucIndex;
+    VOS_UINT32                                  ulResult;
+    VOS_UINT16                                  usLength;
 
     /* 初始化消息变量 */
     pRcvMsg         = (DRV_AGENT_MSG_STRU *)pMsg;
-
     pstEvent        = (DRV_AGENT_PHONESIMLOCKINFO_QRY_CNF_STRU *)pRcvMsg->aucContent;
-
     ucIndex         = AT_BROADCAST_CLIENT_INDEX_MODEM_0;
     usLength        = 0;
 
@@ -9616,11 +9615,8 @@ VOS_UINT32 AT_SimlockDataReadPrint(
 {
     VOS_UINT16                                  usLength        = *pusLength;
     VOS_UINT8                                   ucCatIndex      = 0;
-    VOS_UINT8                                   ucCatNum;
 
-    ucCatNum = AT_MIN(stSimlockDataRead.ucSupportCategoryNum, DRV_AGENT_SUPPORT_CATEGORY_NUM);
-
-    for (ucCatIndex = 0; ucCatIndex < ucCatNum; ucCatIndex++)
+    for (ucCatIndex = 0; ucCatIndex < DRV_AGENT_SUPPORT_CATEGORY_NUM; ucCatIndex++)
     {
         if (0 != ucCatIndex)
         {
@@ -9734,9 +9730,7 @@ VOS_UINT32 AT_RcvDrvAgentSimlockDataReadQryCnf(VOS_VOID *pMsg)
     VOS_UINT32                                  ulResult;
     VOS_UINT16                                  usLength;
 
-
-    printk(KERN_ERR "\n AT_RcvDrvAgentSimlockDataReadQryCnf enter\n");
-
+    printk(KERN_ERR "\n AT_RcvDrvAgentSimlockDataR***QryCnf enter (AT^SIMLOCKDATAR***) %u \n", VOS_GetSlice());
 
     /* 初始化消息变量 */
     pRcvMsg         = (DRV_AGENT_MSG_STRU *)pMsg;
@@ -9831,7 +9825,7 @@ VOS_UINT32 AT_RcvDrvAgentPhonePhynumSetCnf(VOS_VOID *pMsg)
     pRcvMsg         = (DRV_AGENT_MSG_STRU *)pMsg;
     pstEvent        = (DRV_AGENT_PHONEPHYNUM_SET_CNF_STRU *)pRcvMsg->aucContent;
 
-    printk(KERN_ERR "\n AT_RcvDrvAgentPhonePhynumSetCnf enter \n");
+    printk(KERN_ERR "\n AT_RcvDrvAgentPhonePhyn**SetCnf enter (AT^PHONEPHYN**) %u \n", VOS_GetSlice());
 
     /* 通过ClientId获取ucIndex */
     if ( AT_FAILURE == At_ClientIdToUserId(pstEvent->stAtAppCtrl.usClientId,&ucIndex) )
@@ -9898,7 +9892,7 @@ VOS_UINT32 AT_RcvDrvAgentPhonePhynumQryCnf(VOS_VOID *pMsg)
     VOS_UINT16                          usLength;
     VOS_UINT32                          i;
 
-    printk(KERN_ERR "\n AT_RcvDrvAgentPhonePhynumQryCnf enter \n");
+    printk(KERN_ERR "\n AT_RcvDrvAgentPhonePhy***QryCnf enter (AT^PHONEPHYN**) %u \n", VOS_GetSlice());
 
     /* 初始化消息变量 */
     pRcvMsg         = (DRV_AGENT_MSG_STRU *)pMsg;

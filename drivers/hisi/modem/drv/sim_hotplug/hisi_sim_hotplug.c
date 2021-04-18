@@ -940,7 +940,6 @@ static void inquiry_sim_det_irq_reg(struct work_struct *work)
         if (0 == info->det_debounce_checking && NULL != info->sim_debounce_delay_wq)
         {
             info->det_debounce_checking = 1;
-            wake_lock_timeout(&info->sim_hotplug_wklock, msecs_to_jiffies(info->hpd_debounce_wait_time + 5));
             queue_delayed_work(info->sim_debounce_delay_wq,
                                &info->sim_debounce_delay_work,
                                msecs_to_jiffies(info->det_debounce_wait_time));

@@ -56,6 +56,40 @@ struct ufs_uic_err_history {
 	unsigned long delta_bit_cnt;
 };
 
+struct ufs_reg_dump {
+	u32 cap;
+	u32 ver;
+	u32 hcpid;
+	u32 hcmid;
+	u32 ahit;
+	u32 is;
+	u32 ie;
+	u32 hcs;
+	u32 hce;
+	u32 uecpa;
+	u32 uecdl;
+	u32 uecn;
+	u32 uect;
+	u32 uedme;
+	/*UTP Transfer Request*/
+	u32 utriac;
+	u32 utrlba;
+	u32 utrlbau;
+	u32 utrldbr;
+	u32 utrlclr;
+	u32 utrlrsr;
+	/*UTP Task Managerment Request*/
+	u32 utmrlba;
+	u32 utmrlbau;
+	u32 utmrldbr;
+	u32 utmrlclr;
+	u32 utmrlrsr;
+	/*uic command*/
+	u32 uic_cmd;
+	u32 uic_arg1;
+	u32 uic_arg2;
+	u32 uic_arg3;
+};
 
 struct ufs_dsm_adaptor {
 	unsigned long err_type;
@@ -82,6 +116,7 @@ struct ufs_dsm_adaptor {
 #define	UFS_TEMP_LOW_ERR		20
 #define	UFS_HIVV_INTERNEL_ERR	21
 
+	struct ufs_reg_dump dump;
 	/*for UIC Transfer Error*/
 	unsigned long uic_disable;
 	u32 uic_uecpa;

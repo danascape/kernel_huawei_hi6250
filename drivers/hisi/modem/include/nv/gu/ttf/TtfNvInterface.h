@@ -800,18 +800,6 @@ typedef struct
     VOS_UINT8                           aucReserve[3];
 }NV_DSDS_ACTIVE_MODEM_MODE_STRU;
 
-/*****************************************************************************
-结构名    : NV_TTF_RLC_FLOW_CONTROL_STRU
-DESCRIPTION: 对应en_NV_Item_RLC_Flow_Control项的结构,对上行UDP 灌包场景，限制WRLC的UDP 缓存量
- 1.日    期   : 2018年03月31日
-   作    者   : c00368566
-*****************************************************************************/
-typedef struct
-{
-    TTF_BOOL_ENUM_UINT8         enEnable;               /* 功能是否打开,取值0和1 */
-    VOS_UINT8                   ucFreq;                 /* 流控频率，单位:10ms */
-    VOS_UINT16                  usFlowCtrlThreshold;    /* 数据包老化时间，单位:10ms */ 
-}NV_TTF_RLC_FLOW_CONTROL_STRU;
 
 /*****************************************************************************
   6 UNION

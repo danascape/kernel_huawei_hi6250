@@ -153,5 +153,7 @@ obj-$(CONFIG_HISI_FB_3650)        += hisi/dss/
 obj-$(CONFIG_HISI_FB_3660)        += hisi/dss/
 obj-$(CONFIG_HISI_FB_6250)        += hisi/dss/
 obj-$(CONFIG_HISI_FB_970)         += hisi/dss/
+obj-$(CONFIG_HISI_FB_980)         += hisi/dss/
+obj-$(CONFIG_HISI_FB_660)         += hisi/dss/
 # the test framebuffer is last
 obj-$(CONFIG_FB_VIRTUAL)          += vfb.o

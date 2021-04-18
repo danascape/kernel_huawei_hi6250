@@ -233,7 +233,7 @@ Output:
 static ssize_t gt1x_tool_write(struct file *filp, const char __user * buff, size_t len, loff_t * data)
 {
 	u64 ret = 0;
-	int data_len = 0;
+	short data_len = 0;
 	if(!buff){
 		TS_LOG_ERR("%s: invalid buff\n", __func__);
 		return -EINVAL;
@@ -363,8 +363,8 @@ Output:
 static ssize_t gt1x_tool_read(struct file *filp, char __user * buffer, size_t count, loff_t * ppos)
 {
 	u16 addr, len, loc = 0;
-	int data_len = 0;
-	u8 tmp =0;
+	short data_len;
+	int tmp =0;
 
 	if(!buffer){
 		TS_LOG_ERR("%s: invalid buff\n", __func__);

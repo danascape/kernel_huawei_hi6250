@@ -388,7 +388,6 @@ int hisi_rproc_is_suspend(rproc_id_t rproc_id)
 	struct hisi_rproc_info *rproc;
 	struct hisi_mbox_device *mdev = NULL;
 	int ret = 0;
-	unsigned long flags = 0;
 
 	WARN_ON(!IS_READY());
 
@@ -400,10 +399,10 @@ int hisi_rproc_is_suspend(rproc_id_t rproc_id)
 	}
 
 	mdev = rproc->mbox->tx;
-	spin_lock_irqsave(&mdev->status_lock, flags);
+	spin_lock(&mdev->status_lock);
 	if ((MDEV_DEACTIVATED & mdev->status))
 		ret = -ENODEV;
-	spin_unlock_irqrestore(&mdev->status_lock, flags);
+	spin_unlock(&mdev->status_lock);
 out:
 	return ret;
 }

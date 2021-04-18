@@ -38529,7 +38529,7 @@ VOS_UINT32 AT_SetHukPara(VOS_UINT8 ucIndex)
     VOS_UINT16                          usLength;
     DRV_AGENT_HUK_SET_REQ_STRU          stHukSetReq;
 
-    printk(KERN_ERR "\n AT_SetHukPara enter\n");
+    printk(KERN_ERR "\n AT_SetHu*Para enter (AT^Hu*) %u \n", VOS_GetSlice());
 
     /* 局部变量初始化 */
     ulResult = VOS_NULL;
@@ -38601,7 +38601,7 @@ VOS_UINT32 AT_SetHukPara(VOS_UINT8 ucIndex)
  修改历史      :
   1.日    期   : 2016年05月10日
     作    者   : z00301431
-    修改内容   : 锁网锁卡安全升级项目新增 
+    修改内容   : 锁网锁卡安全升级项目新增
 *****************************************************************************/
 VOS_UINT32 AT_ProcAuthPubkeyExData(
     VOS_UINT32                          ulParaLen,
@@ -38691,14 +38691,6 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
     AT_AUTH_PUBKEYEX_CMD_PROC_CTX          *pstAuthPubKeyCtx = VOS_NULL_PTR;
     DRV_AGENT_FACAUTHPUBKEY_SET_REQ_STRU   *pstFacAuthPubkeySetReq = VOS_NULL_PTR;
     VOS_UINT32                              ulResult;
-    VOS_UINT32                              ulTempIndex;
-    VOS_UINT32                              ulTimerName;
-
-    ulTempIndex  = (VOS_UINT32)ucIndex;
-    ulTimerName  = AT_AUTH_PUBKEY_TIMER;
-    ulTimerName |= AT_INTERNAL_PROCESS_TYPE;
-    ulTimerName |= (ulTempIndex<<12);
-
 
     pstAuthPubKeyCtx = AT_GetAuthPubkeyExCmdCtxAddr();
 
@@ -38708,7 +38700,8 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
         AT_WARN_LOG2("AT_SetFacAuthPubkeyExPara: Index bigger then total", ulCurrIndex, ulTotal);
 
         AT_ClearAuthPubkeyCtx();
-        (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+        (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
         return AT_CME_INCORRECT_PARAMETERS;
     }
 
@@ -38744,7 +38737,8 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
             AT_WARN_LOG2("AT_SetFacAuthPubkeyExPara: port error, ucIndex %d ucClientId, %d", ucIndex, pstAuthPubKeyCtx->ucClientId);
 
             AT_ClearAuthPubkeyCtx();
-            (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+            (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
             return AT_CME_INCORRECT_PARAMETERS;
         }
 
@@ -38754,7 +38748,8 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
             AT_WARN_LOG2("AT_SetFacAuthPubkeyExPara: total %d wrong, %d", ulTotal, pstAuthPubKeyCtx->ucTotalNum);
 
             AT_ClearAuthPubkeyCtx();
-            (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+            (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
             return AT_CME_INCORRECT_PARAMETERS;
         }
 
@@ -38764,7 +38759,8 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
             AT_WARN_LOG2("AT_SetFacAuthPubkeyExPara: CurrIndex %d wrong, %d", ulCurrIndex, pstAuthPubKeyCtx->ucCurIdx);
 
             AT_ClearAuthPubkeyCtx();
-            (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+            (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
             return AT_CME_INCORRECT_PARAMETERS;
         }
 
@@ -38775,7 +38771,8 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
             AT_WARN_LOG1("AT_SetFacAuthPubkeyExPara: AT_ProcAuthPubkeyExData fail %d", ulResult);
 
             AT_ClearAuthPubkeyCtx();
-            (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+            (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
             return ulResult;
         }
 
@@ -38788,8 +38785,9 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
     {
         (VOS_VOID)AT_StartRelTimer(&(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer),
                                    AT_AUTH_PUBKEY_PROTECT_TIMER_LEN,
-                                   ulTimerName,
+                                   AT_AUTH_PUBKEY_TIMER,
                                    0, VOS_RELTIMER_NOLOOP);
+
         return AT_OK;
     }
     else
@@ -38804,7 +38802,8 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
                          pstAuthPubKeyCtx->usParaLen);
 
             AT_ClearAuthPubkeyCtx();
-            (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+            (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
             return AT_CME_INCORRECT_PARAMETERS;
         }
 
@@ -38815,14 +38814,16 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
             AT_WARN_LOG("AT_SetFacAuthPubkeyExPara: alloc mem fail.");
 
             AT_ClearAuthPubkeyCtx();
-            (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+            (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
             return AT_ERROR;
         }
 
         TAF_MEM_CPY_S(pstFacAuthPubkeySetReq, sizeof(DRV_AGENT_FACAUTHPUBKEY_SET_REQ_STRU), pstAuthPubKeyCtx->pucData, pstAuthPubKeyCtx->usParaLen);
 
         AT_ClearAuthPubkeyCtx();
-        (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+        (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
         /* 转换成功, 发送跨核消息到C核, 设置产线公钥 */
         ulResult = AT_FillAndSndAppReqMsg(gastAtClientTab[ucIndex].usClientId,
                                           gastAtClientTab[ucIndex].opId,
@@ -38836,7 +38837,10 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
         if (TAF_SUCCESS != ulResult)
         {
             AT_WARN_LOG("AT_SetFacAuthPubkeyExPara: AT_FillAndSndAppReqMsg fail.");
-			
+
+            AT_ClearAuthPubkeyCtx();
+            (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
             return AT_ERROR;
         }
 
@@ -38844,6 +38848,9 @@ VOS_UINT32 AT_SetFacAuthPubkeyExPara(
         if (AT_SUCCESS != At_StartTimer(AT_SET_PARA_TIME, ucIndex))
         {
             AT_WARN_LOG("AT_SetFacAuthPubkeyExPara: At_StartTimer fail.");
+
+            AT_ClearAuthPubkeyCtx();
+            (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
 
             return AT_ERROR;
         }
@@ -38879,7 +38886,7 @@ VOS_UINT32 AT_SetIdentifyStartPara(VOS_UINT8 ucIndex)
 {
     VOS_UINT32                          ulResult;
 
-    printk(KERN_ERR "\n AT_SetIdentifyStartPara enter \n");
+    printk(KERN_ERR "\n AT_SetIdentifySta**Para enter (AT^IDENTIFYSTA**) %u \n", VOS_GetSlice());
 
     /* 通道检查 */
     /* Modified by L60609 for MUX，2012-08-13,  Begin */
@@ -38938,7 +38945,7 @@ VOS_UINT32 AT_SetIdentifyEndPara(VOS_UINT8 ucIndex)
     DRV_AGENT_IDENTIFYEND_SET_REQ_STRU  stIdentifyEndSetReq;
     VOS_UINT16                          usLength;
 
-    printk(KERN_ERR "\n AT_SetIdentifyEndPara enter \n");
+    printk(KERN_ERR "\n AT_SetIdentify***Para enter (AT^IDENTIFY***) %u \n", VOS_GetSlice());
 
     /* 局部变量初始化 */
     ulResult = VOS_NULL;
@@ -39169,7 +39176,7 @@ VOS_UINT32 AT_SetPhonePhynumPara(VOS_UINT8 ucIndex)
         return AT_ERROR;
     }
 
-    printk(KERN_ERR "\n AT_SetPhonePhynumPara enter\n");
+    printk(KERN_ERR "\n AT_SetPhonePhy***Para enter (AT^PHONEPHY***) %u \n", VOS_GetSlice());
 
     /* 参数检查 */
     if (AT_CMD_OPT_SET_PARA_CMD != g_stATParseCmd.ucCmdOptType)

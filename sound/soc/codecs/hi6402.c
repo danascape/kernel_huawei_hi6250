@@ -21,7 +21,6 @@
 #include <linux/of_device.h>
 #include <linux/of_irq.h>
 #include <linux/of_platform.h>
-#include <linux/of_gpio.h>
 #include <linux/wakelock.h>
 #include <sound/core.h>
 #include <sound/pcm.h>
@@ -58,10 +57,6 @@
 #define FS_32000 0x2
 #define FS_48000 0x4
 #define FS_96000 0x5
-
-#define BT_TRI_BT                  0
-#define BT_TRI_PA                  1
-#define BT_TRI_INVALID             2
 
 #define HI6402_IRQ_NUM (32)
 
@@ -117,7 +112,6 @@ struct hi6402_board_cfg {
 	int hac_gpio;
 	bool use_stereo_smartpa;
 	unsigned int mic2_source;
-	int bt_tri_gpio;
 };
 
 /* codec private data */
@@ -222,80 +216,6 @@ static int hac_switch_put(struct snd_kcontrol *kcontrol,
 	pr_debug("%s: hac_switch = %d\n", __func__, hac_switch);
 	ret = hac_gpio_switch(hac_switch);
 
-	return ret;
-}
-
-static const char * const bt_tri_text[] = {"BT", "PA", "Invalid"};
-static const struct soc_enum bt_tri_enum[] = {
-	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(bt_tri_text), bt_tri_text),
-};
-
-static int hi6402_bt_tri_status_get(struct snd_kcontrol *kcontrol,
-					struct snd_ctl_elem_value *ucontrol)
-{
-	struct hi6402_platform_data *priv = NULL;
-	int ret = 0;
-
-	if (!kcontrol || !ucontrol){
-		pr_err("%s: input pointer is null (%pK, %pK)\n", __func__, kcontrol, ucontrol);
-		return -1;
-	}
-
-	priv = snd_soc_codec_get_drvdata(g_hi6402_codec);
-	if (!priv) {
-		pr_err("%s: priv is null\n", __func__);
-		return -1;
-	}
-	if (!gpio_is_valid(priv->board_cfg.bt_tri_gpio)) {
-		pr_info("%s: bt tri gpio = %d is invalid\n", __func__, priv->board_cfg.bt_tri_gpio);
-		ucontrol->value.integer.value[0] = BT_TRI_INVALID;
-		return 0;
-	}
-	ret = gpio_get_value(priv->board_cfg.bt_tri_gpio);
-	pr_info("%s: bt tri gpio = %d, value = %d\n", __func__, priv->board_cfg.bt_tri_gpio, ret);
-	ucontrol->value.integer.value[0] = ret;
-
-	return 0;
-}
-
-static int hi6402_bt_tri_status_set(struct snd_kcontrol *kcontrol,
-					struct snd_ctl_elem_value *ucontrol)
-{
-	struct hi6402_platform_data *priv = NULL;
-	int ret = 0;
-
-	if (!kcontrol || !ucontrol) {
-		pr_err("%s: input pointer is null (%pK, %pK)\n", __func__, kcontrol, ucontrol);
-		return -1;
-	}
-
-	priv = snd_soc_codec_get_drvdata(g_hi6402_codec);
-	if (!priv) {
-		pr_err("%s: priv is null\n", __func__);
-		return -1;
-	}
-	if (!gpio_is_valid(priv->board_cfg.bt_tri_gpio)) {
-		pr_info("%s: bt tri gpio = %d is invalid\n", __func__, priv->board_cfg.bt_tri_gpio);
-		return -1;
-	}
-
-	ret = ucontrol->value.integer.value[0];
-	pr_info("%s:bt tri status, ret = %d\n", __func__, ret);
-
-	if (BT_TRI_BT == ret) {
-		pr_info("%s: Enable bt tri gpio %u, ret = %d\n",
-		__func__, priv->board_cfg.bt_tri_gpio, ret);
-
-		gpio_set_value(priv->board_cfg.bt_tri_gpio, BT_TRI_BT);
-	} else if (BT_TRI_PA == ret) {
-		pr_info("%s: Disable bt tri gpio %u, ret = %d\n",
-		__func__, priv->board_cfg.bt_tri_gpio, ret);
-
-		gpio_set_value(priv->board_cfg.bt_tri_gpio, BT_TRI_PA);
-	} else {
-		pr_info("%s: bt tri set status value is invalid, ret = %d\n",
-		__func__, ret);
-	}
 	return ret;
 }
 
@@ -2364,8 +2284,6 @@ static const struct snd_kcontrol_new hi6402_snd_controls[] = {
 		HI6402_ANA_LINEIN_BOOST_REG, HI6402_ANA_LINEINR_BOOST_BIT, 1, 0),
 	SOC_ENUM_EXT("HAC",
 		hac_switch_enum[0], hac_switch_get, hac_switch_put),
-	SOC_ENUM_EXT("BT TRI",
-		bt_tri_enum[0], hi6402_bt_tri_status_get, hi6402_bt_tri_status_set),
 };
 
 /* SWITCH */
@@ -4521,48 +4439,6 @@ static void hi6402_dump_reg(char *buf, unsigned int dump_size)
 	snprintf(buf + len, dump_size - len, "\n");/* unsafe_function_ignore: snprintf */
 }
 
-int hi6402_bt_tri_gpio_init(int bt_tri_gpio)
-{
-	if (!gpio_is_valid(bt_tri_gpio)) {
-		pr_err("%s : bt tri is not support.\n", __FUNCTION__);
-		return -1;
-	}
-	if (gpio_request(bt_tri_gpio, "bt_tri_gpio")) {
-		pr_err("%s : bt tri gpio request failed!\n", __FUNCTION__);
-		return -1;
-	}
-	if (gpio_direction_output(bt_tri_gpio, BT_TRI_PA)) {
-		pr_err("%s: bt tri gpio set output failed!\n", __FUNCTION__);
-		return -1;
-	}
-
-	return 0;
-}
-
-static void hi6402_get_board_bt_tri(struct device_node *node, struct hi6402_board_cfg *board_cfg)
-{
-	unsigned int val = 0;
-	int ret = 0;
-
-	if (!node || !board_cfg) {
-		pr_err("%s: intput parameters is null pointer (%pK, %pK) ! \n", __FUNCTION__, node, board_cfg);
-		return;
-	}
-
-	pr_info("%s: hi6402_get_board_bt_tri !\n", __FUNCTION__);
-	val = of_get_named_gpio(node, "hisilicon,bt_tri_gpio", 0);
-	if (val > 0) {
-		board_cfg->bt_tri_gpio = (unsigned int)val;
-		pr_info("%s: hi6402_get_board_bt_tri, gpio = %d!\n", __FUNCTION__, board_cfg->bt_tri_gpio);
-		ret = hi6402_bt_tri_gpio_init(board_cfg->bt_tri_gpio);
-		if (0 != ret) {
-			pr_err("%s : gpio resource init fail, ret = %d\n", __FUNCTION__, ret);
-		}
-	} else {
-		board_cfg->bt_tri_gpio = -1;
-		pr_info("%s: bt tri not supported, gpio = %d!\n", __FUNCTION__, board_cfg->bt_tri_gpio);
-	}
-}
 
 static int hi6402_irq_init(struct hi64xx_irq *irq_data)
 {
@@ -4985,7 +4861,7 @@ struct snd_soc_dai_driver hi6402_dai[] = {
 		.capture = {
 			.stream_name	= "Capture",
 			.channels_min	= 1,
-			.channels_max = 6,
+			.channels_max = 5,
 			.rates = HI6402_RATES,
 			.formats = HI6402_FORMATS},
 		.ops = &hi6402_audio_dai_ops,
@@ -5001,7 +4877,7 @@ struct snd_soc_dai_driver hi6402_dai[] = {
 		.capture = {
 			.stream_name = "Up",
 			.channels_min = 1,
-			.channels_max = 6,
+			.channels_max = 5,
 			.rates = HI6402_RATES,
 			.formats = HI6402_FORMATS},
 		.ops = &hi6402_voice_dai_ops,
@@ -5070,7 +4946,6 @@ static void hi6402_get_board_cfg(struct device_node *node, struct hi6402_board_c
 	} else {
 		board_cfg->use_stereo_smartpa = false;
 	}
-	hi6402_get_board_bt_tri(node, board_cfg);
 }
 
 static void hi6402_init_codec_device(struct hi_cdc_ctrl* cdc)
@@ -5130,11 +5005,10 @@ static int hi6402_platform_probe(struct platform_device *pdev)
 	} else {
 		hi6402_get_board_cfg(priv->node, &(priv->board_cfg));
 		hac_en_gpio = priv->board_cfg.hac_gpio;
-		dev_info(dev, "%s : mic_num %d , use_stereo_smartpa %d, hac_gpio %d, bt_tri_gpio %d\n",
+		dev_info(dev, "%s : mic_num %d , use_stereo_smartpa %d, hac_gpio %d\n",
 			__FUNCTION__, priv->board_cfg.mic_num,
 			priv->board_cfg.use_stereo_smartpa,
-			priv->board_cfg.hac_gpio,
-			priv->board_cfg.bt_tri_gpio);
+			priv->board_cfg.hac_gpio);
 	}
 
 	priv->irqmgr = (struct hi64xx_irq *)dev_get_drvdata(pdev->dev.parent);
@@ -5201,9 +5075,6 @@ codec_register_err_exit:
 compat_init_err_exit:
 irq_pll_unlock_exit:
 free_platform_data:
-	if (gpio_is_valid(priv->board_cfg.bt_tri_gpio)) {
-		gpio_free(priv->board_cfg.bt_tri_gpio);
-	}
 	if (priv) {
 		devm_kfree(dev, priv);
 	}
@@ -5217,10 +5088,6 @@ static int hi6402_platform_remove(struct platform_device *pdev)
 	struct hi6402_platform_data *priv =
 		(struct hi6402_platform_data *)platform_get_drvdata(pdev);
 	BUG_ON(NULL == priv);
-
-	if (gpio_is_valid(priv->board_cfg.bt_tri_gpio)) {
-		gpio_free(priv->board_cfg.bt_tri_gpio);
-	}
 
 	if (hac_en_gpio) {
 		gpio_free(hac_en_gpio);

@@ -814,10 +814,6 @@ static ssize_t cyttsp_debug_enable_store(struct device *dev,
 	int data_int = 0;
 	struct cyttsp_button_data *data = NULL;
 
-	if(NULL == dev) {
-		hwlog_err("%s: dev is NULL, just return!\n", __func__);
-		goto err_device_null;
-	}
 	if(NULL == buf) {
 		hwlog_err("%s: buf is NULL, just return!\n", __func__);
 		goto err_buf_null;
@@ -880,7 +876,6 @@ err_write_reg:
 err_data_null:
 err_i2c_client_null:
 err_buf_null:
-err_device_null:
 	return -EIO;
 }
 

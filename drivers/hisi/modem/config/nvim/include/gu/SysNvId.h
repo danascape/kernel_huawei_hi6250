@@ -553,12 +553,7 @@ enum SYS_NV_ID_ENUM
 /* Added by l00426960 for Anycell抑制, 2017-11-08, end */
 /* 2467 */       en_NV_Item_Alerting_Srvcc_Open_Codec_Cfg         = 2467,       /* 之前是本地振铃，Alerting Srvcc后也要打开Codec */
 /* 2468 */       en_NV_Item_Srvcc_No_Call_Num_T3240_Cfg           = 2468,       /* SRVCC到G后，IMSA同步的呼叫信息时空的，是否不主动释放连接，并修改T3240定时器时长 */
-/*  2482 */     en_NV_Item_REDIAL_WIFI_TO_CS_DOMAIN_CFG      = 2482,     /* TAF_NV_SWITCH_WIFI_TO_CS_REDIAL_CONFIG_STRU */
 /*  2491 */     en_NV_Item_Classmark_SuppCodec_CapRpt_Ctrl        = 2491,     /* NAS_NVIM_SRCH_STGY_AFTER_HISTORY_REJ_STRU */
-
-/*  2509 */     en_NV_Item_Manual_Mode_Reg_Hplmn_Cfg              = 2509,     /* NAS_NVIM_MANUAL_MODE_REG_HPLMN_CFG_STRU */
-
-/* 2514 */     en_NV_Item_Ss_Conn_State_Rcv_Rel_Ind_Set_Cause_Cfg = 2514,     /* NAS_NVIM_SS_CONN_STATE_RCV_REL_IND_SET_CAUSE_STRU */
 
 /*   3000*/      en_NV_Item_ErrLog_CsHo_Len = 3000,
  /* 3001 */      en_NV_Item_SBM_CUSTOM_DUAL_IMSI_NEW = 3001,
@@ -861,8 +856,6 @@ enum SYS_NV_ID_ENUM
 /* Added by g00178567 for 提供定制CS+PS时，PS RB不上报不可恢复错, 2017-05-23, begin */
 /* 4807 */       en_NV_Item_WTTF_CSPS_RLC_PS_NOT_RPT_DATALINK_LOSS      = 4807,
 /* Added by g00178567 for 提供定制CS+PS时，PS RB不上报不可恢复错, 2016-05-23, end */
-
-/* 4808 */       en_NV_Item_RLC_Flow_Control                            = 4808,
 
 /*   4900  */    en_NV_Item_Bastet_CONFIG = 4900,
 /*   8250*/      en_NV_Item_GCF_TYPE_CONTENT_ID = 8250,

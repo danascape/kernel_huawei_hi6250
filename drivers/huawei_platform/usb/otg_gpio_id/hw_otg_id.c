@@ -273,7 +273,6 @@ static int hw_otg_id_probe(struct platform_device *pdev)
     if ((avgvalue > ADC_VOLTAGE_LIMIT) && (avgvalue <= ADC_VOLTAGE_MAX)) {
 		hw_usb_err("%s Set gpio_direction_output, avgvalue is %d.\n", __func__, avgvalue);
 		ret = gpio_direction_output(otg_gpio_id_dev_p->gpio,1);
-                goto err_detect_otg_id;
     }
 	else {
         ret = gpio_direction_input(otg_gpio_id_dev_p->gpio);
@@ -288,16 +287,21 @@ static int hw_otg_id_probe(struct platform_device *pdev)
         hw_usb_err("%s gpio_to_irq error!!! dev_p->gpio=%d, dev_p->irq=%d.\n", __func__, otg_gpio_id_dev_p->gpio, otg_gpio_id_dev_p->irq);
         goto err_gpio_to_irq;
     }
+	else {
+		hw_usb_err("%s otg irq is %d.\n", __func__, otg_gpio_id_dev_p->irq);
+		if (0 == !hw_is_usb_cable_connected()) {
+            hw_otg_id_notifier_call(NULL, !USB_CHARGER_INSERTED, NULL);
+		}
+		else {
+			hw_otg_id_notifier_call(NULL, !USB_CHARGER_REMOVE, NULL);
+		}
+	}
 
     ret = request_irq(otg_gpio_id_dev_p->irq, hw_otg_id_irq_handle,
 	    	IRQF_TRIGGER_LOW | IRQF_NO_SUSPEND | IRQF_ONESHOT, "otg_gpio_irq", NULL);
     if (ret < 0) {
         hw_usb_err("%s request otg irq handle funtion fail!! ret:%d\n", __func__, ret);
         goto err_request_irq;
-    } else {
-        if (VBUS_IS_CONNECTED == !hw_is_usb_cable_connected()) {
-            hw_otg_id_notifier_call(NULL, !USB_CHARGER_INSERTED, NULL);
-        }
     }
 
     /* check the otg status when the phone poweron*/
@@ -322,7 +326,6 @@ static int hw_otg_id_probe(struct platform_device *pdev)
 		devm_kfree(&pdev->dev, otg_gpio_id_dev_p);
 		otg_gpio_id_dev_p = NULL;
 		return 0;
-	err_detect_otg_id:
 	err_set_gpio_direction:
 	err_gpio_to_irq:
 	err_request_irq:

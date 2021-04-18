@@ -1487,7 +1487,11 @@ void SetStateAttachWaitSink(void)
     platform_enable_timer(TRUE);
 #endif
 
-    loopCounter=1;
+    if(loopCounter++ > MAX_CABLE_LOOP)                                          // Swap toggle state machine current if looping
+    {
+        SetStateIllegalCable();
+        return;
+    }
 
 
     ConnState = AttachWaitSink;                                                 // Set the state machine variable to AttachWait.Snk
@@ -1550,7 +1554,11 @@ void SetStateAttachWaitSource(void)
     platform_enable_timer(TRUE);
 #endif // FSC_INTERRUPT_TRIGGERED
 
-    loopCounter=1;
+    if(loopCounter++ > MAX_CABLE_LOOP)                                          // Swap toggle state machine current if looping
+    {
+        SetStateIllegalCable();
+        return;
+    }
 
 
     Registers.Mask.M_COMP_CHNG = 0;

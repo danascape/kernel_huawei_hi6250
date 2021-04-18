@@ -57,7 +57,20 @@ const char __user *buff, size_t count, loff_t *ppos)
 
 	switch (proc_operate_mode) {
 	case PROC_UPGRADE:
-		TS_LOG_INFO("%s:PROC_UPGRADE is not support!\n", __func__);
+		memset(upgrade_file_path, 0, sizeof(upgrade_file_path));
+		sprintf(upgrade_file_path, "%s", writebuf + 1);
+		upgrade_file_path[buflen-1] = '\0';
+		TS_LOG_DEBUG("%s",  upgrade_file_path);
+
+		disable_irq(focal_dev_data->ts_platform_data->irq_id);
+		ret = focal_flash_upgrade_with_bin_file(focal_pdata,
+			upgrade_file_path);
+		enable_irq(focal_dev_data->ts_platform_data->irq_id);
+		if (ret < 0) {
+			TS_LOG_DEBUG("%s:upgrade failed.",  __func__);
+			return ret;
+		}
+
 	    break;
 	case PROC_SET_TEST_FLAG:
 		break;

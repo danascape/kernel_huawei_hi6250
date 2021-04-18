@@ -7169,10 +7169,6 @@ int mcu_sys_ready_callback(const pkt_header_t *head)
 		if (ret < 0) {
 			hwlog_err("sensor fw dload err ret=%d\n", ret);
 		}
-		ret = motion_set_cfg_data();
-		if (ret < 0) {
-			hwlog_err("motion set cfg data err ret=%d\n", ret);
-		}
 		unregister_mcu_event_notifier(TAG_SYS, CMD_SYS_STATUSCHANGE_REQ,
 					      mcu_sys_ready_callback);
 #ifdef CONFIG_IOM3_RECOVERY

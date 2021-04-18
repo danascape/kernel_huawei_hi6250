@@ -347,17 +347,8 @@ static int stat_show(struct seq_file *s, void *v)
 			   si->nr_flushing, si->nr_flushed,
 			   si->nr_discarding, si->nr_discarded,
 			   si->nr_discard_cmd, si->undiscard_blks);
-#ifdef CONFIG_F2FS_CLOSE_FUA
-		if (blk_flush_async_support(si->sbi->sb->s_bdev)) /* indicate fua is off or on */
-			seq_printf(s, "  - inmem: %4d, atomic io: %4d (Max. %4d)\n",
-				   si->inmem_pages, si->aw_cnt, si->max_aw_cnt);
-		else
-			seq_printf(s, "  - inmem: %4d, Atomic IO: %4d (Max. %4d)\n",
-				   si->inmem_pages, si->aw_cnt, si->max_aw_cnt);
-#else
 		seq_printf(s, "  - inmem: %4d, atomic IO: %4d (Max. %4d)\n",
 			   si->inmem_pages, si->aw_cnt, si->max_aw_cnt);
-#endif
 		seq_printf(s, "  - nodes: %4d in %4d\n",
 			   si->ndirty_node, si->node_pages);
 		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",

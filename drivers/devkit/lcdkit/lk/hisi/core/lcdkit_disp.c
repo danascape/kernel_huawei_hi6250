@@ -45,9 +45,7 @@ static struct hisi_panel_info lcd_info = {0};
 static char* tp_reset_pull_h[] = {
 "jdi_ili7807e_5p2_1080p_video",
 "ebbg_nt35596s_5p2_1080p_video",
-"jdi_nt35696h_5p1_1080P_cmd",
-"boe_ft8201_10p1_1200p_video",
-"inx_ft8201_10p1_1200p_video"
+"jdi_nt35696h_5p1_1080P_cmd"
 };
 uint32_t g_panel_vender_id = 0xFFFF;
 
@@ -229,8 +227,6 @@ static void lcdkit_info_init(struct hisi_fb_data_type* hisifd, struct hisi_panel
         pinfo->mipi.data_t_lpx_adjust = lcdkit_data.mipi->data_t_lpx_adjust;
     }
     pinfo->mipi.rg_vrefsel_vcm_adjust = lcdkit_data.mipi->rg_vrefsel_vcm_adjust;
-    pinfo->mipi.rg_vrefsel_vcm_clk_adjust = lcdkit_data.mipi->rg_vrefsel_vcm_clk_adjust;
-    pinfo->mipi.rg_vrefsel_vcm_data_adjust = lcdkit_data.mipi->rg_vrefsel_vcm_data_adjust;
     pinfo->mipi.phy_mode = lcdkit_data.mipi->phy_mode;
     pinfo->mipi.lp11_flag = lcdkit_data.mipi->lp11_flag;
     pinfo->mipi.hs_wr_to_time = lcdkit_data.mipi->hs_wr_to_time;
@@ -668,13 +664,7 @@ static void lcdkit_reset_init(struct gpio_desc* cmds)
     cm++;
     cm->wait = lcdkit_infos.lcd_delay->reset_step2_H;
 }
-static void lcdkit_reset_high_init(struct gpio_desc* cmds)
-{
-    struct gpio_desc* cm = NULL;
 
-    cm = cmds;
-    cm->wait = lcdkit_infos.lcd_delay->reset_step2_H;
-}
 static void lcdkit_bias_on_dealy_init(struct gpio_desc* cmds)
 {
     struct gpio_desc* cm = NULL;
@@ -879,7 +869,6 @@ static int jdi_panel_otp_reload(uint32_t mipi_dsi0_base)
     char page2a[2] = {0xff, 0x2a};
     char page10[2] = {0xff, 0x10};
     char reg_fb[2] = {0xfb, 0x01};
-    char cmd1[2] = {0xff, 0x10};
 
     static int read_flag = 0;
     struct dsi_cmd_desc lcd_reg_cmd[] = {
@@ -922,15 +911,9 @@ static int jdi_panel_otp_reload(uint32_t mipi_dsi0_base)
         {DTYPE_DCS_WRITE1, 0, 10, WAIT_TYPE_US,
             sizeof(page2a), page2a},
     };
-
     struct dsi_cmd_desc lcd_reg_fb_cmds[] = {
         {DTYPE_DCS_WRITE1, 0, 10, WAIT_TYPE_US,
             sizeof(reg_fb), reg_fb},
-    };
-
-    struct dsi_cmd_desc cmd1_code_cmds[] = {
-        {DTYPE_DCS_WRITE1, 0, 10, WAIT_TYPE_US,
-            sizeof(cmd1), cmd1},
     };
 
     /*read 0xa1 reg*/
@@ -975,8 +958,8 @@ static int jdi_panel_otp_reload(uint32_t mipi_dsi0_base)
         ARRAY_SIZE(lcd_reg_34_cmds), mipi_dsi0_base);
 
     /*switch page10*/
-    mipi_dsi_cmds_tx(cmd1_code_cmds, \
-        ARRAY_SIZE(cmd1_code_cmds), mipi_dsi0_base);
+    mipi_dsi_cmds_tx(lcd_page10_cmds, \
+        ARRAY_SIZE(lcd_page10_cmds), mipi_dsi0_base);
     }
 
     return 0;
@@ -1680,10 +1663,6 @@ static int  lcdkit_probe(struct hisi_fb_data_type* hisifd)
     lcdkit_bias_on_dealy_init(lcdkit_bias_enable_cmds);
     lcdkit_bias_off_dealy_init(lcdkit_bias_disable_cmds);
 
-    if(lcdkit_infos.lcd_misc->reset_ph_delay_set_flag == 1)
-    {
-        lcdkit_reset_high_init(lcdkit_gpio_reset_high_cmds);
-    }
     //panel chain
     hisifd->panel_info = pinfo;
     lcdkit_panel_data.next = hisifd->panel_data;

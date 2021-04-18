@@ -620,12 +620,6 @@ static int ncp6925_seq_config(struct hisi_pmic_ctrl_t *pmic_ctrl, pmic_seq_index
         return -1;
     }
 
-    if(VOUT_MAX <= seq_index)
-    {
-        cam_err("%s seq_index out of range.", __func__);
-        return -1;
-    }
-
     i2c_client = pmic_ctrl->pmic_i2c_client;
     i2c_func = pmic_ctrl->pmic_i2c_client->i2c_func_tbl;
 

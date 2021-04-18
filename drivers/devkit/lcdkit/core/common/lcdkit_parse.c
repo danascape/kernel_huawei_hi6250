@@ -252,7 +252,6 @@ void lcdkit_parse_panel_dts(struct device_node* np)
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-panel-cabc-support", &lcdkit_info.panel_infos.cabc_support, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-panel-rgbw-support", &lcdkit_info.panel_infos.rgbw_support, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-panel-bias-change-lm36274-from-panel-support", &lcdkit_info.panel_infos.bias_change_lm36274_from_panel_support, 0);
-    OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-panel-init-lm36923-after-panel-power-on-support", &lcdkit_info.panel_infos.init_lm36923_after_panel_power_on_support, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-panel-hbm-support", &lcdkit_info.panel_infos.hbm_support, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-panel-inversion-support", &lcdkit_info.panel_infos.inversion_support, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-panel-scan-support", &lcdkit_info.panel_infos.scan_support, 0);
@@ -707,9 +706,6 @@ void lcdkit_parse_panel_dts(struct device_node* np)
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-vsn-on", &lcdkit_info.panel_infos.delay_af_vsn_on, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-lp11", &lcdkit_info.panel_infos.delay_af_LP11, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-tp-reset", &lcdkit_info.panel_infos.delay_af_tp_reset, 0);
-    OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-rst-after-vbat", &lcdkit_info.panel_infos.rst_after_vbat_flag, 0);
-    OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-lcdrst-after-tprst", &lcdkit_info.panel_infos.lcdrst_after_tprst_flag, 0);
-    OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-lcdph-delay-set-flag", &lcdkit_info.panel_infos.lcdph_delay_set_flag, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-display-on", &lcdkit_info.panel_infos.delay_af_display_on, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-display-off", &lcdkit_info.panel_infos.delay_af_display_off, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-display-off-second", &lcdkit_info.panel_infos.delay_af_display_off_second, 0);

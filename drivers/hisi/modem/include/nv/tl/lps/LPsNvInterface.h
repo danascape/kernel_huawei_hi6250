@@ -294,11 +294,6 @@ ERR_MSP_NVIM_NOT_SUPPORT_WRITE       2007           系统模式不允许修改该项
 
 #define LPS_NV_GU2L_NO_BAR_BIT    (0x00000200)
 
-/* Begin: add by m00352332 DCM定制,切换过程中HO_CNF响应失败,等到T304超时后出发重建 */
-/* stPsFunFlag03 bitFlag12_11 */
-#define LPS_NV_DCM_HO_FAIL_WAIT_T304_REEST_BIT    (0x00000800)
-/* End: add by m00352332 DCM定制,切换过程中HO_CNF响应失败,等到T304超时后出发重建 */
-
 
 /*TDS DSP 自检地址*/
 #define ADDR_SELF_ADJUST_PARA       (0x1300F840)
@@ -3046,7 +3041,7 @@ typedef struct
 
 /*****************************************************************************
  结构名    : LRRC_NV_VOWIFI_TREES_STRU
- 协议表格  :
+ 协议表格  : 
  ASN.1描述 :
  结构说明  : vowifi 能量上报门限，连接态和idle态使用不用的门限
 *****************************************************************************/
@@ -3107,7 +3102,7 @@ typedef struct
 
 /*****************************************************************************
 结构名    : TL_CHR_BIG_DATA_NV_PARA_STRU
-协议表格  :
+协议表格  : 
 ASN.1描述 :
 结构说明  : EN_NV_ID_RRC_MMP_CONFIG LRRC多modem共享优化配置参数
 *****************************************************************************/
@@ -3150,7 +3145,7 @@ typedef struct
     VOS_INT16               sMmpLowRsrpThresh;                   /* 低质量先验频点门限 */
     VOS_INT16               sMmpHighRsrpThresh;                  /* 高质量先验频点门限 */
     VOS_INT16               sMmpRsrpOffset;                      /* 低优先级频点高于高质量频点offset以上时，且高质量频点不过sMmpHighRsrpThresh时，先搜低优先级频点 */
-    PS_BOOL_ENUM_UINT8      enCandFreqShareInChina;              /* 先验频点共享优化仅在国内生效 */
+    PS_BOOL_ENUM_UINT8      enCandFreqShareInChina;              /* 先验频点共享优化仅在国内生效 */ 
     VOS_UINT8               ucMmpMaxCandFreqNum;                 /* MMP先搜频点的最大个数，最小为1，1表示仅先搜另一modem主频点 */
 }RRC_MMP_CONFIG_STRU;
 
@@ -3275,7 +3270,7 @@ typedef struct
 /*****************************************************************************
  结构名    : LRRC_NV_RF_MEAS_PARAM_V1020
  协议表格  :
- ASN.1描述 : NV53795拆分出NV48633 对应结构
+ ASN.1描述 : NV53795拆分出NV48633 对应结构 
  结构说明  : LRRC_NV_RF_MEAS_PARAM_V1020_STRU
 *****************************************************************************/
 typedef struct
@@ -3289,7 +3284,7 @@ typedef struct
 /*****************************************************************************
  结构名    : LRRC_NV_UE_CAP_FEATURE_GROUP_IND_R10
  协议表格  :
- ASN.1描述 : NV53795拆分出NV48634对应结构
+ ASN.1描述 : NV53795拆分出NV48634对应结构 
  结构说明  : LRRC_NV_UE_CAP_FEATURE_GROUP_IND_R10_STRU
 *****************************************************************************/
 typedef struct
@@ -3302,7 +3297,7 @@ typedef struct
 /*****************************************************************************
  结构名    : LRRC_NV_UE_CAP_FEATURE_GROUP_IND_R9
  协议表格  :
- ASN.1描述 : NV53794拆分出NV48635 对应结构
+ ASN.1描述 : NV53794拆分出NV48635 对应结构 
  结构说明  : LRRC_NV_UE_CAP_FEATURE_GROUP_IND_R9_STRU
 *****************************************************************************/
 typedef struct
@@ -3324,7 +3319,7 @@ typedef struct
 /*****************************************************************************
  结构名    : LRRC_NV_UE_CAP_FEATURE_GROUP_IND
  协议表格  :
- ASN.1描述 : NV53804拆分出NV48636 对应结构
+ ASN.1描述 : NV53804拆分出NV48636 对应结构 
  结构说明  : LRRC_NV_UE_CAP_FEATURE_GROUP_IND_STRU
 *****************************************************************************/
 typedef struct
@@ -3338,27 +3333,11 @@ typedef struct
 /*****************************************************************************
  结构名    : LRRC_NV_UE_CAP_PDCP_PARA
  协议表格  :
- ASN.1描述 : NV53804拆分出NV48637 对应结构
+ ASN.1描述 : NV53804拆分出NV48637 对应结构 
  结构说明  : LRRC_NV_UE_CAP_PDCP_PARA_STRU
 *****************************************************************************/
 typedef RRC_UE_CAP_PDCP_PARA_STRU  LRRC_NV_UE_CAP_PDCP_PARA_STRU;
 
-
-/*****************************************************************************
- 结构名    : LRRC_NV_VOLTE_END_EVAB1B2_CTR_INFO
- 协议表格  :
- ASN.1描述 :
- 结构说明  : VOLTE结束后对评估B1B2事件启动时刻进行控制NV结构
-*****************************************************************************/
-typedef struct
-{
-    VOS_UINT32              ulVolteEndEvaB1B2CtrTimerLen;/* VOLTE结束后对评估B1B2事件启动延长时间 */
-    VOS_UINT8               ucRsv1;
-    VOS_UINT8               ucRsv2;
-    VOS_UINT16              usRsv1;
-    VOS_UINT16              usRsv2;
-    VOS_UINT16              usRsv3;
-}LRRC_NV_VOLTE_END_EVAB1B2_CTR_INFO_STRU;
 
 
 /*****************************************************************************

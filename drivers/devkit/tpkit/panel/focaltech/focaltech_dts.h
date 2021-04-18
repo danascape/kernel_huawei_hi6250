@@ -25,7 +25,6 @@
 #define FTS_WD_CHECK		"need_wd_check_status"
 #define FTS_CHECK_STATUS_WATCHDOG_TIMEOUT		"check_status_watchdog_timeout"
 #define FTS_PRAM_PROJECTID_ADDR		"pram_projectid_addr"
-#define FTS_PROJECT_ATM 					"project_atm"
 #define FTS_X_MAX		"x_max"
 #define FTS_Y_MAX		"y_max"
 #define FTS_X_MAX_MT		"x_max_mt"
@@ -89,11 +88,6 @@
 
 #define FTS_CB_TEST_CSV			"cb_test_threshold"
 #define FTS_SCAP_RAW_FATA_CSV		"scap_raw_data_threshold"
-#define FTS_RAWDATA_TEST_CSV			"rawdata_test_threshold"
-#define FTS_OPEN_TEST_CSV			"open_test_threshold"
-#define FTS_CB_UNIFORMITY_TEST_CSV			"cb_uniformity_test_threshold"
-#define FTS_CB_INCREASE_CSV			"cb_increase_test_threshold"
-#define IS_IC_RAWDATA_PROC_PRINTF	"is_ic_rawdata_proc_printf"
 
 #define FTS_TEST_TYPE_DEFAULT	"Normalize_type:judge_last_result"
 
@@ -105,8 +99,7 @@
 #define FTS_FW_ONLY_DEPEND_ON_LCD	"fts,fw_only_depend_on_lcd"
 #define FTS_FW_NEED_DISTINGUISH_LCD	"fts,need_distinguish_lcd"
 #define FTS_TOUCH_SWITCH_FLAG	"touch_switch_flag"
-#define FTS_TOUCH_SWITCH_GAME_REG	"touch_switch_game_reg"
-#define PROJECT_ATM                   1
+
 int focal_get_vendor_name_from_dts(const char *project_id,
 	char *vendor_name, size_t size);
 

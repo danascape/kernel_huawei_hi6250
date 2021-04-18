@@ -1914,28 +1914,6 @@ typedef struct
 }NAS_NVIM_NV_BREATH_LED_STR_STRU;
 
 /*****************************************************************************
- 函 数 名  : NAS_NVIM_MANUAL_MODE_REG_HPLMN_CFG_STRU
- 功能描述  : en_NV_Item_Manual_Mode_Reg_Hplmn_Cfg对应的NV结构体
- 输出参数  : 无
- 返 回 值  : typedef
- 调用函数  :
- 被调函数  :
-
- 修改历史      :
-  1.日    期   : 2018年1月29日
-    作    者   : n00355355
-    修改内容   : 新生成函数
-
-*****************************************************************************/
-typedef struct
-{
-    VOS_UINT8                           ucIsManualModeRegHplmnFlg;              /* 手动搜网模式下用户指定网络非HPLMN，搜到HPLMN时是否允许注册的开关 */
-    VOS_UINT8                           ucReserved1;                            /* 保留位 */
-    VOS_UINT8                           ucReserved2;                            /* 保留位 */
-    VOS_UINT8                           ucReserved3;                            /* 保留位 */
-}NAS_NVIM_MANUAL_MODE_REG_HPLMN_CFG_STRU;
-
-/*****************************************************************************
  结构名    : NAS_NVIM_NV_WIFI_Key_STRU
  结构说明  : NV_WIFI_Key(50012)结构(废弃)
   1.日    期   : 2013年5月22日
@@ -4578,17 +4556,12 @@ typedef struct
     VOS_UINT8                           aucReserve2[4];
 }CNAS_NVIM_HRPD_SESSION_INFO_EX_STRU;
 
-/*****************************************************************************
-结构名    : NAS_NVIM_TIME_INFO_REPORT_OPTIMIZE_CFG_STRU
-结构说明  : en_NV_Item_Time_Info_Report_Cfg(2434) 时间优化上报策略控制
-*****************************************************************************/
 typedef struct
 {
-    VOS_UINT8                           ucRptOptType;                           /* 上报策略控制 0:不控制，1:^TIME时区、夏令时变化上报， */
-                                                                                /*  2:保留，同0，3:在1的基础上增加灭屏上报间隔时间控制 */
-    VOS_UINT8                           ucInterval;                             /* RptOptType为3时，灭屏上报间隔时间，单位min，取值0-255 */
-    VOS_UINT8                           ucReserved2;
-    VOS_UINT8                           ucReserved3;
+    VOS_UINT8                 ucTimeInfoRptOptimizeFlg;                              /* 时间信息更新优化是否开启 VOS_TRUE:开启 VOS_FALSE:关闭 */
+    VOS_UINT8                 ucReserved1;
+    VOS_UINT8                 ucReserved2;
+    VOS_UINT8                 ucReserved3;
 }NAS_NVIM_TIME_INFO_REPORT_OPTIMIZE_CFG_STRU;
 
 
@@ -6138,24 +6111,6 @@ typedef struct
     VOS_UINT8                           ucSuppCodecRptFlag;                     /* GU下RAU ATTACH是否带supported codecs */
     VOS_UINT8                           ucReserved;                             /* 保留位 */
 }NAS_NVIM_CLASSMARK_SUPPCODEC_CAPRPT_CTRL_STRU;
-
-/*****************************************************************************
- 结构名    : NAS_NV_CELL_CHG_TRIGGER_LAU_IN_IU_MODE_CTRL_STRU
- 结构说明  : SS连接状态收到REL IND是否要设置原因值 控制NV结构体
-  1.日    期   : 2018年3月10日
-    作    者   : n00269697
-    修改内容   : 新建结构体
-*****************************************************************************/
-typedef struct
-{
-    VOS_UINT8                           ucSsConnStateRcvRelIndSetCauseFlg;      /* SS连接状态收到REL IND是否要设置原因值标志:
-                                                                                   0--不设置原因值；
-                                                                                   1--设置原因值 */
-    VOS_UINT8                           ucReserved1;
-    VOS_UINT8                           ucReserved2;
-    VOS_UINT8                           ucReserved3;
-
-}NAS_NVIM_SS_CONN_STATE_RCV_REL_IND_SET_CAUSE_STRU;
 
 
 /*****************************************************************************

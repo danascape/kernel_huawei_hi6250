@@ -454,9 +454,6 @@ struct page *init_inode_metadata(struct inode *inode, struct inode *dir,
 			remove_orphan_inode(F2FS_I_SB(dir), inode->i_ino);
 		f2fs_i_links_write(inode, true);
 	}
-
-	/* in case of zero inode page */
-	update_inode(inode, page);
 	return page;
 
 put_error:

@@ -177,7 +177,6 @@ static enum power_supply_property hisi_bci_battery_props[] = {
 	POWER_SUPPLY_PROP_ONLINE,
 	POWER_SUPPLY_PROP_TECHNOLOGY,
 	POWER_SUPPLY_PROP_CYCLE_COUNT,
-	POWER_SUPPLY_PROP_LIMIT_FCC,
 	POWER_SUPPLY_PROP_VOLTAGE_NOW,
 	POWER_SUPPLY_PROP_CURRENT_NOW,
 	POWER_SUPPLY_PROP_CAPACITY,
@@ -1497,9 +1496,6 @@ static int hisi_bci_battery_get_property(struct power_supply *psy,
 		break;
 	case POWER_SUPPLY_PROP_CYCLE_COUNT:
 		val->intval = hisi_battery_cycle_count();
-		break;
-	case POWER_SUPPLY_PROP_LIMIT_FCC:
-		val->intval = hisi_battery_get_limit_fcc();
 		break;
 	case POWER_SUPPLY_PROP_FCP_STATUS:
 		val->intval = 0;

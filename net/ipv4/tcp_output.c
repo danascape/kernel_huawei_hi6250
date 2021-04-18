@@ -2817,10 +2817,6 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb)
 			return -ENOMEM;
 	}
 
-	if(NULL == inet_csk(sk)->icsk_af_ops->rebuild_header) {
-		pr_err("%s: rebuild_header is null.\n", __func__);
-		return -EAGAIN;
-	}
 	if (inet_csk(sk)->icsk_af_ops->rebuild_header(sk))
 		return -EHOSTUNREACH; /* Routing failure or similar. */
 

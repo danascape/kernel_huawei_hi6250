@@ -1208,21 +1208,10 @@ page_hit:
 			printk("| F2FS inode page dump                                   |\n");
 			printk("+--------------------------------------------------------+\n");
 			dump_inode = (unsigned long *)page_address(page);
-			for (i = 0; i < PAGE_SIZE/sizeof(unsigned long); i++)
+			for (i = 0; i < PAGE_SIZE; i+=sizeof(unsigned long))
 				printk("F2FS-fs: 0x%lx\n", dump_inode[i]);
 		}
-#ifdef CONFIG_F2FS_CHECK_FS
 		f2fs_bug_on(sbi, 1);
-#else
-#ifdef CONFIG_HUAWEI_F2FS_DSM
-		if(f2fs_dclient && !dsm_client_ocuppy(f2fs_dclient))
-		{
-			dsm_client_record(f2fs_dclient,"F2FS bug: %s:%d\n", __func__, __LINE__);
-			dsm_client_notify(f2fs_dclient, DSM_F2FS_NODE_CORRUPT);
-		}
-#endif
-		set_sbi_flag(sbi, SBI_NEED_FSCK);
-#endif
 		ClearPageUptodate(page);
 out_err:
 		f2fs_put_page(page, 1);
@@ -1422,12 +1411,7 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
 		return 0;
 	}
 
-#ifdef CONFIG_F2FS_CLOSE_FUA
-	if (atomic && !test_opt(sbi, NOBARRIER) &&
-		!blk_flush_async_support(sbi->sb->s_bdev))
-#else
 	if (atomic && !test_opt(sbi, NOBARRIER))
-#endif
 		fio.op_flags |= WRITE_FLUSH_FUA;
 
 	set_page_writeback(page);

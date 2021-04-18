@@ -85,7 +85,6 @@ extern "C" {
 #define RNIC_MAC_HDR_LEN                (14)
 
 #define RNIC_MAX_PACKET                 (1536)                                  /* RNIC允许传输的最大包长为1500字节 */
-#define RNIC_R_IMS_MAX_PACKET           (2048)                                  /* R_IMS RNIC允许传输的最大包长为2000字节 */
 
 #define RNIC_IPV4_VERSION               (4)                                     /* IP头部中IP V4版本号 */
 #define RNIC_IPV6_VERSION               (6)                                     /* IP头部中IP V6版本号 */
@@ -161,13 +160,8 @@ extern "C" {
 
 /* Added by m00217266 for 双VoWiFi项目, 2017-3-24, begin */
 #ifdef CONFIG_VOWIFI_NEW_FRW
-#if (FEATURE_ON == FEATURE_MULTI_MODEM)
-#define RNIC_RMNET_R_IS_VALID(RmNetId) \
-            ((RNIC_RMNET_ID_R_IMS00 == RmNetId) || (RNIC_RMNET_ID_R_IMS10 == RmNetId))
-#else
 #define RNIC_RMNET_R_IS_VALID(RmNetId) \
             (RNIC_RMNET_ID_R_IMS00 == RmNetId)
-#endif
 #endif
 /* Added by m00217266 for 双VoWiFi项目, 2017-3-24, end */
 

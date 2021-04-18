@@ -1082,7 +1082,7 @@ oal_uint32  dmac_rx_filter_frame_ap(
     修改内容   : 新生成函数
 
 *****************************************************************************/
-OAL_STATIC oal_uint32  dmac_rx_get_vap(hal_to_dmac_device_stru *pst_hal_device, oal_uint8 uc_hal_vap_id, oal_uint8 uc_rx_queue_id, mac_vap_stru **pst_vap, oal_netbuf_stru *pst_netbuf)
+OAL_STATIC oal_uint32  dmac_rx_get_vap(hal_to_dmac_device_stru *pst_hal_device, oal_uint8 uc_hal_vap_id, oal_uint8 uc_rx_queue_id, mac_vap_stru **pst_vap)
 {
     hal_to_dmac_vap_stru       *pst_hal_vap  = OAL_PTR_NULL;
     oal_uint8                   uc_mac_vap_id;
@@ -1175,15 +1175,6 @@ OAL_STATIC oal_uint32  dmac_rx_get_vap(hal_to_dmac_device_stru *pst_hal_device, 
             #endif //_PRE_WLAN_FEATURE_ROAM
                 )
             {
-                return OAL_SUCC;
-            }
-
-            /* DTS2017121904451: STA在等待assoc rsp 状态下接收到eapol 帧，也上报host ,
-             * 避免ap 发送assoc rsp 和eapol 间隔小，vap_state 来不及同步，导致秘钥协商失败 */
-            if (((*pst_vap)->en_vap_state == MAC_VAP_STATE_STA_WAIT_ASOC)
-                && (pst_netbuf && mac_get_data_type(pst_netbuf) == MAC_DATA_EAPOL))
-            {
-                OAM_WARNING_LOG0(uc_mac_vap_id, OAM_SF_RX, "{dmac_rx_get_vap::report EAPOL to host when vap_state is WAIT_ASOC}");
                 return OAL_SUCC;
             }
 
@@ -2139,7 +2130,7 @@ oal_uint32  dmac_rx_process_data_event(frw_event_mem_stru *pst_event_mem)
             dmac_fbt_scan_rx_process_frame(pst_device, pst_cb_ctrl);
         }
 #endif
-        ul_rslt = dmac_rx_get_vap(pst_device, uc_vap_id, en_dscr_queue_id, &pst_vap, pst_curr_netbuf);
+        ul_rslt = dmac_rx_get_vap(pst_device, uc_vap_id, en_dscr_queue_id, &pst_vap);
         if (OAL_SUCC != ul_rslt)
         {
             //OAM_INFO_LOG1(pst_event_hdr->uc_vap_id, OAM_SF_RX, "{dmac_rx_process_data_event::dmac_rx_get_vap ul_rslt=%d.}", ul_rslt);

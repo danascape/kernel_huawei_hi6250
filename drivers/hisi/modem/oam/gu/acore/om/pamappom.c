@@ -62,6 +62,7 @@
 #include "TafNvInterface.h"
 #include "CbtPpm.h"
 #include "DrvNvInterface.h"
+#include "ScInterface.h"
 #include "NasNvInterface.h"
 #include "msp_nvim.h"
 #include "AtOamInterface.h"
@@ -79,6 +80,7 @@ OM_RECORD_BUF_STRU                      g_astAcpuRecordInfo[VOS_EXC_DUMP_MEM_NUM
 
 VOS_UINT32                              g_ulAcpuOmFilterFlag;
 
+/* AT<->AT的屏蔽处理，移到GuNasLogFilter.c */
 /*****************************************************************************
  Prototype       : OM_RecordInfoEnd
  Description     : A核保留桩函数

@@ -38,8 +38,6 @@
 #define AIRPRESS_CALIDATA_NV_SIZE  4
 #define CAP_PROX_CALIDATA_NV_NUM  310
 #define CAP_PROX_CALIDATA_NV_SIZE  28
-#define TP_COLOR_NV_NUM 16
-#define TP_COLOR_NV_SIZE 15
 #define pinhole_para_size (10)
 #define TMD2745_PARA_SIZE (10)
 #define RPR531_PARA_SIZE (16)
@@ -379,40 +377,6 @@ struct ps_platform_data {
 	uint8_t ps_extend_data[SENSOR_PLATFORM_EXTEND_DATA_SIZE];
 };
 
-struct ps_extend_platform_data {
-	uint8_t external_ir_mode_flag;
-	uint8_t external_ir_avg_algo;
-	int external_ir_calibrate_noise_max;
-	int external_ir_calibrate_noise_min;
-	int external_ir_calibrate_far_threshold_max;
-	int external_ir_calibrate_far_threshold_min;
-	int external_ir_calibrate_near_threshold_max;
-	int external_ir_calibrate_near_threshold_min;
-	int external_ir_calibrate_pwindows_max;
-	int external_ir_calibrate_pwindows_min;
-	int external_ir_calibrate_pwave_max;
-	int external_ir_calibrate_pwave_min;
-	int min_proximity_value;
-	int pwindows_value;
-	int pwave_value;
-	int threshold_value;
-	int calibrate_noise;
-};
-
-struct ps_external_ir_param {
-	int external_ir;
-	int internal_ir_min_proximity_value;
-	int external_ir_min_proximity_value;
-	int internal_ir_pwindows_value;
-	int external_ir_pwindows_value;
-	int internal_ir_pwave_value;
-	int external_ir_pwave_value;
-	int internal_ir_threshold_value;
-	int external_ir_threshold_value;
-	int external_ir_calibrate_noise;
-	int external_ir_enable_gpio;
-};
-
 struct airpress_platform_data {
 	struct sensor_combo_cfg cfg;
 	int offset;
@@ -457,7 +421,7 @@ struct semteck_sar_data {
 	uint16_t threshold_to_modem[8];
 	uint32_t init_reg_val[17];
 	uint8_t ph;
-	uint16_t calibrate_thred[4];
+	uint16_t calibrate_thred[2];
 };
 union sar_data {
 	struct cypress_sar_data cypress_data;
@@ -473,12 +437,12 @@ union sar_data {
 */
 struct sar_platform_data {
 	struct sensor_combo_cfg cfg;
+	uint8_t gpio_int;
 	uint16_t poll_interval;
 	uint16_t flag_for_threshold_config;
 	int  calibrate_type;
 	int  calibrate_delay;
 	union sar_data	sar_datas;
-	uint8_t  stage_num;
 };
 
 struct sar_cap_proc_calibrate_data {

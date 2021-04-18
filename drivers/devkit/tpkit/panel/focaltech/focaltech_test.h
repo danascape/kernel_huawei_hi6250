@@ -12,7 +12,7 @@
 #define true  1
 
 #define TX_NUM_MAX			30
-#define RX_NUM_MAX			40
+#define RX_NUM_MAX			30
 #define DEVICE_MODE_ADDR		0x00
 #define DEVICE_MODE_WORK		0x00
 #define DEVICE_MODE_FACTORY		0x40
@@ -35,7 +35,6 @@
 
 #define FTS_LCD_PRE_FRAME_TIME		16
 #define FTS_MAX_CAP_TEST_NUM		6
-#define FTS_8201_MAX_CAP_TEST_NUM	7
 #define FTS_LCD_NOISE_TEST_DELAY_TIME	50
 #define FTS_ENTER_FACTORY_DELAY_TIME	100
 #define FTS_OPEN_HDFILT_REG_DELAY_TIME	100
@@ -93,10 +92,6 @@ struct focal_test_threshold {
 	int  lcd_noise_max;
 	int open_test_cb_min;
 	int row_column_delta_max;
-	int cb_uniformity_x;
-	int cb_uniformity_y;
-	int cb_increase_level;
-	int cb_increase_min;
 	int raw_data_min_array[TX_NUM_MAX*RX_NUM_MAX];
 	int raw_data_max_array[TX_NUM_MAX*RX_NUM_MAX];
 	int row_column_delta_max_array[TX_NUM_MAX*RX_NUM_MAX*2];
@@ -141,9 +136,6 @@ int focal_get_debug_data(struct ts_diff_data_info *info,
 	struct ts_cmd_node *out_cmd);
 int focal_chip_get_capacitance_test_type(struct ts_test_type_info *info);
 void focal_prase_threshold_for_csv(const char *project_id,
-	struct focal_test_threshold *threshold,
-	struct focal_test_params *params);
-void focal_8201_prase_threshold_for_csv(const char *project_id,
 	struct focal_test_threshold *threshold,
 	struct focal_test_params *params);
 

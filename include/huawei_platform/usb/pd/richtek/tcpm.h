@@ -523,10 +523,7 @@ extern int tcpm_send_uvdm(struct tcpc_device *tcpc_dev,
 	uint8_t cnt, uint32_t *data, bool wait_resp);
 #endif	/* CONFIG_USB_PD_UVDM */
 
-#ifdef CONFIG_POGO_PIN
-extern int tcpm_typec_disable_function(
-        struct tcpc_device *tcpc_dev, bool disable);
-#endif
+
 /* PD DMD */
 #if defined(CONFIG_HUAWEI_DSM)
 struct dsm_client;

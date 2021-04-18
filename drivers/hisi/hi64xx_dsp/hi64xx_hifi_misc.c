@@ -100,10 +100,6 @@
 
 #define INTERVAL_TIMEOUT_MS (1000)
 
-#define WAKEUP_SCENE_DSP_CLOSE 1
-#define WAKEUP_SCENE_PLL_CLOSE 2
-#define WAKEUP_SCENE_PLL_OPEN 3
-
 void hi64xx_watchdog_send_event(void);
 
 /*XXX: change to 4 to enbale debug print*/
@@ -1482,70 +1478,6 @@ static void hi64xx_msg_proc_work(struct work_struct *work)
 	return;
 }
 
-static void hi64xx_wakeup_dsp_res_handle(void)
-{
-	if (dsp_priv->dsp_config.dsp_ops.dsp_if_set_bypass)
-		dsp_priv->dsp_config.dsp_ops.dsp_if_set_bypass(HI6402_HIFI_DSP_IF_PORT_1, false);
-
-	if (dsp_priv->dsp_config.dsp_ops.mad_enable)
-		dsp_priv->dsp_config.dsp_ops.mad_enable();
-
-	if ((dsp_priv->high_freq_scene_status & (1 << HI_FREQ_SCENE_PA))
-		&& (dsp_priv->high_freq_scene_status & (1 << HI_FREQ_SCENE_OM_HOOK))) {
-		HI64XX_DSP_WARNING("pa & wake up exist, can not hook.\n");
-		hi64xx_stop_hook();
-	}
-}
-
-static int hi64xx_wakeup_res_handle(int scene)
-{
-	int ret = OK;
-
-	switch(scene) {
-	case WAKEUP_SCENE_PLL_CLOSE:
-		if (dsp_priv->low_freq_scene_status & (1 << LOW_FREQ_SCENE_MULTI_WAKE_UP)) {
-			dsp_priv->low_freq_scene_status &= ~(1ul << LOW_FREQ_SCENE_MULTI_WAKE_UP);
-		} else {
-			hi64xx_release_low_pll_resource(LOW_FREQ_SCENE_WAKE_UP);
-		}
-		break;
-	case WAKEUP_SCENE_DSP_CLOSE:
-		if (!(dsp_priv->low_freq_scene_status & (1 << LOW_FREQ_SCENE_MULTI_WAKE_UP))) {
-			if (!(dsp_priv->low_freq_scene_status & (1 << LOW_FREQ_SCENE_WAKE_UP))) {
-				HI64XX_DSP_WARNING("scene wakeup is NOT opened.\n");
-				ret = REDUNDANT;
-				return ret;
-			}
-			if (dsp_priv->dsp_config.dsp_ops.dsp_if_set_bypass)
-				dsp_priv->dsp_config.dsp_ops.dsp_if_set_bypass(HI6402_HIFI_DSP_IF_PORT_1, true);
-			if (dsp_priv->dsp_config.dsp_ops.mad_disable)
-				dsp_priv->dsp_config.dsp_ops.mad_disable();
-		}
-		break;
-	case WAKEUP_SCENE_PLL_OPEN:
-		ret = hi64xx_request_low_pll_resource(LOW_FREQ_SCENE_WAKE_UP);
-		if (ret == REDUNDANT) {
-			if (dsp_priv->low_freq_scene_status & (1 << LOW_FREQ_SCENE_MULTI_WAKE_UP)) {
-				ret = ERROR;
-				break;
-			}
-			ret = OK;
-			dsp_priv->low_freq_scene_status |= (1 << LOW_FREQ_SCENE_MULTI_WAKE_UP);
-			break;
-		}
-
-		hi64xx_wakeup_dsp_res_handle();
-
-		break;
-	default:
-		HI64XX_DSP_ERROR("wake up wrong sceneid:%d\n", scene);
-		ret = INVALID;
-		break;
-	}
-	return ret;
-}
-
-
 /*
  * cmd_process_functions
  * */
@@ -1572,9 +1504,21 @@ static int hi64xx_func_if_open(struct krn_param_io_buf *param)
 	switch (dma_msg_stru->uwProcessId) {
 // current not support HOOK
 	case MLIB_PATH_WAKEUP:
-		ret = hi64xx_wakeup_res_handle(WAKEUP_SCENE_PLL_OPEN);
+		ret = hi64xx_request_low_pll_resource(LOW_FREQ_SCENE_WAKE_UP);
 		if (ret != OK) {
 			goto end;
+		}
+
+		if (dsp_priv->dsp_config.dsp_ops.dsp_if_set_bypass)
+			dsp_priv->dsp_config.dsp_ops.dsp_if_set_bypass(HI6402_HIFI_DSP_IF_PORT_1, false);
+
+		if (dsp_priv->dsp_config.dsp_ops.mad_enable)
+			dsp_priv->dsp_config.dsp_ops.mad_enable();
+
+		if ((dsp_priv->high_freq_scene_status & (1 << HI_FREQ_SCENE_PA))
+			&& (dsp_priv->high_freq_scene_status & (1 << HI_FREQ_SCENE_OM_HOOK))) {
+			HI64XX_DSP_WARNING("pa & wake up exist, can not hook.\n");
+			hi64xx_stop_hook();
 		}
 
 		break;
@@ -1674,8 +1618,16 @@ static int hi64xx_func_if_close(struct krn_param_io_buf *param)
 	dma_msg_stru = &dsp_if_open_req->stProcessDMA;
 
 	if (dma_msg_stru->uwProcessId == MLIB_PATH_WAKEUP) {
-		if (hi64xx_wakeup_res_handle(WAKEUP_SCENE_DSP_CLOSE) != 0)
+		if ((dsp_priv->low_freq_scene_status & (1 << LOW_FREQ_SCENE_WAKE_UP)) == 0) {
+			HI64XX_DSP_WARNING("scene wakeup is NOT opened.\n");
+			ret = REDUNDANT;
 			goto end;
+		}
+		if (dsp_priv->dsp_config.dsp_ops.dsp_if_set_bypass)
+			dsp_priv->dsp_config.dsp_ops.dsp_if_set_bypass(HI6402_HIFI_DSP_IF_PORT_1, true);
+		if (dsp_priv->dsp_config.dsp_ops.mad_disable)
+			dsp_priv->dsp_config.dsp_ops.mad_disable();
+
 // current not support HOOK
 	} else if (dma_msg_stru->uwProcessId == MLIB_PATH_SMARTPA) {
 		if ((dsp_priv->high_freq_scene_status & (1 << HI_FREQ_SCENE_PA)) == 0) {
@@ -1725,7 +1677,7 @@ static int hi64xx_func_if_close(struct krn_param_io_buf *param)
 	}
 
 	if (dma_msg_stru->uwProcessId == MLIB_PATH_WAKEUP) {
-		(void)hi64xx_wakeup_res_handle(WAKEUP_SCENE_PLL_CLOSE);
+		hi64xx_release_low_pll_resource(LOW_FREQ_SCENE_WAKE_UP);
 // current not support HOOK
 	} else if (dma_msg_stru->uwProcessId == MLIB_PATH_SMARTPA) {
 		hi64xx_release_pll_resource(HI_FREQ_SCENE_PA);

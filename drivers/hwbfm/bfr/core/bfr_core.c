@@ -851,7 +851,7 @@ static int bfr_run_recovery_method(bfr_recovery_method_select_param_t *pselect_p
 
             memset((void *)&reason_param, 0, sizeof(reason_param));
             memcpy((void *)reason_param.command, (void *)BFR_ENTER_ERECOVERY_CMD,
-                strlen(BFR_ENTER_ERECOVERY_CMD)+1);/*[false alarm]:strlen*/
+                strlen(BFR_ENTER_ERECOVERY_CMD));/*[false alarm]:strlen*/
             reason_param.enter_erecovery_reason = EER_BOOT_FAIL_SOLUTION;
             reason_param.enter_erecovery_reason_number = bfr_get_enter_erecovery_reason(pselect_param->cur_boot_fail_no);
             reason_param.boot_fail_stage_for_erecovery = bfr_get_main_boot_fail_stage(pselect_param->cur_boot_fail_stage);
@@ -872,7 +872,7 @@ static int bfr_run_recovery_method(bfr_recovery_method_select_param_t *pselect_p
             BFMR_PRINT_KEY_INFO("FRM_ENTER_SAFE_MODE!\n");
             memset((void *)&misc_msg, 0, sizeof(misc_msg));
             memcpy((void *)misc_msg.command, (void *)BFR_ENTER_SAFE_MODE_CMD,
-                strlen(BFR_ENTER_SAFE_MODE_CMD)+1);/*[false alarm]:strlen*/
+                strlen(BFR_ENTER_SAFE_MODE_CMD));/*[false alarm]:strlen*/
             (void)bfr_save_bfr_rrecord_misc_msg(&misc_msg);
             break;
         }

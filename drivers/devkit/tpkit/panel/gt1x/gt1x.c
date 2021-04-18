@@ -2099,8 +2099,6 @@ static int gt1x_parse_specific_dts(void)
 		config_status = 6;
 	else if(!strncmp(cfg_type, GT1X_NOISE_TEST_CONFIG, strlen(GT1X_NOISE_TEST_CONFIG)))
 		config_status = 7;
-	else if (!strncmp(cfg_type, GT1X_GAME_SCENE_CONFIG, strlen(GT1X_GAME_SCENE_CONFIG)))
-		config_status = 8;
 	else{
 		TS_LOG_ERR("%s: invalid config text field\n", __func__);
 		goto exit;
@@ -2243,14 +2241,6 @@ static int gt1x_get_cfg_parms(struct gt1x_ts_data *ts, const char *filename)
 		if (ret < 0) {
 			TS_LOG_ERR("%s: Failed to parse holster_noise_config data:%d\n", __func__, ret);
 		} 
-	}
-
-	/* parse game scene config data */
-	if (TS_SWITCH_TYPE_GAME == (ts->dev_data->touch_switch_flag & TS_SWITCH_TYPE_GAME)){
-		ret = gt1x_get_cfg_data(cfg_bin, GT1X_GAME_SCENE_CONFIG, &ts->game_scene_config);
-		if (ret < 0) {
-			TS_LOG_ERR("%s: Failed to parse game scene data:%d\n", __func__, ret);
-		}
 	}
 
 exit:
@@ -3155,8 +3145,6 @@ static void gt1x_chip_touch_switch(void)
 	int error = 0;
 	unsigned int i = 0, cnt = 0;
 	struct gt1x_ts_data *ts = gt1x_ts;
-	struct ts_feature_info *info = &ts->dev_data->ts_platform_data->feature_info;
-	struct gt1x_ts_config *config = NULL;
 
 	TS_LOG_INFO("%s enter\n", __func__);
 
@@ -3165,6 +3153,10 @@ static void gt1x_chip_touch_switch(void)
 		goto out;
 	}
 
+	if (TS_SWITCH_TYPE_DOZE != (ts->dev_data->touch_switch_flag & TS_SWITCH_TYPE_DOZE)){
+		TS_LOG_ERR("%s, doze mode does not suppored by this chip\n",__func__);
+		goto out;
+	}
 	/* SWITCH_OPER,ENABLE_DISABLE,PARAM */
 	memcpy(in_data, ts->dev_data->touch_switch_info, MAX_STR_LEN -1);
 	TS_LOG_INFO("%s, in_data:%s\n",__func__, in_data);
@@ -3193,75 +3185,29 @@ static void gt1x_chip_touch_switch(void)
 	**/
 	param = (u8)time;
 
-	switch (stype) {
-		case TS_SWITCH_TYPE_DOZE:
-			if (TS_SWITCH_TYPE_DOZE != (ts->dev_data->touch_switch_flag & TS_SWITCH_TYPE_DOZE)){
-				TS_LOG_ERR("%s, doze mode does not suppored by this chip\n",__func__);
-				goto out;
-			}
+	if (TS_SWITCH_TYPE_DOZE != (stype & TS_SWITCH_TYPE_DOZE)){
+		TS_LOG_ERR("%s stype not TS_SWITCH_TYPE_DOZE:%d, invalid\n",__func__, stype);
+		goto out;
+	}
 
-			switch (soper){
-				case TS_SWITCH_DOZE_ENABLE:
-					TS_LOG_INFO("%s:enter doze_mode[param:%d]\n", __func__, param);
-					error = gt1x_send_cmd(GTP_CMD_DOZE_CONFIG, param, 1);
-					if (error) {
-						TS_LOG_ERR("%s: Failed send doze enable cmd: error%d\n", __func__, error);
-					}
-					break;
-				case TS_SWITCH_DOZE_DISABLE:
-					TS_LOG_INFO("%s:exit doze_mode\n", __func__);
-					/*holdoff > 100 means always at active status*/
-					error = gt1x_send_cmd(GTP_CMD_DOZE_CONFIG, 0xFF, 1);
-					if (error) {
-						TS_LOG_ERR("%s: Failed send doze disable cmd: error%d\n", __func__, error);
-					}
-					break;
-				default:
-					TS_LOG_ERR("%s: soper unknown:%u, invalid\n", __func__, soper);
-					break;
+	switch (soper){
+		case TS_SWITCH_DOZE_ENABLE:
+			TS_LOG_INFO("%s:enter doze_mode[param:%d]\n", __func__, param);
+			error = gt1x_send_cmd(GTP_CMD_DOZE_CONFIG, param, 1);
+			if (error) {
+				TS_LOG_ERR("%s: Failed send doze enable cmd: error%d\n", __func__, error);
 			}
 			break;
-		case TS_SWITCH_TYPE_GAME:
-			if (TS_SWITCH_TYPE_GAME != (ts->dev_data->touch_switch_flag & TS_SWITCH_TYPE_GAME)){
-				TS_LOG_ERR("%s, game mode does not suppored by this chip\n",__func__);
-				goto out;
-			}
-
-			switch (soper){
-				case TS_SWITCH_GAME_ENABLE:
-					TS_LOG_INFO("%s: enter game_mode\n", __func__);
-					error = gt1x_send_cfg(&ts->game_scene_config);
-					if (error) {
-						TS_LOG_ERR("%s: Send game ENABLE config error\n", __func__);
-					}
-					break;
-				case TS_SWITCH_GAME_DISABLE:
-					if (!info) {
-						TS_LOG_ERR("%s, error info data\n",__func__);
-						goto out;
-					}
-
-					TS_LOG_INFO("%s: exit game_mode to [holster_switch:%d][glove_switch:%d]\n", __func__,
-						info->holster_info.holster_switch,info->glove_info.glove_switch);
-					if (info->holster_info.holster_switch)
-						config = &ts->holster_config;
-					else if (info->glove_info.glove_switch)
-						config = &ts->glove_config;
-					else
-						config = &ts->normal_config;
-
-					error = gt1x_send_cfg(config);
-					if (error) {
-						TS_LOG_ERR("%s: Send DISABLE config error\n", __func__);
-					}
-					break;
-				default:
-					TS_LOG_ERR("%s: soper unknown:%u, invalid\n", __func__, soper);
-					break;
+		case TS_SWITCH_DOZE_DISABLE:
+			TS_LOG_INFO("%s:exit doze_mode\n", __func__);
+			/*holdoff > 100 means always at active status*/
+			error = gt1x_send_cmd(GTP_CMD_DOZE_CONFIG, 0xFF, 1);
+			if (error) {
+				TS_LOG_ERR("%s: Failed send doze disable cmd: error%d\n", __func__, error);
 			}
 			break;
 		default:
-			TS_LOG_ERR("%s: stype unknown:%u, invalid\n", __func__, stype);
+			TS_LOG_ERR("%s: soper unknown:%u, invalid\n", __func__, soper);
 			break;
 	}
 

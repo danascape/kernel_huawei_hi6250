@@ -1660,13 +1660,6 @@ struct hi6555c_priv {
 
 	/*use the gpio to control the classd power supply.*/
 	int spk_pa_en_gpio;
-
-	/*use the gpio to control the hs_swtich .*/
-	int hs_en_gpio;
-	int hs_en_value;
-	bool i2s2_disabled;
-
-
 	/* clock */
 	struct clk *codec_soc;/* periph_clken12_codec_soc */
 	struct clk *codec_modem0;/* periph_clken1_digacodec */

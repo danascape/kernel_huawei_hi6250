@@ -2025,14 +2025,6 @@ static ssize_t hisifb_lcd_support_mode_show(struct device *dev,
 		ret = pdata->lcd_support_mode_show(hisifd->pdev, buf);
 		hisifb_deactivate_vsync(hisifd);
 	}
-
-        /** 
-         * support none if lower lcd_support_mode_show functions have not be returned
-         */
-        if (0 == ret) {
-            HISI_FB_WARNING("fb%d, support none!\n", hisifd->index);
-            ret = snprintf(buf, PAGE_SIZE, "%d\n", 0);
-        }
 err_out:
 	up(&hisifd->blank_sem);
 

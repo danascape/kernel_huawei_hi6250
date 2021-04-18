@@ -4103,10 +4103,6 @@ static void r8152b_get_version(struct r8152 *tp)
 		tp->version = RTL_VER_06;
 		tp->mii.supports_gmii = 1;
 		break;
-	case 0x6010:
-		tp->version = RTL_VER_06;
-		tp->mii.supports_gmii = 1;
-		break;
 	default:
 		netif_info(tp, probe, tp->netdev,
 			   "Unknown version 0x%04x\n", version);

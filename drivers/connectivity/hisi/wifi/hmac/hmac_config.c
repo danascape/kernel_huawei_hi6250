@@ -13910,7 +13910,6 @@ oal_uint32  hmac_config_scan_abort(mac_vap_stru *pst_mac_vap, oal_uint16 us_len,
 oal_uint32 hmac_config_remain_on_channel(mac_vap_stru *pst_mac_vap, oal_uint16 us_len, oal_uint8 *puc_param)
 {
     mac_remain_on_channel_param_stru   *pst_remain_on_channel;
-    hmac_device_stru                   *pst_hmac_device;
     mac_device_stru                    *pst_mac_device;
     hmac_vap_stru                      *pst_hmac_vap;
     oal_uint32                          ul_ret;
@@ -13931,15 +13930,6 @@ oal_uint32 hmac_config_remain_on_channel(mac_vap_stru *pst_mac_vap, oal_uint16 u
         return OAL_ERR_CODE_PTR_NULL;
     }
 
-    /* 获取hmac device */
-    pst_hmac_device = hmac_res_get_mac_dev(pst_mac_vap->uc_device_id);
-    if (OAL_PTR_NULL == pst_hmac_device)
-    {
-        OAM_WARNING_LOG1(pst_mac_vap->uc_vap_id, OAM_SF_SCAN, "{hmac_config_remain_on_channel::pst_hmac_device[%d] null.}",
-                        pst_mac_vap->uc_device_id);
-        return OAL_ERR_CODE_MAC_DEVICE_NULL;
-    }
-
     /* 1.2 检查是否能进入监听状态 */
     ul_ret = hmac_p2p_check_can_enter_state(pst_mac_vap, HMAC_FSM_INPUT_LISTEN_REQ);
     if (ul_ret != OAL_SUCC)
@@ -13949,21 +13939,6 @@ oal_uint32 hmac_config_remain_on_channel(mac_vap_stru *pst_mac_vap, oal_uint16 u
                         "{hmac_config_remain_on_channel fail,device busy: ul_ret=%d}\r\n", ul_ret);
         return OAL_ERR_CODE_CONFIG_BUSY;
     }
-    /* 判断当前扫描是否正在执行 */
-    if (OAL_TRUE == pst_hmac_device->st_scan_mgmt.en_is_scanning)
-    {
-        OAM_WARNING_LOG0(pst_mac_vap->uc_vap_id, OAM_SF_SCAN, "{hmac_config_remain_on_channel::the scan request is rejected.}");
-        return OAL_ERR_CODE_CONFIG_BUSY;
-    }
-
-#ifdef _PRE_WLAN_FEATURE_ROAM
-    /* 判断当前是否正在执行漫游 */
-    if (MAC_VAP_STATE_ROAMING == pst_mac_vap->en_vap_state)
-    {
-        OAM_WARNING_LOG0(pst_mac_vap->uc_vap_id, OAM_SF_SCAN, "{hmac_config_remain_on_channel:: roam reject new scan.}");
-        return OAL_ERR_CODE_CONFIG_BUSY;
-    }
-#endif //_PRE_WLAN_FEATURE_ROAM
 
 
     /* 1.3 获取home 信道和信道类型。如果返回主信道为0，表示没有设备处于up 状态，监听后不需要返回主信道 */

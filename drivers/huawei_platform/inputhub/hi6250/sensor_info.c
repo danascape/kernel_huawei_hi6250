@@ -20,7 +20,6 @@
 #include <linux/sched.h>
 #include <linux/slab.h>
 #include <linux/io.h>
-#include <linux/gpio.h>
 #include <linux/uaccess.h>
 #include <linux/types.h>
 #include <linux/fs.h>
@@ -69,7 +68,6 @@ int hw_extern_pmic_query_state(int index, int *state)
 }
 #endif
 
-extern struct sensor_detect_manager s_detect_manager[SENSOR_MAX];
 int hisi_nve_direct_access(struct hisi_nve_info_user *user_info);
 
 #ifdef CONFIG_HUAWEI_DSM
@@ -129,9 +127,6 @@ enum PHONE_TYPE {
 	LELAND,/*35*/
 	ANE, /*36*/
 	FLORIDA, /*37*/
-	BACH2,/*38*/
-	HANDEL,/*39*/
-	LELANDPLUS = 40,/*40*/
 };
 enum PHONE_VERSION {
 	V3 = 10,		/*decimal base*/
@@ -242,39 +237,6 @@ char sensor_chip_info[SENSOR_MAX][MAX_CHIP_INFO_LEN];
 static int gsensor_offset[15];	/*g-sensor calibrate data*/
 static int gyro_sensor_offset[15];
 static int ps_sensor_offset[3];
-static int ps_switch_mode = 0;
-struct ps_external_ir_param ps_external_ir_param = {
-       .external_ir = 0,
-       .internal_ir_min_proximity_value = 750,
-       .external_ir_min_proximity_value = 850,
-       .internal_ir_pwindows_value = 75,
-       .external_ir_pwindows_value = 300,
-       .internal_ir_pwave_value = 10,
-       .external_ir_pwave_value = 55,
-       .internal_ir_threshold_value = 35,
-       .external_ir_threshold_value = 60,
-       .external_ir_calibrate_noise = 30,
-       .external_ir_enable_gpio = 67,
-};
-struct ps_extend_platform_data ps_extend_platform_data = {
-	.external_ir_mode_flag = 0,
-	.external_ir_avg_algo = 0,
-	.external_ir_calibrate_noise_max = 100,
-	.external_ir_calibrate_noise_min = 3,
-	.external_ir_calibrate_far_threshold_max = 800,
-	.external_ir_calibrate_far_threshold_min = 10,
-	.external_ir_calibrate_near_threshold_max = 1500,
-	.external_ir_calibrate_near_threshold_min = 20,
-	.external_ir_calibrate_pwindows_max = 800,
-	.external_ir_calibrate_pwindows_min = 3,
-	.external_ir_calibrate_pwave_max = 1500,
-	.external_ir_calibrate_pwave_min = 5,
-	.min_proximity_value = 850,
-	.pwindows_value = 5,
-	.pwave_value = 20,
-	.threshold_value = 20,
-	.calibrate_noise = 30,
-};
 static uint16_t als_offset[6];
 static uint8_t hp_offset[24];
 static uint8_t cap_prox_calibrate_data[CAP_PROX_CALIDATA_NV_SIZE]={0};
@@ -296,7 +258,6 @@ extern int ps_first_start_flag;
 extern int txc_ps_flag;
 extern int ams_tmd2620_ps_flag;
 extern int avago_apds9110_ps_flag;
-extern int ltr578_ps_external_ir_calibrate_flag;
 extern int als_first_start_flag;
 extern int gyro_first_start_flag;
 extern int handpress_first_start_flag;
@@ -304,7 +265,6 @@ extern int rohm_rgb_flag;
 extern int avago_rgb_flag;
 static int ltr578_flag = 0;
 static int apds9922_flag = 0;
-static int tp_color_from_nv_flag = 0;
 static int rohm_rpr531_flag = 0;
 int tmd2745_flag = 0;
 extern int is_cali_supported;
@@ -798,10 +758,6 @@ BH1745_ALS_PARA_TABLE als_para_diff_tp_color_table[] = {
 	 {171, 223, 134, 803, 788, 171, 285, 589, 100, -4269, 5377, -3052,
 	  5306, 2466, 1227, 2116, 1229, 4741, 6598, 3360, 683, 4103, 7330, 3200,
 	  300} },
-    {HANDEL, V3, DEFAULT_TPLCD, WHITE,
-        {207, 481, 212, 1786, 1780, 207, 336, 673, 100, -3310, 6364, -3364,
-         6256, 1818, 1232, 2833, 1239, 3507, 3663, 1390, 441, 4407, 6192,6000,
-         200} },
 	{NATASHA, V3, DEFAULT_TPLCD, BLACK,
 	 {194, 354, 136, 1060, 1140, 194, 412, 1370, 100, -2713, 7576, -2787,
 	  5320, 963, 1418, 1598, 1896, 11495, 8100, 1968, 1143, 3163, 2480, 4500,
@@ -1091,14 +1047,6 @@ BH1745_ALS_PARA_TABLE als_para_diff_tp_color_table[] = {
 	{500,1188,712,6805,5267,500,496,1563,100,-2218,3966,-4079,
 	 6010,971,1573,7560,2023,877,904,940,139,3996,6190,6000,
 	 150}},
-	{BACH2, V3, DEFAULT_TPLCD, WHITE,
-	{164,273,263,941,718,164,321,652,100,-3996,4892,-2930,
-	 5284,2105,1568,1837,1369,6054,8168,3406,796,4669,6076,6000,
-	 100}},
-	{BACH2, V3, DEFAULT_TPLCD, BLACK,
-	{241,598,288,2500,2187,241,385,838,100,-3680,5576,-3202,
-	 5958,2308,1668,2547,1488,2124,2252,680,245,3450,5462,6000,
-	 100}},
 };
 
 /* Although the GRAY and Black TP's RGB ink is same ,but some product may has both the GRAY
@@ -1388,9 +1336,6 @@ APDS9251_ALS_PARA_TABLE apds_als_para_diff_tp_color_table[] = {
 	{HAYDN, V3, DEFAULT_TPLCD, WHITE,
          {12572, -350, 1023, 1011, 911, 1625, 1001, 1742, 181, 130, 43,
           3354, 4873, 2131, 115, 2770, 7637, 5000, 200, 1, 38} },
-    {HANDEL, V3, DEFAULT_TPLCD, WHITE,
-         {6924, 1068, 1880, 1774, 1879, 1022, 1038, 960, 568, 266, 93,
-          2168, 3474, 1336, 116, 3628, 5334, 6000, 200, 1, 38} },
 	{NATASHA, V3, DEFAULT_TPLCD, BLACK,
 	 {4016, 2116, 533, 512, 445, 930, 1237, 827, 479, 317, 139,
 	  7592, 7305, 1724, 324, 2706, 3028, 4500, 200, 0, 100} },
@@ -1493,12 +1438,6 @@ APDS9251_ALS_PARA_TABLE apds_als_para_diff_tp_color_table[] = {
 	{LON, VN1, DEFAULT_TPLCD, GOLD,
 	 {11687, 2391, 8154, 7469, 5936, 740, 1250,740, 435, 120, 80,
 	  2251, 2779, 498, 64, 3147, 4976, 5000,150,1,18} },
-	{BACH2, V3, DEFAULT_TPLCD, WHITE,
-	 {12598, -228, 915, 867, 804, 1413, 1000, 1442, 179, 115, 43,
-	  6328, 8329, 3296, 286, 4233, 6333, 30000,50,1,38} },
-	{BACH2, V3, DEFAULT_TPLCD, BLACK,
-	 {13836, -503, 2276, 2048, 1772, 1457, 1000, 1388, 260, 169, 62,
-	  2039, 2540, 1028, 106, 3211, 6472, 30000,50,1,38} },
 };
 /*in the array of pinhole_als_para_diff_tp_color_table, these figures represent the parameter
 for the als sensor */
@@ -1615,10 +1554,6 @@ PINHOLE_ALS_PARA_TABLE pinhole_als_para_diff_tp_color_table[] = {
 	{FLORIDA, V4, APDS9922, TS_PANEL_UNKNOWN, {1450, 361, 358, 311, 465,0}},
 	{FLORIDA, V4, APDS9922, TS_PANEL_OFILIM, {1450, 361, 358, 311, 465,0}},
 	{FLORIDA, V4, APDS9922, TS_PANEL_MUTTO, {1397, 395, 360, 330, 481,0}},
-
-	{LELANDPLUS, V4, LTR578, TS_PANEL_UNKNOWN, {1450, 400, 750, 710, 960,0}},
-	{LELANDPLUS, V4, LTR578, TS_PANEL_EELY, {1450, 400, 750, 710, 960,0}},
-	{LELANDPLUS, V4, LTR578, TS_PANEL_OFILIM, {1450, 400, 730, 650, 930,0}},
 };
 
 TMD2745_ALS_PARA_TABLE tmd2745_als_para_diff_tp_color_table[] = {
@@ -1738,13 +1673,6 @@ RPR531_ALS_PARA_TABLE rpr531_als_para_diff_tp_color_table[] ={
 		{11982,6090,3263,1960,7220,3142,1352,739,1000,1550,1989,2650}},
 	{FLORIDA, V4, TS_PANEL_MUTTO,
 		{13570,8036,3272,1291,8360,4534,1408,434,1000,1510,1907,2966}},
-
-	{LELANDPLUS, V4, TS_PANEL_UNKNOWN,
-		{14089, 8074, 4613, 1810, 8314, 4268, 2277, 580, 1000, 1580, 2300, 3100}},
-	{LELANDPLUS, V4, TS_PANEL_EELY,
-		{14089, 8074, 4613, 1810, 8314, 4268, 2277, 580, 1000, 1580, 1900, 3100}},
-	{LELANDPLUS, V4, TS_PANEL_OFILIM,
-		{13094, 8239, 5609, 1810, 7637, 4355, 2795, 580, 1000, 1680, 1900, 3100}},
 };
 void key_fb_notifier_action(int enable);
 
@@ -2356,15 +2284,6 @@ int read_ps_offset_from_nv(void)
 	hwlog_info( "nve_direct_access read ps_offset (%d,%d,%d)\n",
 			ps_sensor_offset[0], ps_sensor_offset[1],
 			ps_sensor_offset[2]);
-	if(ltr578_ps_external_ir_calibrate_flag == 1)
-	{
-		ps_external_ir_param.external_ir_pwindows_value = ps_sensor_offset[2] - ps_sensor_offset[1];
-		ps_external_ir_param.external_ir_pwave_value = ps_sensor_offset[1] - ps_sensor_offset[0];
-		ps_external_ir_param.external_ir_calibrate_noise = ps_sensor_offset[0];
-		hwlog_info("%s:set ltr578 offset ps_data[0]:%d,ps_data[1]:%d,ps_data[2]:%d,pwindows:%d,pwave:%d\n",
-				__func__,ps_sensor_offset[0],ps_sensor_offset[1],ps_sensor_offset[2],\
-				ps_external_ir_param.external_ir_pwindows_value,ps_external_ir_param.external_ir_pwave_value);
-	}
 
 	pkg_ap.tag=TAG_PS;
 	pkg_ap.cmd=CMD_PS_OFFSET_REQ;
@@ -3463,11 +3382,6 @@ void read_als_data_from_dts(struct device_node *dn)
 	else
 		als_data.again = (uint8_t) temp;
 
-	if (of_property_read_u32(dn, "tp_color_from_nv", &temp))
-		hwlog_info("%s:read als tp_color_from_nv fail\n", __func__);
-	else
-		tp_color_from_nv_flag = (uint8_t)temp;
-
 	read_is_cali_supported( dn );
 
 	if (of_property_read_u32(dn, "file_id", &temp))
@@ -3595,129 +3509,6 @@ void read_als_data_from_dts(struct device_node *dn)
 			    ("als_extend_data:fill_extend_data_in_dts failed!\n");
 		}
 	}
-}
-
-int read_tpcolor_from_nv(void)
-{
-	int ret = 0;
-	int i = 0;
-	char nv_tp_color[16] = "";
-	struct hisi_nve_info_user user_info;
-	memset(&user_info, 0, sizeof(user_info));
-	user_info.nv_operation = NV_READ_TAG;
-	user_info.nv_number = TP_COLOR_NV_NUM;
-	user_info.valid_size = TP_COLOR_NV_SIZE;
-	strncpy(user_info.nv_name, "TPCOLOR", sizeof(user_info.nv_name));
-	user_info.nv_name[sizeof(user_info.nv_name) - 1] = '\0';
-	ret = hisi_nve_direct_access(&user_info);
-	if (ret != 0) {
-		hwlog_err("nve_direct_access read error(%d)\n", ret);
-		return -1;
-	}
-	memcpy(nv_tp_color, user_info.nv_data, sizeof(nv_tp_color)-1);
-
-	if(strstr(nv_tp_color,"white")){
-		phone_color = WHITE;
-	}else if(strstr(nv_tp_color,"black")){
-		phone_color = BLACK;
-	}else if(strstr(nv_tp_color,"gold")){
-		phone_color = GOLD;
-	}else{
-		hwlog_info("other colors\n");
-	}
-
-	hwlog_info("phone_color = 0x%x, nv_tp_color = %s\n",phone_color,nv_tp_color);
-	als_data.als_phone_tp_colour = phone_color;
-
-	als_para_table = 0;
-	if (rohm_rgb_flag == 1) {
-			for (i = 0;
-			     i < ARRAY_SIZE(als_para_diff_tp_color_table);
-			     i++) {
-				if ((als_para_diff_tp_color_table[i].
-				     phone_type == als_data.als_phone_type)
-				    && (als_para_diff_tp_color_table[i].
-					phone_version ==
-					als_data.als_phone_version)
-				    && (als_para_diff_tp_color_table[i].
-					tp_lcd_manufacture == tplcd_manufacture
-					|| als_para_diff_tp_color_table[i].
-					tp_lcd_manufacture == DEFAULT_TPLCD)
-				    && (als_para_diff_tp_color_table[i].
-					tp_color == phone_color)) {
-					als_para_table = i;
-					break;
-				}
-			}
-			memcpy(als_data.als_extend_data,
-			       als_para_diff_tp_color_table[als_para_table].
-			       bh745_para,
-			       sizeof(als_para_diff_tp_color_table
-				      [als_para_table].bh745_para) >
-			       SENSOR_PLATFORM_EXTEND_DATA_SIZE ?
-			       SENSOR_PLATFORM_EXTEND_DATA_SIZE :
-			       sizeof(als_para_diff_tp_color_table
-				      [als_para_table].bh745_para));
-			hwlog_info
-			    (" als_para_tabel=%d ,bh1745 phone_color=0x%x  tplcd_manufacture=%d, phone_type=%d,phone_version=%d\n",
-			     als_para_table, phone_color, tplcd_manufacture,
-			     als_data.als_phone_type,
-			     als_data.als_phone_version);
-	} else if (avago_rgb_flag == 1) {
-			for (i = 0;
-			     i < ARRAY_SIZE(apds_als_para_diff_tp_color_table);
-			     i++) {
-				if ((apds_als_para_diff_tp_color_table[i].
-				     phone_type == als_data.als_phone_type)
-				    && (apds_als_para_diff_tp_color_table[i].
-					phone_version ==
-					als_data.als_phone_version)
-				    && (apds_als_para_diff_tp_color_table[i].
-					tp_lcd_manufacture == tplcd_manufacture
-					|| apds_als_para_diff_tp_color_table[i].
-					tp_lcd_manufacture == DEFAULT_TPLCD)
-				    && (apds_als_para_diff_tp_color_table[i].
-					tp_color == phone_color)) {
-					als_para_table = i;
-					break;
-				}
-			}
-			memcpy(als_data.als_extend_data,
-			       apds_als_para_diff_tp_color_table
-			       [als_para_table].apds251_para,
-			       sizeof(apds_als_para_diff_tp_color_table
-				      [als_para_table].apds251_para) >
-			       SENSOR_PLATFORM_EXTEND_DATA_SIZE ?
-			       SENSOR_PLATFORM_EXTEND_DATA_SIZE :
-			       sizeof(apds_als_para_diff_tp_color_table
-				      [als_para_table].apds251_para));
-			hwlog_info
-			    ("als_para_tabel=%d apds9251 phone_color=0x%x phone_type=%d,phone_version=%d\n",
-			     als_para_table, phone_color,
-			     als_data.als_phone_type,
-			     als_data.als_phone_version);
-	}
-
-	return 0;
-}
-
-int get_tpcolor_from_nv(void)
-{
-	int ret = 0;
-
-	if(tp_color_from_nv_flag)
-	{
-		hwlog_info(" %s: tp_color_from_nv_flag = %d\n", __func__,tp_color_from_nv_flag);
-		ret = read_tpcolor_from_nv();
-		if(ret != 0)
-		{
-			hwlog_err("%s: read tp_color from NV fail\n", __func__);
-			return -1;
-		}
-		resend_als_parameters_to_mcu();
-	}
-
-	return 0;
 }
 
 const char *get_sensor_info_by_tag(int tag)
@@ -4170,11 +3961,7 @@ static void save_to_file(const char *file_path, const char *content)
 	oldfs = get_fs();
 	set_fs(KERNEL_DS);
 
-	if(ps_external_ir_param.external_ir == 1) {
-		fp = filp_open(file_path, O_WRONLY | O_APPEND | O_CREAT, 0644);
-	} else {
-		fp = filp_open(file_path, O_WRONLY | O_APPEND, 0644);
-	}
+	fp = filp_open(file_path, O_WRONLY | O_APPEND, 0644);
 	if (IS_ERR(fp)) {
 		hwlog_err("oper %s fail\n", file_path);
 		set_fs(oldfs);
@@ -4750,15 +4537,6 @@ static int ps_calibrate_save(const void *buf, int length)
 	memcpy(temp_buf, buf, length);
 	hwlog_info( "%s:psensor calibrate ok, %d,%d,%d \n", __func__,
 				 temp_buf[0], temp_buf[1], temp_buf[2]);
-	if(ltr578_ps_external_ir_calibrate_flag == 1)
-	{
-	    ps_external_ir_param.external_ir_pwindows_value = temp_buf[2] - temp_buf[1];
-	    ps_external_ir_param.external_ir_pwave_value = temp_buf[1] - temp_buf[0];
-	    ps_external_ir_param.external_ir_calibrate_noise = temp_buf[0];
-	    hwlog_info("%s:set nv ltr578 offset ps_data[0]:%d,ps_data[1]:%d,ps_data[2]:%d,pwindows:%d,pwave:%d\n",
-	                __func__,temp_buf[0],temp_buf[1],temp_buf[2],\
-	                ps_external_ir_param.external_ir_pwindows_value,ps_external_ir_param.external_ir_pwave_value);
-	}
 	ret = write_ps_offset_to_nv(temp_buf);
 	if(ret)
 	{
@@ -4782,7 +4560,7 @@ static ssize_t attr_ps_calibrate_write(struct device *dev,
 	char date_str[CLI_TIME_STR_LEN] = {0};
 
 	if((txc_ps_flag != 1) && (ams_tmd2620_ps_flag != 1) &&
-		(avago_apds9110_ps_flag != 1) && (ltr578_ps_external_ir_calibrate_flag != 1)) {
+		(avago_apds9110_ps_flag != 1)) {
 		hwlog_info("ps sensor is not txc_ps_224 or ams_tmd2620 or avago_apds9110,no need calibrate\n");
 		return count;
 	}
@@ -4846,88 +4624,6 @@ save_log:
 
 static DEVICE_ATTR(ps_calibrate, 0664, attr_ps_calibrate_show,
 		   attr_ps_calibrate_write);
-static ssize_t attr_ps_switch_mode_show(struct device *dev,
-				      struct device_attribute *attr, char *buf)
-{
-	int val = ps_switch_mode;
-	return snprintf(buf, PAGE_SIZE, "%d",val);
-}
-
-static ssize_t attr_ps_switch_mode_store(struct device *dev,
-				       struct device_attribute *attr,
-				       const char *buf, size_t count)
-{
-	unsigned long val = 0;
-	int ret = 0;
-	write_info_t	pkg_ap;
-	read_info_t	pkg_mcu;
-
-	memset(&pkg_ap, 0, sizeof(pkg_ap));
-	memset(&pkg_mcu, 0, sizeof(pkg_mcu));
-	if(ps_external_ir_param.external_ir == 1) {
-		if (strict_strtoul(buf, 10, &val))
-			return -EINVAL;
-		if((val < 0)||(val > 1)){
-			hwlog_err("set ps switch mode val invalid,val=%lu\n", val);
-			return count;
-		}
-		if(val == 1){
-			ps_extend_platform_data.external_ir_mode_flag  = 1;
-			ps_extend_platform_data.min_proximity_value = ps_external_ir_param.external_ir_min_proximity_value;
-			ps_extend_platform_data.pwindows_value = ps_external_ir_param.external_ir_pwindows_value;
-			ps_extend_platform_data.pwave_value = ps_external_ir_param.external_ir_pwave_value;
-			ps_extend_platform_data.threshold_value  = ps_external_ir_param.external_ir_threshold_value;
-			ps_extend_platform_data.calibrate_noise  = ps_external_ir_param.external_ir_calibrate_noise;
-		}
-		else{
-			ps_extend_platform_data.external_ir_mode_flag  = 0;
-			ps_extend_platform_data.min_proximity_value = ps_external_ir_param.internal_ir_min_proximity_value;
-			ps_extend_platform_data.pwindows_value = ps_external_ir_param.internal_ir_pwindows_value;
-			ps_extend_platform_data.pwave_value = ps_external_ir_param.internal_ir_pwave_value;
-			ps_extend_platform_data.threshold_value  = ps_external_ir_param.internal_ir_threshold_value;
-		}
-
-		hwlog_info("external_ir:%d,external_ir_enable_gpio:%d, min_proximity_value:%d, pwindows_value:%d, pwave_value:%d, threshold_value:%d\n",
-							ps_extend_platform_data.external_ir_mode_flag,
-							ps_external_ir_param.external_ir_enable_gpio,
-							ps_extend_platform_data.min_proximity_value,
-							ps_extend_platform_data.pwindows_value,
-							ps_extend_platform_data.pwave_value,
-							ps_extend_platform_data.threshold_value);
-
-		pkg_ap.tag=TAG_PS;
-		pkg_ap.cmd=CMD_PS_RESET_PARA_REQ;
-		pkg_ap.wr_buf=(void *)(&ps_extend_platform_data);
-		pkg_ap.wr_len=sizeof(ps_extend_platform_data);
-		hwlog_err("ps switch mode val is %lu  len is %lu.\n", val, sizeof(val));
-		ret=write_customize_cmd(&pkg_ap,  &pkg_mcu);
-		if(ret)
-		{
-			hwlog_err("send ps switch mode cmd to mcu fail,ret=%d\n", ret);
-			return count;
-		}
-		if(pkg_mcu.errno!=0)
-		{
-			hwlog_err("ps switch mode fail, %d\n", pkg_mcu.errno);
-		}
-		else
-		{
-			ps_switch_mode=val;
-			if(val == 1){
-				gpio_direction_output(ps_external_ir_param.external_ir_enable_gpio, 1);
-			}
-			else{
-				gpio_direction_output(ps_external_ir_param.external_ir_enable_gpio, 0);
-			}
-			hwlog_info("ps switch mode  success, data len=%d\n", pkg_mcu.data_length);
-		}
-	}else {
-		hwlog_err(" external_ir not enable in this product. operation fail!");
-	}
-	return count;
-}
-static DEVICE_ATTR(ps_switch_mode, 0664, attr_ps_switch_mode_show,
-		   attr_ps_switch_mode_store);
 
 static ssize_t attr_als_calibrate_show(struct device *dev,
 				struct device_attribute *attr, char *buf)
@@ -5014,13 +4710,6 @@ static ssize_t attr_als_calibrate_write(struct device *dev,
 			no need to calibrate\n", is_cali_supported );
 		return count;
 	}
-
-        /*read tp color from NV before als calibrate*/
-        ret = get_tpcolor_from_nv();
-        if(ret)
-        {
-                hwlog_err( "get_tpcolor_from_nv read from nv fail, ret=%d",ret);
-        }
 
 	memset(&pkg_ap, 0, sizeof(pkg_ap));
 	memset(&pkg_mcu, 0, sizeof(pkg_mcu));
@@ -7250,6 +6939,8 @@ static ssize_t show_hifi_supported(struct device *dev,
 static DEVICE_ATTR(hifi_supported, 0664, show_hifi_supported, NULL);
 
 
+
+extern struct sensor_detect_manager s_detect_manager[SENSOR_MAX];
 static enum detect_state sensor_detect_flag = DET_FAIL;
 static ssize_t show_sensor_detect(struct device *dev,
 					  struct device_attribute *attr, char *buf)
@@ -7324,7 +7015,6 @@ static struct attribute *sensor_attributes[] = {
 	&dev_attr_ps_calibrate.attr,
 	&dev_attr_ps_enable.attr,
 	&dev_attr_ps_setdelay.attr,
-	&dev_attr_ps_switch_mode.attr,
 	&dev_attr_pdr_enable.attr,
 	&dev_attr_pdr_setdelay.attr,
 	&dev_attr_orientation_enable.attr,

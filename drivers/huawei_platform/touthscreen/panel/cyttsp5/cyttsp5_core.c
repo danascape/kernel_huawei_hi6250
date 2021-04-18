@@ -32,9 +32,6 @@
 #include <linux/hisi/usb/hisi_usb.h>
 #define CY_CORE_STARTUP_RETRY_COUNT        3
 
-#define CY_GET_SELFTEST_RESULT_CMD_LEN	5
-#define CY_SELFTEST_RESP_DATA_OFFSET	10
-
 MODULE_FIRMWARE(CY_FW_FILE_NAME);
 extern int tpmodule_notifier_call_chain(unsigned long val, void *v);
 
@@ -2135,16 +2132,16 @@ static int cyttsp5_hid_output_get_selftest_result_(struct cyttsp5_core_data *cd,
 						   u16 *actual_read_len,
 						   u8 *data)
 {
-	int rc = 0;
+	int rc;
 	u16 total_read_len = 0;
-	u16 read_len = 0;
+	u16 read_len;
 	u16 off_buf = 0;
-	u8 write_buf[CY_GET_SELFTEST_RESULT_CMD_LEN];
-	u8 read_test_id = 0;
+	u8 write_buf[5];
+	u8 read_test_id;
 	int target_read_length = read_length;
 	struct cyttsp5_hid_output hid_output = {
 		HID_OUTPUT_APP_COMMAND(HID_OUTPUT_GET_SELF_TEST_RESULT),
-		.write_length = CY_GET_SELFTEST_RESULT_CMD_LEN,
+		.write_length = 5,
 		.write_buf = write_buf,
 	};
 
@@ -2166,10 +2163,8 @@ again:
 	read_len = get_unaligned_le16(&cd->response_buf[7]);
 	TS_LOG_DEBUG("%s:current read_len = %d, target read_length = %d, total_read_len = %d\n",
 					__func__, read_len, target_read_length, total_read_len);
-	if (read_len && read_len <=(sizeof(cd->response_buf) - CY_SELFTEST_RESP_DATA_OFFSET)
-		&& data && (read_len + total_read_len) <= read_length
-		&& (read_len + total_read_len) <= (CY_MAX_PRBUF_SIZE - 6)) {
-		memcpy(&data[off_buf], &cd->response_buf[CY_SELFTEST_RESP_DATA_OFFSET], read_len);
+	if (read_len && data && (read_len + total_read_len) <= read_length) {
+		memcpy(&data[off_buf], &cd->response_buf[10], read_len);
 
 		total_read_len += read_len;
 		read_offset += read_len;

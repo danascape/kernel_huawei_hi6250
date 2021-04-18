@@ -30,7 +30,6 @@
 
 #ifdef CONFIG_HUAWEI_F2FS_DSM
 #define DSM_F2FS_UNLINK_SIGNIF_FILE		(928005000)
-#define DSM_F2FS_NODE_CORRUPT			(928005000)
 #define DSM_F2FS_NEED_FSCK			(928005001)
 #endif
 
@@ -1277,9 +1276,6 @@ struct f2fs_sb_info {
 	struct f2fs_fault_info fault_info;
 #endif
 	bool is_extra_flag_set;
-
-/* should make sure everything is ready and safe for f2fs_print_sbi_info */
-	bool print_sbi_safe;
 };
 
 #ifdef CONFIG_F2FS_FAULT_INJECTION

@@ -65,7 +65,6 @@ extern  struct ts_kit_device_data *g_focal_dev_data ;
 #define FTS_REG_DOZE_HOLDOFF_TIME	0x87
 #define FTS_DOZE_ENABLE				1
 #define FTS_DOZE_DISABLE			0
-#define FTS_FT86XX_HIGH                              0x86
 
 #define GESTURE_DOUBLECLICK                     0x24
 #define FTS_REG_GESTURE_EN      			(0xD0)
@@ -85,7 +84,6 @@ extern  struct ts_kit_device_data *g_focal_dev_data ;
 #define FTS_GESTURE_EANBLE                  (1)
 #define FTS_SLEEP_TIME_100                  (100)
 #define FTS_SLEEP_TIME_220                  (220)
-#define FTS_SLEEP_TIME_265                  (265)
 #define FTS_SELF_CTRL_POWER			1
 #define FTS_VCI_LDO_POWER			1
 #define FTS_VDDIO_LDO_POWER			1
@@ -99,7 +97,6 @@ enum focal_ic_type {
 	FOCAL_FT8716 = 0,
 	FOCAL_FT8607,
 	FOCAL_FT5X46,
-	FOCAL_FT8201,
 };
 
 #if defined (CONFIG_HUAWEI_DSM)
@@ -179,7 +176,6 @@ struct focal_platform_data {
 	int fw_only_depend_on_lcd;//0 : fw depend on TP and others ,1 : fw only depend on lcd.
 	char lcd_panel_info[LCD_PANEL_INFO_MAX_LEN];
 	char lcd_module_name[FULL_NAME_MAX_LEN];
-	u8 touch_switch_game_reg;
 };
 
 int focal_read(u8 *addr, u16 addr_len, u8 *value, u16 values_size);
@@ -200,8 +196,6 @@ char *focal_strncat(char *dest, char *src, size_t dest_size);
 char *focal_strncatint(char *dest, int src, char *format, size_t dest_size);
 int focal_strtolow(char *src_str, size_t size);
 int focal_esdcheck_set_upgrade_flag(u8 boot_upgrade);
-extern int focal_8201_get_raw_data(struct ts_rawdata_info *info, struct ts_cmd_node *out_cmd);
-extern int focal_get_raw_data(struct ts_rawdata_info *info, struct ts_cmd_node *out_cmd);
 
 #endif
 

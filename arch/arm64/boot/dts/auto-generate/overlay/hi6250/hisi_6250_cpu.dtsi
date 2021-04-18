@@ -304,10 +304,4 @@
 		compatible = "hisi,targetcpu";
 		target_cpu = "Kirin 650";
 	};
-
-	menu-switch {
-		compatible = "hisi,menu-switch";
-		cpu-mask = <0x0>, <0xF0>;
-		switch-profile = <1402000>;
-	};
   };

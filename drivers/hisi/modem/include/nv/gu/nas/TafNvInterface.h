@@ -3445,20 +3445,6 @@ typedef struct
 }TAF_NV_SWITCH_IMS_TO_CS_REDIAL_CONFIG_STRU;
 
 /*****************************************************************************
- 结构名    : TAF_NV_SWITCH_WIFI_TO_CS_REDIAL_CONFIG_STRU
- 结构说明  : en_NV_Item_REDIAL_WIFI_TO_CS_DOMAIN_CFG(2482)
- 1.日    期   : 2017年10月10日
-   作    者   : gwx483917
-   修改内容   : 新建
-*****************************************************************************/
-typedef struct
-{
-    VOS_UINT8                                               ucLteWifiCauseDifferFlag; /* VOLTE和VOWIFI原因值区分标志 */
-    VOS_UINT8                                               aucReserve[3];
-    TAF_NV_SWITCH_IMS_TO_CS_REDIAL_CAUSE_CONFIG_STRU        stCallRedialCauseCfg;
-}TAF_NV_SWITCH_WIFI_TO_CS_REDIAL_CONFIG_STRU;
-
-/*****************************************************************************
  结构名    : TAF_NV_SWITCH_CS_TO_IMS_REDIAL_CONFIG_STRU
  结构说明  :
  1.日    期   : 2013年12月24日

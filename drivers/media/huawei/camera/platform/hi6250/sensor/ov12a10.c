@@ -491,11 +491,10 @@ int ov12a10_config(hwsensor_intf_t* si,void  *argp)
 			if (s_ov12a10_power_on)
 			{
 				ret = si->vtbl->power_down(si);
-				if (0 != ret)
+				if (0 == ret)
 				{
-					cam_err("%s. power_down fail.", __func__);
+					s_ov12a10_power_on = false;
 				}
-				s_ov12a10_power_on = false;
 			}
 			/*lint -e455 -esym(455,*)*/
 			mutex_unlock(&ov12a10_power_lock);

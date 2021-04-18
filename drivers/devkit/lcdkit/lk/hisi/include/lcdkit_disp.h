@@ -567,8 +567,6 @@ struct lcdkit_panel_mipi
     uint32_t data_t_hs_trial_adjust;
     int data_t_lpx_adjust;
     uint32_t rg_vrefsel_vcm_adjust;
-    uint32_t rg_vrefsel_vcm_clk_adjust;
-    uint32_t rg_vrefsel_vcm_data_adjust;
     uint32_t phy_mode;  //0: DPHY, 1:CPHY
     uint32_t lp11_flag; /* 0: nomal_lp11, 1:short_lp11, 2:disable_lp11 */
     uint32_t hs_wr_to_time;
@@ -662,9 +660,7 @@ struct lcdkit_misc_info
     uint8_t use_gpio_lcd_bl;
     uint8_t use_gpio_lcd_bl_power;
     uint8_t bias_change_lm36274_from_panel_support;
-    uint8_t init_lm36923_after_panel_power_on_support;
     uint8_t lcd_otp_support;
-    uint8_t reset_ph_delay_set_flag;
 };
 
 struct lcdkit_delay_ctrl

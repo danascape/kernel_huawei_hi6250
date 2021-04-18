@@ -63,9 +63,7 @@
 extern struct cc_anti_corrosion_dev *cc_corrosion_dev_p;
 #endif
 /* #define DEBUG_GPIO	66 */
-#ifdef CONFIG_POGO_PIN
-#include <huawei_platform/usb/huawei_pogopin.h>
-#endif
+
 #define RT1711H_DRV_VERSION	"1.1.5_Huawei"
 #ifdef CONFIG_CONTEXTHUB_PD
 extern void hw_pd_wait_dptx_ready(void);
@@ -1131,18 +1129,6 @@ static int rt1711_set_cc(struct tcpc_device *tcpc, int pull)
 
 	return 0;
 }
-
-#ifdef CONFIG_POGO_PIN
-static int tcpm_typec_detect_disable(bool disable)
-{
-	return tcpm_typec_disable_function(g_chip_for_reg_read->tcpc, disable);
-}
-
-struct cc_detect_ops rt1711h_cc_detect_ops = {
-	.typec_detect_disable = tcpm_typec_detect_disable,
-};
-#endif
-
 void rt1711h_set_cc_mode(int mode)
 {
 	if (!g_chip_for_reg_read || !g_chip_for_reg_read->tcpc) {
@@ -1456,6 +1442,7 @@ static int rt_parse_dt(struct rt1711_chip *chip, struct device *dev)
 
 	pr_info("%s\n", __func__);
 	chip->irq_gpio = of_get_named_gpio(np, "rt1711,irq_pin", 0);
+
 	return 0;
 }
 
@@ -1732,9 +1719,7 @@ static int rt1711_i2c_probe(struct i2c_client *client,
 #ifdef CONFIG_CC_ANTI_CORROSION
 	cc_corrosion_register_ops(&rt1711h_corrosion_ops);
 #endif
-#ifdef CONFIG_POGO_PIN
-	cc_detect_register_ops(&rt1711h_cc_detect_ops);
-#endif
+
 	ret = rt1711_init_alert(chip->tcpc);
 	if (ret < 0) {
 		pr_err("rt1711 init alert fail\n");

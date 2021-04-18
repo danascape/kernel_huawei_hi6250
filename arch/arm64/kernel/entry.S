@@ -33,7 +33,6 @@
 #include <asm/thread_info.h>
 #include <asm/uaccess.h>
 #include <asm/unistd.h>
-#include <linux/arm-smccc.h>
 
 /*
  * Context tracking subsystem.  Used to instrument transitions
@@ -334,7 +333,7 @@ tsk	.req	x28		// current thread_info
 
 	.pushsection ".entry.text", "ax"
 	.align	11
-ENTRY_NOTAG(vectors)
+ENTRY(vectors)
 	ventry	el1_sync_invalid		// Synchronous EL1t
 	ventry	el1_irq_invalid			// IRQ EL1t
 	ventry	el1_fiq_invalid			// FIQ EL1t
@@ -661,12 +660,13 @@ el0_ia:
 	 * Instruction abort handling
 	 */
 	mrs	x26, far_el1
-	enable_dbg
+	// enable interrupts before calling the main handler
+	enable_dbg_and_irq
 	ct_user_exit
 	mov	x0, x26
 	mov	x1, x25
 	mov	x2, sp
-	bl	do_el0_ia_bp_hardening
+	bl	do_mem_abort
 	b	ret_to_user
 el0_fpsimd_acc:
 	/*
@@ -694,7 +694,7 @@ el0_sp_pc:
 	 */
 	mrs	x26, far_el1
 	// enable interrupts before calling the main handler
-	enable_dbg
+	enable_dbg_and_irq
 	ct_user_exit
 	mov	x0, x26
 	mov	x1, x25
@@ -753,11 +753,6 @@ el0_irq_naked:
 #endif
 
 	ct_user_exit
-#ifdef CONFIG_HARDEN_BRANCH_PREDICTOR
-	tbz     x22, #55, 1f
-	bl      do_el0_irq_bp_hardening
-1:
-#endif
 	irq_handler
 
 #ifdef CONFIG_TRACE_IRQFLAGS
@@ -897,19 +892,7 @@ el0_svc_naked:					// compat entry point
 	stp	x0, scno, [sp, #S_ORIG_X0]	// save the original x0 and syscall number
 	enable_dbg_and_irq
 	ct_user_exit 1
-#ifdef CONFIG_ENHANCED_HARDEN_BRANCH_PREDICTOR
-	push x6, x7
-	push x4, x5
-	push x2, x3
-	push x0, x1
 
-	bl  do_el0_svc_bp_hardening
-
-	pop x0, x1
-	pop x2, x3
-	pop x4, x5
-	pop x6, x7
-#endif
 #ifdef CONFIG_HISI_BB
 #ifdef CONFIG_HISI_BB_SYSCALL
 /*

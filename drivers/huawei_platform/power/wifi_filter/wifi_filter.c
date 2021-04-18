@@ -237,26 +237,20 @@ void get_filter_info(
         items.port          = tcp_hdr(skb)->dest;
         items.protocol      = IPPROTO_TCP;
         items.filter_cnt    = 0;
-        if (is_in_items_array(&items)) {
-            FILTER_LOGD("port %d has exist",ntohs(items.port));
-            return;
-        }
     } else if (ip->protocol == IPPROTO_UDP) {
         FILTER_LOGD("udp dest=%d,source=%d",ntohs(udp_hdr(skb)->dest), ntohs(udp_hdr(skb)->source));
-        if (ntohs(udp_hdr(skb)->dest) != NETBIOS_PORT)
-        {
-            return;
-        } else {
-            special_item.filter_cnt = 1;
-            special_item.port       = htons(NETBIOS_PORT);
-            special_item.protocol   = IPPROTO_UDP;
-
-        }
+        return;
     } else {
         printk("other protocol");
         return;
     }
-
+    if (is_in_items_array(&items)) {
+        FILTER_LOGD("port %d has exist",items.port);
+        return;
+    }
+    special_item.filter_cnt = 1;
+    special_item.port       = htons(NETBIOS_PORT);
+    special_item.protocol   = IPPROTO_UDP;
     memcpy(&g_filter_items[0],&special_item,sizeof(hw_wifi_filter_item));
     memcpy(&g_filter_items[g_filter_item_index],&items,sizeof(hw_wifi_filter_item));
     g_filter_item_index++;

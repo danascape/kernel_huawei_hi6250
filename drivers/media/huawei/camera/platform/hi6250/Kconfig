@@ -189,16 +189,6 @@ config HUAWEI_CAMERA_USE_OV16B10BND
     default y
     depends on HUAWEI_CAMERA
 
-config HUAWEI_CAMERA_USE_HI846BACH2_BACK
-        bool "hi846BACH2_BACK"
-    default y
-        depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_HI846BACH2_FRONT
-        bool "hi846BACH2_FRONT"
-    default y
-        depends on HUAWEI_CAMERA
-
 config HUAWEI_CAMERA_USE_OV16B10RNE
     bool "ov16b10RNE"
     default y
@@ -257,11 +247,6 @@ config HUAWEI_CAMERA_USE_OV13855FLA
     default y
     depends on HUAWEI_CAMERA
 
-config HUAWEI_CAMERA_USE_OV13855LLDS
-    bool "ov13855LLDS"
-    default y
-    depends on HUAWEI_CAMERA
-
 config HUAWEI_CAMERA_USE_HI1333LLD
     bool "hi1333LLD"
     default y
@@ -272,10 +257,6 @@ config HUAWEI_CAMERA_USE_HI1333FLA
     default y
     depends on HUAWEI_CAMERA
 
-config HUAWEI_CAMERA_USE_HI1333LLDS
-    bool "hi1333LLDS"
-    default y
-    depends on HUAWEI_CAMERA
 
 config HUAWEI_CAMERA_USE_IMX258LLD
     bool "imx258LLD"
@@ -284,11 +265,6 @@ config HUAWEI_CAMERA_USE_IMX258LLD
 
 config HUAWEI_CAMERA_USE_IMX258FLA
     bool "imx258FLA"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_IMX258LLDS
-    bool "imx258LLDS"
     default y
     depends on HUAWEI_CAMERA
 
@@ -302,11 +278,6 @@ config HUAWEI_CAMERA_USE_HI259FLA
     default y
     depends on HUAWEI_CAMERA
 
-config HUAWEI_CAMERA_USE_HI259LLDS
-    bool "hi259LLDS"
-    default y
-    depends on HUAWEI_CAMERA
-
 config HUAWEI_CAMERA_USE_GC2375LLD
     bool "gc2375LLD"
     default y
@@ -314,11 +285,6 @@ config HUAWEI_CAMERA_USE_GC2375LLD
 
 config HUAWEI_CAMERA_USE_GC2375FLA
     bool "gc2375FLA"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_GC2375LLDS
-    bool "gc2375LLDS"
     default y
     depends on HUAWEI_CAMERA
 
@@ -331,22 +297,6 @@ config HUAWEI_CAMERA_USE_HI1333LLDFRONT
     bool "hi1333LLDFRONT"
     default y
     depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_S5K3P8LLDS
-    bool "s5k3p8LLDS"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_IMX371LLDS
-    bool "imx371LLDS"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_OV16885LLDS
-    bool "ov16885LLDS"
-    default y
-    depends on HUAWEI_CAMERA
-
 config HUAWEI_CAMERA_USE_HI259LLDFRONT
     bool "hi259LLDFRONT"
     default y
@@ -427,57 +377,7 @@ config HUAWEI_CAMERA_USE_IMX576
     default y
     depends on HUAWEI_CAMERA
 
-config HUAWEI_CAMERA_USE_GC2375HANDEL
-    bool "gc2375HANDEL"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_HI259HANDEL
-    bool "hi259HANDEL"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_IMX219HANDEL
-    bool "imx219HANDEL"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_IMX258HANDEL
-    bool "imx258HANDEL"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_OV13855HANDEL
-    bool "ov13855HANDEL"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_HI1333HANDEL
-    bool "hi1333HANDEL"
-    default y
-    depends on HUAWEI_CAMERA
-
 config HUAWEI_CAMERA_USE_OV16885
     bool "ov16885"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_SP2509AGASSI2
-    bool "SP2509AGASSI2"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_GC2375AGASSI2
-    bool "GC2375AGASSI2"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_GC5025AGASSI2BACK
-    bool "GC5025AGASSI2BACK"
-    default y
-    depends on HUAWEI_CAMERA
-
-config HUAWEI_CAMERA_USE_HI556AGASSI2BACK
-    bool "HI556AGASSI2BACK"
     default y
     depends on HUAWEI_CAMERA

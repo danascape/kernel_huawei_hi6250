@@ -365,9 +365,6 @@ VOS_UINT32 AT_IsImsRegErrRptParaValid(
 );
 
 VOS_UINT32 AT_RcvImsaCallAltSrvInd(VOS_VOID * pMsg);
-
-VOS_UINT32 AT_SetUserAgentCfgPara(VOS_UINT8 ucIndex);
-VOS_UINT32 AT_RcvImsaUserAgentSetCnf(VOS_VOID * pMsg);
 #endif /* end of FEATURE_IMS */
 extern VOS_UINT32 AT_DigitString2Hex(
     VOS_UINT8                          *pucDigitStr,

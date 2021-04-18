@@ -33,9 +33,7 @@
 #ifdef CONFIG_CC_ANTI_CORROSION
 #include <huawei_platform/usb/hw_cc_anti_corrosion.h>
 #endif
-#ifdef CONFIG_POGO_PIN
-#include <huawei_platform/usb/huawei_pogopin.h>
-#endif
+
 /******************************************************************************
 * Driver functions
 ******************************************************************************/
@@ -142,17 +140,6 @@ struct cc_corrosion_ops fusb30x_corrosion_ops = {
 };
 #endif
 
-#ifdef CONFIG_POGO_PIN
-static int fusb30x_typec_detect_disable(FSC_BOOL disable)
-{
-	return core_cc_disable(disable);
-}
-
-struct cc_detect_ops fusb30x_cc_detect_ops = {
-	.typec_detect_disable = fusb30x_typec_detect_disable,
-};
-#endif
-
 static struct cc_check_ops cc_check_ops = {
 	.is_cable_for_direct_charge = is_cable_for_direct_charge,
 };
@@ -249,9 +236,7 @@ static int fusb30x_probe (struct i2c_client* client,
 #ifdef CONFIG_CC_ANTI_CORROSION
     cc_corrosion_register_ops(&fusb30x_corrosion_ops);
 #endif
-#ifdef CONFIG_POGO_PIN
-	cc_detect_register_ops(&fusb30x_cc_detect_ops);
-#endif
+
 #ifdef FSC_DEBUG
     /* Initialize debug sysfs file accessors */
     fusb_Sysfs_Init();

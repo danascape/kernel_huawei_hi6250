@@ -155,21 +155,9 @@ extern "C" {
 #define DRV_AGENT_SIMLOCKDATAWRITE_STRU_LEN     (548)                           /* 锁网锁卡改制命令参数结构体长度 */
 #endif
 #define DRV_AGENT_PUBKEY_SIGNATURE_LEN          (32)        /* 鉴权公钥SSK签名长度 */
-
-#if ((FEATURE_ON == FEATURE_SC_DATA_STRUCT_EXTERN) || (FEATURE_ON == FEATURE_BOSTON_AFTER_FEATURE))
-#define DRV_AGENT_SUPPORT_CATEGORY_NUM          (4)         /* 支持的锁网锁卡CATEGORY类别数，目前只支持四种:network/network subset/SP/CP */
-#else
 #define DRV_AGENT_SUPPORT_CATEGORY_NUM          (3)         /* 支持的锁网锁卡CATEGORY类别数，目前只支持三种:network/network subset/SP */
-#endif
-
 #define DRV_AGENT_PH_LOCK_CODE_GROUP_NUM        (20)        /* 锁网锁卡号段组数 */
-
-#define DRV_AGENT_SUPPORT_CATEGORY_NUM_EXTERED  (4)         /* 锁网锁卡升级后支持的锁网锁卡CATEGORY类别数，目前只支持四种:network/network subset/SP/CP */
-#define DRV_AGENT_PH_LOCK_CODE_GROUP_NUM_EXTERED   (10)     /* 锁网锁卡升级后上报的最大锁网锁卡号段组数 */
-#define DRV_AGENT_PH_LOCK_CODE_LEN_EXTERNED     (6)         /* 锁网锁卡号段长度 */
-
 #define DRV_AGENT_PH_LOCK_CODE_LEN              (4)         /* 锁网锁卡号段长度 */
-
 #define DRV_AGENT_PH_PHYNUM_LEN                 (16)        /* 物理号长度 */
 #define DRV_AGENT_PH_PHYNUM_IMEI_LEN            (15)        /* IMEI号长度 */
 #define DRV_AGENT_PH_PHYNUM_IMEI_NV_LEN         (16)        /* IMEI号NV项长度 */
@@ -2895,21 +2883,6 @@ typedef struct
 }DRV_AGENT_SIMLOCKDATAWRITE_SET_CNF_STRU;
 
 /*****************************************************************************
-结构名    : DRV_AGENT_PH_LOCK_CODE_NEW_STRU
-结构说明  : 锁网锁卡号段结构
-
-  1.日    期   : 2017年03月24日
-    作    者   : q00380176
-    修改内容   : AP-Modem锁网锁卡项目新增结构
-
-*****************************************************************************/
-typedef struct
-{
-   VOS_UINT8        aucPhLockCodeBegin[DRV_AGENT_PH_LOCK_CODE_LEN_EXTERNED];
-   VOS_UINT8        aucPhLockCodeEnd[DRV_AGENT_PH_LOCK_CODE_LEN_EXTERNED];
-}DRV_AGENT_PH_LOCK_CODE_NEW_STRU;
-
-/*****************************************************************************
 结构名    : DRV_AGENT_PH_LOCK_CODE_STRU
 结构说明  : 锁网锁卡号段结构
 
@@ -2956,48 +2929,9 @@ typedef struct
 {
     AT_APPCTRL_STRU                                 stAtAppCtrl;                /* 消息头 */
     DRV_AGENT_PERSONALIZATION_ERR_ENUM_UINT32       enResult;                   /* 命令执行结果 */
-    VOS_UINT8                                       ucSupportCategoryNum;       /* 当前category个数 */
-    VOS_UINT8                                       aucRsv[3];              /* 保留字节，用于四字节对齐 */
-
     /* 目前支持3种category，结构体数组按照network->network subset->SP的顺序排列 */
     DRV_AGENT_SIMLOCK_DATA_CATEGORY_STRU            astCategoryData[DRV_AGENT_SUPPORT_CATEGORY_NUM];
 }DRV_AGENT_SIMLOCKDATAREAD_QRY_CNF_STRU;
-
-/*****************************************************************************
-结构名    : DRV_AGENT_SIMLOCKDATAREAD_QRY_CNF_EX_STRU
-结构说明  : AT与DRV AGENT查询锁网锁卡安全数据的消息回复结构,支持4层锁
-
-  1.日    期   : 2017年03月28日
-    作    者   : q00380176
-    修改内容   : AP-Modem锁网锁卡项目新增结构
-
-*****************************************************************************/
-typedef struct
-{
-    AT_APPCTRL_STRU                                 stAtAppCtrl;                /* 消息头 */
-    DRV_AGENT_PERSONALIZATION_ERR_ENUM_UINT32       enResult;                   /* 命令执行结果 */
-    /* 目前支持4种category，结构体数组按照network->network subset->SP->CP的顺序排列 */
-    DRV_AGENT_SIMLOCK_DATA_CATEGORY_STRU            astCategoryData[DRV_AGENT_SUPPORT_CATEGORY_NUM];
-}DRV_AGENT_SIMLOCKDATAREAD_QRY_CNF_EX_STRU;
-
-/*****************************************************************************
-结构名    : DRV_AGENT_SIMLOCK_INFO_CATEGORY_NEW_STRU
-结构说明  : 锁网锁卡数据升级后锁网锁卡信息单个类型的数据结构
-
-  1.日    期   : 2017年03月23日
-    作    者   : q00380176
-    修改内容   : AP-Modem锁网锁卡项目新增结构
-
-*****************************************************************************/
-typedef struct
-{
-    DRV_AGENT_PERSONALIZATION_CATEGORY_ENUM_UINT8           enCategory;             /* 锁网锁卡的category类别 */
-    DRV_AGENT_PERSONALIZATION_INDICATOR_ENUM_UINT8          enIndicator;            /* 锁网锁卡的激活指示 */
-    VOS_UINT8                                               ucFlag;                 /* 0: 白名单 1: 黑名单 */
-    VOS_UINT8                                               ucRsv;                  /* 4字节对齐, 保留位 */
-    VOS_UINT32                                              ulGroupNum;             /* 号段个数，一个begin/end算一个号段 */
-    DRV_AGENT_PH_LOCK_CODE_NEW_STRU                         astLockCode[DRV_AGENT_PH_LOCK_CODE_GROUP_NUM_EXTERED];      /* 锁网锁卡的号段内容*/
-}DRV_AGENT_SIMLOCK_INFO_CATEGORY_NEW_STRU;
 
 /*****************************************************************************
 结构名    : DRV_AGENT_SIMLOCK_INFO_CATEGORY_STRU
@@ -3019,24 +2953,6 @@ typedef struct
 }DRV_AGENT_SIMLOCK_INFO_CATEGORY_STRU;
 
 /*****************************************************************************
-结构名    : DRV_AGENT_PHONESIMLOCKINFO_QRY_CNF_NEW_STRU
-结构说明  : AT与DRV AGENT查询锁网锁卡信息的消息回复结构
-
-  1.日    期   : 2017年03月23日
-    作    者   : q00380176
-    修改内容   : AP-Modem锁网锁卡项目新增结构
-
-*****************************************************************************/
-typedef struct
-{
-    AT_APPCTRL_STRU                                 stAtAppCtrl;                /* 消息头 */
-    DRV_AGENT_PERSONALIZATION_ERR_ENUM_UINT32       enResult;                   /* 命令执行结果 */
-    VOS_UINT8                                       ucSupportCategoryNum;       /* 当前category个数 */
-    VOS_UINT8                                       aucReserve[3];
-    DRV_AGENT_SIMLOCK_INFO_CATEGORY_NEW_STRU        astCategoryInfo[DRV_AGENT_SUPPORT_CATEGORY_NUM_EXTERED];
-}DRV_AGENT_PHONESIMLOCKINFO_QRY_CNF_NEW_STRU;
-
-/*****************************************************************************
 结构名    : DRV_AGENT_PHONESIMLOCKINFO_QRY_CNF_STRU
 结构说明  : AT与DRV AGENT查询锁网锁卡信息的消息回复结构
 
@@ -3049,7 +2965,6 @@ typedef struct
 {
     AT_APPCTRL_STRU                                 stAtAppCtrl;                /* 消息头 */
     DRV_AGENT_PERSONALIZATION_ERR_ENUM_UINT32       enResult;                   /* 命令执行结果 */
-
     /* 目前支持3种category，结构体数组按照network->network subset->SP的顺序排列 */
     DRV_AGENT_SIMLOCK_INFO_CATEGORY_STRU            astCategoryInfo[DRV_AGENT_SUPPORT_CATEGORY_NUM];
 }DRV_AGENT_PHONESIMLOCKINFO_QRY_CNF_STRU;

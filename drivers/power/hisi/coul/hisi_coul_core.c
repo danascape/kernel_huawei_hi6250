@@ -2573,18 +2573,6 @@ int coul_get_battery_aging_safe_policy(AGING_SAFE_POLICY_TYPE *asp)
     return 0;
 }
 
-/*******************************************************
-  Function:        coul_get_battery_limit_fcc
-  Description:     get the battery limit fcc
-  Input:           NULL
-  Output:          NULL
-  Return:          limit fcc
-********************************************************/
-int coul_get_battery_limit_fcc(void)
-{
-    struct smartstar_coul_device *di = g_smartstar_coul_dev;
-    return di->batt_limit_fcc / 1000;
-}
 
 /*******************************************************
   Function:        coul_is_fcc_debounce
@@ -4235,8 +4223,7 @@ static void make_cc_no_overload(struct smartstar_coul_device *di)
 
 		/*return;*/
 	}
-    /*Redefine low_vol_int count according to dts*/
-    count = di->low_vol_filter_cnt;
+
     if (di->v_low_int_value == LOW_INT_STATE_SLEEP){
 		if ((vbat_uv - LOW_INT_VOL_OFFSET) > (int)di->v_cutoff_sleep){
 			hwlog_err("false low_int,in sleep!\n");
@@ -4822,7 +4809,6 @@ static void coul_smooth_startup_soc(struct smartstar_coul_device *di)
     if (di->last_soc_enable) {
         di->coul_dev_ops->get_last_soc_flag(&flag_soc_valid);
         di->coul_dev_ops->get_last_soc(&soc_temp);
-        hwlog_info("[%s]:flag = %d,di->batt_soc = %d,soc_temp = %d\n",__func__,flag_soc_valid,di->batt_soc,soc_temp);
         if ((flag_soc_valid) && abs(di->batt_soc - soc_temp) < di->startup_delta_soc) {
             di->batt_soc = soc_temp;
             hwlog_info("battery last soc= %d,flag = %d\n", soc_temp , flag_soc_valid);
@@ -6403,7 +6389,6 @@ static void coul_core_get_dts(struct smartstar_coul_device *di)
     unsigned int startup_delta_soc = 0;
     unsigned int soc_at_term = 100;
     unsigned int soc_monitor_limit = DEFAULT_SOC_MONITOR_LIMIT;
-    unsigned int low_vol_filter_cnt = LOW_INT_VOL_COUNT;
     const char *compensation_data_string = NULL;
     unsigned int ntc_compensation_is =0;
     int ret = 0;
@@ -6536,12 +6521,6 @@ static void coul_core_get_dts(struct smartstar_coul_device *di)
     di->soc_monitor_limit = soc_monitor_limit;
     hwlog_info("soc_monitor_limit = %d\n",di->soc_monitor_limit);
 
-    if (of_property_read_u32(np, "low_vol_filter_cnt", &low_vol_filter_cnt)) {
-        hwlog_err("dts:get low_vol_filter_cnt fail, use default limit value!\n");
-    }
-    di->low_vol_filter_cnt = low_vol_filter_cnt;
-    hwlog_info("low_vol_filter_cnt = %d\n",di->low_vol_filter_cnt);
-
     if (of_property_read_string(np, "batt_temp_too_hot", &batt_temp_too_hot_string))
 	    hwlog_err("error:get batt_temp_too_hot value failed!\n");
     else
@@ -6616,7 +6595,6 @@ static int  hisi_coul_probe(struct platform_device *pdev)
         return -1;/*lint !e429*/
     }
     di->iscd = iscd;
-    di->low_vol_filter_cnt = LOW_INT_VOL_COUNT;
     iscd_reset_isc_buffer(di);
 
     di->dev =&pdev->dev;
@@ -6692,6 +6670,7 @@ static int  hisi_coul_probe(struct platform_device *pdev)
         retval = -1;
         goto coul_failed_1;
     }
+	battery_para_check(di);
     hwlog_info("%s: batt ID is %d, batt_brand is %s\n",__FUNCTION__,di->batt_id_vol, di->batt_data->batt_brand);
 
     /*init battery remove check work*/
@@ -6745,7 +6724,6 @@ static int  hisi_coul_probe(struct platform_device *pdev)
     } else {
         hwlog_info("battery not changed, chargecycles = %d%%\n", di->batt_chargecycles);
     }
-    battery_para_check(di);
 
     g_basp_full_pc = basp_full_pc_by_voltage(di);
     di->qmax = coul_get_qmax(di);
@@ -6794,7 +6772,6 @@ coul_no_battery:
     coul_ops->battery_technology          = coul_get_battery_technology;
     coul_ops->battery_charge_params       = coul_get_battery_charge_params;
     coul_ops->battery_vbat_max            = coul_get_battery_vbat_max;
-    coul_ops->get_battery_limit_fcc       = coul_get_battery_limit_fcc;
     coul_ops->charger_event_rcv           = coul_battery_charger_event_rcv;
     coul_ops->coul_is_fcc_debounce        = coul_is_fcc_debounce;
     coul_ops->battery_cycle_count         = coul_battery_cycle_count;

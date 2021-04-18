@@ -619,6 +619,9 @@ static int parse_wirte_file(struct madapt_file_stru *file)
 	if (IS_ERR(fp)) {
 		hwlog_err("parse_wirte_file, open file error!\n");
 		return BSP_ERR_MADAPT_OPEN_FILE_ERR;
+	} else {
+		hwlog_err("parse_wirte_file, file: %s, len: %d\n",
+			file->file, file->len);
 	}
 
 	fs = get_fs();
@@ -688,6 +691,7 @@ ssize_t madapt_dev_write(struct file *file,
 	int ticks_left = 0;
 
 	if (NULL == buf) {
+		hwlog_err("madapt_dev_write, get a NULL ptr: buf!\n");
 		return BSP_ERR_MADAPT_PARAM_ERR;
 	}
 
@@ -696,18 +700,22 @@ ssize_t madapt_dev_write(struct file *file,
 
 	if ((count <= sizeof(unsigned int))
 		|| (count >= sizeof(struct madapt_file_stru))) {
+		hwlog_err("madapt_dev_write, invalid parameter count(%d)!\n",
+			(int)count);
 		return BSP_ERR_MADAPT_PARAM_ERR;
 	}
 
 	mutex_lock(&madapt_mutex);
 	kbuf = kmalloc(sizeof(struct madapt_file_stru), GFP_KERNEL);
 	if (NULL == kbuf) {
+		hwlog_err("madapt_dev_write, malloc buf fail!\n");
 		mutex_unlock(&madapt_mutex);
 		return BSP_ERR_MADAPT_MALLOC_FAIL;
 	}
 
 	memset(kbuf, 0, sizeof(struct madapt_file_stru));
 	if (copy_from_user(kbuf, buf, count)) {
+		hwlog_err("madapt_dev_write, copy from user fail!\n");
 		ret = BSP_ERR_MADAPT_COPY_FROM_USER_ERR;
 		kfree(kbuf);
 		kbuf = NULL;
@@ -715,14 +723,20 @@ ssize_t madapt_dev_write(struct file *file,
 	}
 
 	/* schedule work */
+	hwlog_err("madapt_dev_write, schedule work!\n");
 	schedule_work(&(test_work.proc_nv));
 
 	ticks_left = wait_for_completion_timeout(&(my_completion), HZ*30);
 	if (0 == ticks_left) {
+		hwlog_err("madapt_dev_write, wait_for_completion_timeout timeout!\n");
 		ret = BSP_ERR_MADAPT_TIMEOUT;
 	} else if (BSP_ERR_MADAPT_OK == work_ret) {
+		hwlog_err("madapt_dev_write, work proc success! ticks_left:%d\n",
+				ticks_left);
 		ret = work_ret;
 	} else {
+		hwlog_err("madapt_dev_write, work proc fail! ticks_left:%d\n",
+				ticks_left);
 		ret = work_ret;
 	}
 

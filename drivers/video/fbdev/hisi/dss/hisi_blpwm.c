@@ -18,8 +18,6 @@
 #include "backlight/lp8556.h"
 #include <linux/timer.h>
 #include <linux/delay.h>
-#include "lcdkit_panel.h"
-#include "lcdkit_backlight_ic_common.h"
 
 /* default pwm clk */
 #define DEFAULT_PWM_CLK_RATE	(120 * 1000000L)
@@ -128,17 +126,13 @@ struct bl_info{
 	int32_t bl_ic_ctrl_mode;
 	int32_t blpwm_input_precision;
 	int32_t blpwm_out_precision;
-	int32_t blpwm_preci_no_convert;
 	struct semaphore bl_semaphore;
 	int (*set_common_backlight)(int bl_level);
 };
 
-extern struct lcdkit_bl_ic_info g_bl_config;
 static struct bl_info g_bl_info;
 
 #define BL_LVL_MAP_SIZE	(2047)
-#define BL_MAX_11BIT (2047)
-#define BL_MAX_12BIT (4095)
 static int bl_lvl_map(int level)
 {
 	int ret = 0;
@@ -215,35 +209,16 @@ static void init_bl_info(struct hisi_panel_info *pinfo)
 	g_bl_info.cabc_pwm_in = g_bl_info.blpwm_input_precision;
 	sema_init(&g_bl_info.bl_semaphore, 1);
 	g_bl_info.bl_ic_ctrl_mode = pinfo->bl_ic_ctrl_mode;
-	g_bl_info.blpwm_preci_no_convert = pinfo->blpwm_preci_no_convert;
 	return ;
-}
-
-static uint32_t get_backlight_level(uint32_t bl_level_src)
-{
-	uint32_t bl_level_dst = bl_level_src;
-
-	if (!g_bl_info.blpwm_preci_no_convert){
-		bl_level_dst = (bl_level_src * g_bl_info.blpwm_out_precision) / g_bl_info.bl_max;
-	}
-
-	HISI_FB_DEBUG("get_backlight_level:bl_level_dst=%d, bl_level_src=%d, blpwm_out_precision=%d, \
-bl_max=%d, blpwm_preci_no_convert = %d\n",
-		bl_level_dst, bl_level_src, g_bl_info.blpwm_out_precision,
-		g_bl_info.bl_max,g_bl_info.blpwm_preci_no_convert);
-
-	return bl_level_dst;
 }
 
 static void update_backlight(uint32_t backlight)
 {
 	char __iomem *blpwm_base = NULL;
 	uint32_t brightness = 0;
-	uint32_t bl_level = get_backlight_level(backlight);
-
-		HISI_FB_DEBUG("cabc8:bl_level=%d, backlight=%d, blpwm_out_precision=%d, bl_max=%d\n",
-				bl_level, backlight, g_bl_info.blpwm_out_precision, g_bl_info.bl_max);
-
+	uint32_t bl_level = (backlight * g_bl_info.blpwm_out_precision) / g_bl_info.bl_max;
+	HISI_FB_DEBUG("cabc8:bl_level=%d, backlight=%d, blpwm_out_precision=%d, bl_max=%d\n",
+			bl_level, backlight, g_bl_info.blpwm_out_precision, g_bl_info.bl_max);
 	blpwm_base = hisifd_blpwm_base;
 	if (!blpwm_base) {
 		HISI_FB_ERR("blpwm_base is null!\n");
@@ -264,15 +239,7 @@ static void update_backlight(uint32_t backlight)
 	}else if(g_bl_info.bl_ic_ctrl_mode == COMMON_IC_MODE) {
 		int return_value = -1;
 		bl_level = backlight;
-		switch(g_bl_config.bl_level) {
-			case BL_MAX_12BIT:
-				bl_level = bl_level * g_bl_config.bl_level / g_bl_info.bl_max;
-				break;
-			case BL_MAX_11BIT:
-			default:
-				bl_level = bl_lvl_map(bl_level);
-				break;
-		};
+		bl_level = bl_lvl_map(bl_level);
 		return_value = hisi_blpwm_bl_callback(bl_level);
 		if(0 == return_value)
 			return;
@@ -843,9 +810,6 @@ int hisi_blpwm_set_backlight(struct hisi_fb_data_type *hisifd, uint32_t bl_level
 		HISI_FB_DEBUG("cabc:bl_level=%d\n",bl_level);
 		/* lm36923_ramp_brightness(bl_level); */
 		if (REG_ONLY_MODE == pinfo->bl_ic_ctrl_mode) {
-				if (lcdkit_info.panel_infos.init_lm36923_after_panel_power_on_support) {
-					lm36923_set_backlight_init(bl_level);
-				}
 			lm36923_set_backlight_reg(bl_level);
 		} else if (I2C_ONLY_MODE == pinfo->bl_ic_ctrl_mode) {
 			lm36274_set_backlight_reg(bl_level);
@@ -856,15 +820,8 @@ int hisi_blpwm_set_backlight(struct hisi_fb_data_type *hisifd, uint32_t bl_level
 		lp8556_set_backlight_init(bl_level);
 	}else if (COMMON_IC_MODE == g_bl_info.bl_ic_ctrl_mode) {
 		int return_value = -1;
-		switch(g_bl_config.bl_level) {
-			case BL_MAX_12BIT:
-				bl_level = bl_level * g_bl_config.bl_level / g_bl_info.bl_max;
-				break;
-			case BL_MAX_11BIT:
-			default:
-				bl_level = bl_lvl_map(bl_level);
-				break;
-		};
+
+		bl_level = bl_lvl_map(bl_level);
 		return_value = hisi_blpwm_bl_callback(bl_level);
 		if(0 == return_value)
 		{
@@ -873,7 +830,7 @@ int hisi_blpwm_set_backlight(struct hisi_fb_data_type *hisifd, uint32_t bl_level
 		}
 	}
 
-	bl_level = get_backlight_level(bl_level);
+	bl_level = (bl_level * g_bl_info.blpwm_out_precision) / pinfo->bl_max;
 
 	brightness = (bl_level << 16) | (g_bl_info.blpwm_out_precision - bl_level);
 	outp32(blpwm_base + BLPWM_OUT_CFG, brightness);

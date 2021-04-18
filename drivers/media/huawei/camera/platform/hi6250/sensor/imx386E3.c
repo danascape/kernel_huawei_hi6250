@@ -391,10 +391,9 @@ imx386E3_config(
             mutex_lock(&imx386E3_power_lock);
             if(true == power_on_status){
                 ret = si->vtbl->power_down(si);
-                if(0 != ret){
-                    cam_err("%s. power_down fail.", __func__);
+                if(0 == ret){
+                    power_on_status = false;
                 }
-                power_on_status = false;
             }
             /*lint -e455 -esym(455,*)*/
             mutex_unlock(&imx386E3_power_lock);

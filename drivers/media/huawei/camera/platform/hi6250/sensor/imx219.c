@@ -292,7 +292,6 @@ struct sensor_power_setting imx219_power_down_setting_dvdd120[] = {
 };
 
 struct mutex imx219_power_lock;
-atomic_t volatile imx219_powered = ATOMIC_INIT(0);
 static sensor_t s_imx219 =
 {
     .intf = { .vtbl = &s_imx219_vtbl, },
@@ -304,8 +303,6 @@ static sensor_t s_imx219 =
             .size = ARRAY_SIZE(imx219_power_down_setting),
             .power_setting = imx219_power_down_setting,
     },
-    .p_atpowercnt = &imx219_powered,
-
 };
 
 static const struct of_device_id s_imx219_dt_match[] =
@@ -557,10 +554,9 @@ int imx219_config(hwsensor_intf_t* si, void  *argp)
             mutex_lock(&imx219_power_lock);
             if(true == power_on_status) {
                 ret = si->vtbl->power_down(si);
-                if (ret != 0) {
-                    cam_err("%s. power_down fail.", __func__);
-                 }
-                power_on_status = false;
+                if (ret == 0) {
+                    power_on_status = false;
+                }
             }
             /*lint -e455 -esym(455,*)*/
             mutex_unlock(&imx219_power_lock);

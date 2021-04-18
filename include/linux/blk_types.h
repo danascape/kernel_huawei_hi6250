@@ -127,7 +127,6 @@ struct bio {
 	ktime_t bio_stage_ktime[BIO_PROC_STAGE_MAX];
 	struct timer_list bio_latency_check_timer;
 	void *io_req;
-	volatile int bio_latency_timer_executing;
 	struct block_device	*bi_bdev_part;
 	void *dispatch_task;
 	pid_t task_pid;

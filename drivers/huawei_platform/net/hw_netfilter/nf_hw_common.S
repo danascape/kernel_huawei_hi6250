@@ -23,13 +23,13 @@
 	.type	strfind, %function
 strfind:
 .LFB1396:
-	.file 1 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/drivers/huawei_platform/net/hw_netfilter/nf_hw_common.c"
+	.file 1 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/drivers/huawei_platform/net/hw_netfilter/nf_hw_common.c"
 	.loc 1 13 0
 	.cfi_startproc
 .LVL0:
 .LBB210:
 .LBB211:
-	.file 2 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/ctype.h"
+	.file 2 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/ctype.h"
 	.loc 2 40 0
 	adrp	x8, _ctype
 .LBE211:
@@ -1021,7 +1021,7 @@ get_url_path:
 	add	w0, w0, 1
 .LBB284:
 .LBB285:
-	.file 3 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/slab.h"
+	.file 3 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/slab.h"
 	.loc 3 475 0
 	mov	w1, 32
 	movk	w1, 0x208, lsl 16
@@ -1517,7 +1517,7 @@ get_hash_id:
 .LBB309:
 .LBB310:
 .LBB311:
-	.file 4 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/jhash.h"
+	.file 4 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/jhash.h"
 	.loc 4 151 0
 	mov	w2, 49896
 	.loc 4 155 0
@@ -1538,7 +1538,7 @@ get_hash_id:
 	movk	w1, 0xdead, lsl 16
 .LBB312:
 .LBB313:
-	.file 5 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/bitops.h"
+	.file 5 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/bitops.h"
 	.loc 5 110 0
 	ror	w3, w2, 7
 .LBE313:
@@ -1622,89 +1622,90 @@ get_hash_id:
 	.string	"http://%s%s"
 	.text
 .Letext0:
-	.file 6 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/int-ll64.h"
-	.file 7 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/int-ll64.h"
-	.file 8 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/posix_types.h"
-	.file 9 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/types.h"
-	.file 10 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/capability.h"
-	.file 11 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/thread_info.h"
-	.file 12 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/linux/time.h"
-	.file 13 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/compat.h"
-	.file 14 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/sched.h"
-	.file 15 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/uapi/asm/ptrace.h"
-	.file 16 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/spinlock_types.h"
-	.file 17 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/spinlock_types.h"
-	.file 18 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/fpsimd.h"
-	.file 19 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/processor.h"
-	.file 20 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/atomic-long.h"
-	.file 21 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/seqlock.h"
-	.file 22 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/plist.h"
-	.file 23 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/cpumask.h"
-	.file 24 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/wait.h"
-	.file 25 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/completion.h"
-	.file 26 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/ktime.h"
-	.file 27 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/rbtree.h"
-	.file 28 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/nodemask.h"
-	.file 29 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/osq_lock.h"
-	.file 30 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/rwsem.h"
-	.file 31 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/mm_types.h"
-	.file 32 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/pgtable-types.h"
-	.file 33 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/mmu.h"
-	.file 34 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/uprobes.h"
-	.file 35 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/cputime_jiffies.h"
-	.file 36 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/llist.h"
-	.file 37 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/smp.h"
-	.file 38 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/uidgid.h"
-	.file 39 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/signal.h"
-	.file 40 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/signal-defs.h"
-	.file 41 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/siginfo.h"
-	.file 42 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/signal.h"
-	.file 43 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/pid.h"
-	.file 44 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/mmzone.h"
-	.file 45 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/mutex.h"
-	.file 46 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/workqueue.h"
-	.file 47 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/seccomp.h"
-	.file 48 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/linux/resource.h"
-	.file 49 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/timerqueue.h"
-	.file 50 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/timer.h"
-	.file 51 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hrtimer.h"
-	.file 52 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/task_io_accounting.h"
-	.file 53 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/assoc_array.h"
-	.file 54 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/key.h"
-	.file 55 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/cred.h"
-	.file 56 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/idr.h"
-	.file 57 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/percpu-refcount.h"
-	.file 58 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/rcu_sync.h"
-	.file 59 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/percpu-rwsem.h"
-	.file 60 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/cgroup-defs.h"
-	.file 61 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/kernfs.h"
-	.file 62 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/bitops/builtin-__fls.h"
-	.file 63 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/bitops/fls64.h"
-	.file 64 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/log2.h"
-	.file 65 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/getorder.h"
-	.file 66 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/cachetype.h"
-	.file 67 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/printk.h"
-	.file 68 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/kernel.h"
-	.file 69 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/thread_info.h"
-	.file 70 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/hwcap.h"
-	.file 71 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/cpufeature.h"
-	.file 72 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/jiffies.h"
-	.file 73 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/memory.h"
-	.file 74 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/highuid.h"
-	.file 75 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/percpu_counter.h"
-	.file 76 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/jump_label.h"
-	.file 77 "/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/string.h"
+	.file 6 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/int-ll64.h"
+	.file 7 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/int-ll64.h"
+	.file 8 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/posix_types.h"
+	.file 9 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/types.h"
+	.file 10 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/capability.h"
+	.file 11 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/thread_info.h"
+	.file 12 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/linux/time.h"
+	.file 13 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/compat.h"
+	.file 14 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/sched.h"
+	.file 15 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/uapi/asm/ptrace.h"
+	.file 16 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/spinlock_types.h"
+	.file 17 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/spinlock_types.h"
+	.file 18 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/fpsimd.h"
+	.file 19 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/processor.h"
+	.file 20 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/atomic-long.h"
+	.file 21 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/seqlock.h"
+	.file 22 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/plist.h"
+	.file 23 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/cpumask.h"
+	.file 24 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/wait.h"
+	.file 25 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/completion.h"
+	.file 26 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/ktime.h"
+	.file 27 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/rbtree.h"
+	.file 28 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/nodemask.h"
+	.file 29 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/osq_lock.h"
+	.file 30 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/rwsem.h"
+	.file 31 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/mm_types.h"
+	.file 32 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/pgtable-types.h"
+	.file 33 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/mmu.h"
+	.file 34 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/uprobes.h"
+	.file 35 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/cputime_jiffies.h"
+	.file 36 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/llist.h"
+	.file 37 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/smp.h"
+	.file 38 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/uidgid.h"
+	.file 39 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/signal.h"
+	.file 40 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/signal-defs.h"
+	.file 41 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/asm-generic/siginfo.h"
+	.file 42 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/signal.h"
+	.file 43 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/pid.h"
+	.file 44 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/mmzone.h"
+	.file 45 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/mutex.h"
+	.file 46 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/workqueue.h"
+	.file 47 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/seccomp.h"
+	.file 48 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/uapi/linux/resource.h"
+	.file 49 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/timerqueue.h"
+	.file 50 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/timer.h"
+	.file 51 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/hrtimer.h"
+	.file 52 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/task_io_accounting.h"
+	.file 53 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/assoc_array.h"
+	.file 54 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/key.h"
+	.file 55 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/cred.h"
+	.file 56 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/idr.h"
+	.file 57 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/percpu-refcount.h"
+	.file 58 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/rcu_sync.h"
+	.file 59 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/percpu-rwsem.h"
+	.file 60 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/cgroup-defs.h"
+	.file 61 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/kernfs.h"
+	.file 62 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/bitops/builtin-__fls.h"
+	.file 63 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/bitops/fls64.h"
+	.file 64 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/log2.h"
+	.file 65 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/asm-generic/getorder.h"
+	.file 66 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/cachetype.h"
+	.file 67 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/printk.h"
+	.file 68 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/kernel.h"
+	.file 69 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/thread_info.h"
+	.file 70 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/chipset_common/kernel_harden/kaslr.h"
+	.file 71 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/hwcap.h"
+	.file 72 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/cpufeature.h"
+	.file 73 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/jiffies.h"
+	.file 74 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/memory.h"
+	.file 75 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/highuid.h"
+	.file 76 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/percpu_counter.h"
+	.file 77 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/include/linux/jump_label.h"
+	.file 78 "/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/arch/arm64/include/asm/string.h"
 	.section	.debug_info,"",%progbits
 .Ldebug_info0:
-	.4byte	0x55f4
+	.4byte	0x560a
 	.2byte	0x4
 	.4byte	.Ldebug_abbrev0
 	.byte	0x8
 	.uleb128 0x1
-	.4byte	.LASF1060
-	.byte	0x1
-	.4byte	.LASF1061
 	.4byte	.LASF1062
+	.byte	0x1
+	.4byte	.LASF1063
+	.4byte	.LASF1064
 	.8byte	.Ltext0
 	.8byte	.Letext0-.Ltext0
 	.4byte	.Ldebug_line0
@@ -10523,7 +10524,7 @@ get_hash_id:
 	.4byte	0x34
 	.byte	0
 	.uleb128 0x41
-	.4byte	.LASF1053
+	.4byte	.LASF1055
 	.byte	0x1
 	.byte	0x78
 	.4byte	0x34
@@ -10836,7 +10837,7 @@ get_hash_id:
 	.4byte	0x54
 	.uleb128 0x4d
 	.8byte	.LVL20
-	.4byte	0x5544
+	.4byte	0x555a
 	.uleb128 0x4d
 	.8byte	.LVL22
 	.4byte	0x49d3
@@ -10845,7 +10846,7 @@ get_hash_id:
 	.4byte	0x49d3
 	.uleb128 0x4d
 	.8byte	.LVL26
-	.4byte	0x5544
+	.4byte	0x555a
 	.byte	0
 	.uleb128 0x4e
 	.4byte	.LASF1005
@@ -10905,7 +10906,7 @@ get_hash_id:
 	.4byte	0x4c7c
 	.uleb128 0x4d
 	.8byte	.LVL48
-	.4byte	0x5559
+	.4byte	0x556f
 	.byte	0
 	.uleb128 0x6
 	.4byte	0xfa
@@ -11052,7 +11053,7 @@ get_hash_id:
 	.byte	0x51
 	.uleb128 0x4d
 	.8byte	.LVL63
-	.4byte	0x5544
+	.4byte	0x555a
 	.byte	0
 	.uleb128 0x43
 	.4byte	.LASF1010
@@ -11139,7 +11140,7 @@ get_hash_id:
 	.4byte	0x48de
 	.uleb128 0x4d
 	.8byte	.LVL73
-	.4byte	0x555e
+	.4byte	0x5574
 	.byte	0
 	.uleb128 0x56
 	.4byte	0x48cd
@@ -11154,14 +11155,14 @@ get_hash_id:
 	.4byte	0x48de
 	.uleb128 0x4d
 	.8byte	.LVL81
-	.4byte	0x555e
+	.4byte	0x5574
 	.byte	0
 	.uleb128 0x4d
 	.8byte	.LVL71
 	.4byte	0x4b07
 	.uleb128 0x4d
 	.8byte	.LVL75
-	.4byte	0x5579
+	.4byte	0x558f
 	.uleb128 0x4d
 	.8byte	.LVL76
 	.4byte	0x4d9a
@@ -11170,22 +11171,22 @@ get_hash_id:
 	.4byte	0x4dea
 	.uleb128 0x4d
 	.8byte	.LVL85
-	.4byte	0x5596
+	.4byte	0x55ac
 	.uleb128 0x4d
 	.8byte	.LVL86
-	.4byte	0x5544
+	.4byte	0x555a
 	.uleb128 0x4d
 	.8byte	.LVL87
-	.4byte	0x55b7
+	.4byte	0x55cd
 	.uleb128 0x4d
 	.8byte	.LVL93
-	.4byte	0x55b7
+	.4byte	0x55cd
 	.uleb128 0x4d
 	.8byte	.LVL95
-	.4byte	0x55c8
+	.4byte	0x55de
 	.uleb128 0x4d
 	.8byte	.LVL97
-	.4byte	0x5559
+	.4byte	0x556f
 	.byte	0
 	.uleb128 0x43
 	.4byte	.LASF1017
@@ -11289,17 +11290,17 @@ get_hash_id:
 	.4byte	0x48de
 	.uleb128 0x4d
 	.8byte	.LVL112
-	.4byte	0x555e
+	.4byte	0x5574
 	.byte	0
 	.uleb128 0x4d
 	.8byte	.LVL109
 	.4byte	0x4dea
 	.uleb128 0x4d
 	.8byte	.LVL113
-	.4byte	0x55de
+	.4byte	0x55f4
 	.uleb128 0x4d
 	.8byte	.LVL114
-	.4byte	0x5579
+	.4byte	0x558f
 	.byte	0
 	.uleb128 0x58
 	.4byte	0x48cd
@@ -11314,7 +11315,7 @@ get_hash_id:
 	.4byte	0x48de
 	.uleb128 0x4d
 	.8byte	.LVL119
-	.4byte	0x555e
+	.4byte	0x5574
 	.byte	0
 	.uleb128 0x58
 	.4byte	0x48cd
@@ -11329,7 +11330,7 @@ get_hash_id:
 	.4byte	0x48de
 	.uleb128 0x4d
 	.8byte	.LVL122
-	.4byte	0x555e
+	.4byte	0x5574
 	.byte	0
 	.uleb128 0x58
 	.4byte	0x48cd
@@ -11344,7 +11345,7 @@ get_hash_id:
 	.4byte	0x48de
 	.uleb128 0x4d
 	.8byte	.LVL134
-	.4byte	0x555e
+	.4byte	0x5574
 	.byte	0
 	.uleb128 0x4d
 	.8byte	.LVL102
@@ -11357,10 +11358,10 @@ get_hash_id:
 	.4byte	0x49d3
 	.uleb128 0x4d
 	.8byte	.LVL124
-	.4byte	0x5579
+	.4byte	0x558f
 	.uleb128 0x4d
 	.8byte	.LVL125
-	.4byte	0x5579
+	.4byte	0x558f
 	.uleb128 0x4d
 	.8byte	.LVL126
 	.4byte	0x4d9a
@@ -11375,25 +11376,25 @@ get_hash_id:
 	.4byte	0x4dea
 	.uleb128 0x4d
 	.8byte	.LVL139
-	.4byte	0x5596
+	.4byte	0x55ac
 	.uleb128 0x4d
 	.8byte	.LVL140
-	.4byte	0x55b7
+	.4byte	0x55cd
 	.uleb128 0x4d
 	.8byte	.LVL141
-	.4byte	0x55b7
+	.4byte	0x55cd
 	.uleb128 0x4d
 	.8byte	.LVL144
-	.4byte	0x55b7
+	.4byte	0x55cd
 	.uleb128 0x4d
 	.8byte	.LVL145
-	.4byte	0x55b7
+	.4byte	0x55cd
 	.uleb128 0x4d
 	.8byte	.LVL146
-	.4byte	0x55c8
+	.4byte	0x55de
 	.uleb128 0x4d
 	.8byte	.LVL148
-	.4byte	0x5559
+	.4byte	0x556f
 	.byte	0
 	.uleb128 0x59
 	.4byte	.LASF1023
@@ -11560,35 +11561,45 @@ get_hash_id:
 	.uleb128 0x60
 	.4byte	.LASF1030
 	.byte	0x46
-	.byte	0x3f
+	.byte	0xf
 	.4byte	0xd1
 	.uleb128 0x60
 	.4byte	.LASF1031
 	.byte	0x47
-	.byte	0x66
-	.4byte	0x1114
+	.byte	0x3f
+	.4byte	0xd1
 	.uleb128 0x60
 	.4byte	.LASF1032
 	.byte	0x48
+	.byte	0x65
+	.4byte	0x1114
+	.uleb128 0x60
+	.4byte	.LASF1033
+	.byte	0x46
+	.byte	0x7
+	.4byte	0x66
+	.uleb128 0x60
+	.4byte	.LASF1034
+	.byte	0x49
 	.byte	0x4e
-	.4byte	0x540f
+	.4byte	0x5425
 	.uleb128 0x39
 	.4byte	0xd1
 	.uleb128 0x60
-	.4byte	.LASF1033
+	.4byte	.LASF1035
 	.byte	0x17
 	.byte	0x25
 	.4byte	0x54
 	.uleb128 0x60
-	.4byte	.LASF1034
+	.4byte	.LASF1036
 	.byte	0x17
 	.byte	0x59
-	.4byte	0x542a
+	.4byte	0x5440
 	.uleb128 0x9
 	.4byte	0x3f8a
 	.uleb128 0x6
 	.4byte	0xd1
-	.4byte	0x5445
+	.4byte	0x545b
 	.uleb128 0x7
 	.4byte	0xe8
 	.byte	0x40
@@ -11597,20 +11608,20 @@ get_hash_id:
 	.byte	0
 	.byte	0
 	.uleb128 0x62
-	.4byte	.LASF1035
+	.4byte	.LASF1037
 	.byte	0x17
 	.2byte	0x2f2
-	.4byte	0x5451
+	.4byte	0x5467
 	.uleb128 0x9
-	.4byte	0x542f
+	.4byte	0x5445
 	.uleb128 0x60
-	.4byte	.LASF1036
-	.byte	0x49
+	.4byte	.LASF1038
+	.byte	0x4a
 	.byte	0x8a
 	.4byte	0xbb
 	.uleb128 0x60
-	.4byte	.LASF1037
-	.byte	0x49
+	.4byte	.LASF1039
+	.byte	0x4a
 	.byte	0x93
 	.4byte	0xc6
 	.uleb128 0x60
@@ -11619,120 +11630,120 @@ get_hash_id:
 	.byte	0x4f
 	.4byte	0x1aa7
 	.uleb128 0x60
-	.4byte	.LASF1038
-	.byte	0x4a
+	.4byte	.LASF1040
+	.byte	0x4b
 	.byte	0x22
 	.4byte	0x54
 	.uleb128 0x60
-	.4byte	.LASF1039
-	.byte	0x4a
+	.4byte	.LASF1041
+	.byte	0x4b
 	.byte	0x23
 	.4byte	0x54
 	.uleb128 0x62
-	.4byte	.LASF1040
+	.4byte	.LASF1042
 	.byte	0x37
 	.2byte	0x178
 	.4byte	0x1a72
 	.uleb128 0x62
-	.4byte	.LASF1041
+	.4byte	.LASF1043
 	.byte	0xe
 	.2byte	0xa56
 	.4byte	0x1f48
 	.uleb128 0x60
-	.4byte	.LASF1042
+	.4byte	.LASF1044
 	.byte	0x2c
 	.byte	0x60
 	.4byte	0x54
 	.uleb128 0x60
-	.4byte	.LASF1043
+	.4byte	.LASF1045
 	.byte	0x32
 	.byte	0xbd
 	.4byte	0x54
 	.uleb128 0x62
-	.4byte	.LASF1044
+	.4byte	.LASF1046
 	.byte	0x2e
 	.2byte	0x160
 	.4byte	0x2671
 	.uleb128 0x62
-	.4byte	.LASF1045
+	.4byte	.LASF1047
 	.byte	0x2c
 	.2byte	0x39d
 	.4byte	0x23da
 	.uleb128 0x60
-	.4byte	.LASF1046
-	.byte	0x4b
+	.4byte	.LASF1048
+	.byte	0x4c
 	.byte	0x1c
 	.4byte	0x54
 	.uleb128 0x62
-	.4byte	.LASF1047
+	.4byte	.LASF1049
 	.byte	0x33
 	.2byte	0x132
 	.4byte	0x66
 	.uleb128 0x62
-	.4byte	.LASF1048
+	.4byte	.LASF1050
 	.byte	0x3c
 	.2byte	0x1f3
 	.4byte	0x2fb7
 	.uleb128 0x62
-	.4byte	.LASF1049
+	.4byte	.LASF1051
 	.byte	0xe
 	.2byte	0x8af
 	.4byte	0x1fe1
 	.uleb128 0x60
-	.4byte	.LASF1050
-	.byte	0x4c
+	.4byte	.LASF1052
+	.byte	0x4d
 	.byte	0x51
 	.4byte	0x1be
 	.uleb128 0x6
 	.4byte	0x34
-	.4byte	0x5518
+	.4byte	0x552e
 	.uleb128 0x61
 	.byte	0
 	.uleb128 0x60
-	.4byte	.LASF1051
+	.4byte	.LASF1053
 	.byte	0x2
 	.byte	0x12
-	.4byte	0x5523
+	.4byte	0x5539
 	.uleb128 0x9
-	.4byte	0x550d
+	.4byte	0x5523
 	.uleb128 0x6
 	.4byte	0x17b1
-	.4byte	0x5538
+	.4byte	0x554e
 	.uleb128 0x7
 	.4byte	0xe8
 	.byte	0xd
 	.byte	0
 	.uleb128 0x62
-	.4byte	.LASF1052
+	.4byte	.LASF1054
 	.byte	0x3
 	.2byte	0x107
-	.4byte	0x5528
+	.4byte	0x553e
 	.uleb128 0x64
-	.4byte	.LASF1054
-	.byte	0x4d
+	.4byte	.LASF1056
+	.byte	0x4e
 	.byte	0x20
 	.4byte	0x14a
-	.4byte	0x5559
+	.4byte	0x556f
 	.uleb128 0xb
 	.4byte	0xef
 	.byte	0
 	.uleb128 0x65
-	.4byte	.LASF1063
+	.4byte	.LASF1065
 	.uleb128 0x66
-	.4byte	.LASF1055
+	.4byte	.LASF1057
 	.byte	0x3
 	.2byte	0x13f
 	.4byte	0x32f
-	.4byte	0x5579
+	.4byte	0x558f
 	.uleb128 0xb
 	.4byte	0x1f1
 	.uleb128 0xb
 	.4byte	0x228
 	.byte	0
 	.uleb128 0x67
-	.4byte	.LASF1057
+	.4byte	.LASF1059
 	.4byte	0x32f
-	.4byte	0x5596
+	.4byte	0x55ac
 	.uleb128 0xb
 	.4byte	0x32f
 	.uleb128 0xb
@@ -11741,11 +11752,11 @@ get_hash_id:
 	.4byte	0xe8
 	.byte	0
 	.uleb128 0x66
-	.4byte	.LASF1056
+	.4byte	.LASF1058
 	.byte	0x44
 	.2byte	0x199
 	.4byte	0x54
-	.4byte	0x55b7
+	.4byte	0x55cd
 	.uleb128 0xb
 	.4byte	0x197
 	.uleb128 0xb
@@ -11755,25 +11766,25 @@ get_hash_id:
 	.uleb128 0x68
 	.byte	0
 	.uleb128 0x69
-	.4byte	.LASF1058
+	.4byte	.LASF1060
 	.byte	0x3
 	.byte	0x8f
-	.4byte	0x55c8
+	.4byte	0x55de
 	.uleb128 0xb
 	.4byte	0x29d1
 	.byte	0
 	.uleb128 0x64
-	.4byte	.LASF1059
+	.4byte	.LASF1061
 	.byte	0x43
 	.byte	0x94
 	.4byte	0x54
-	.4byte	0x55de
+	.4byte	0x55f4
 	.uleb128 0xb
 	.4byte	0xef
 	.uleb128 0x68
 	.byte	0
 	.uleb128 0x6a
-	.4byte	.LASF1064
+	.4byte	.LASF1066
 	.4byte	0x32f
 	.uleb128 0xb
 	.4byte	0x32f
@@ -14028,7 +14039,7 @@ get_hash_id:
 	.string	"lowmem_reserve"
 .LASF119:
 	.string	"personality"
-.LASF1032:
+.LASF1034:
 	.string	"jiffies"
 .LASF302:
 	.string	"map_count"
@@ -14056,7 +14067,7 @@ get_hash_id:
 	.string	"rcu_read_lock_nesting"
 .LASF731:
 	.string	"post_attach"
-.LASF1064:
+.LASF1066:
 	.string	"memset"
 .LASF933:
 	.string	"dl_period"
@@ -14114,7 +14125,7 @@ get_hash_id:
 	.string	"task_list"
 .LASF33:
 	.string	"loff_t"
-.LASF1039:
+.LASF1041:
 	.string	"overflowgid"
 .LASF72:
 	.string	"nanosleep"
@@ -14316,7 +14327,7 @@ get_hash_id:
 	.string	"cpuset_slab_spread_rotor"
 .LASF708:
 	.string	"procs_file"
-.LASF1041:
+.LASF1043:
 	.string	"init_pid_ns"
 .LASF750:
 	.string	"mg_tasks"
@@ -14384,14 +14395,16 @@ get_hash_id:
 	.string	"stat_threshold"
 .LASF887:
 	.string	"wait_sum"
-.LASF1055:
+.LASF1057:
 	.string	"__kmalloc"
-.LASF1042:
+.LASF1044:
 	.string	"page_group_by_mobility_disabled"
 .LASF972:
 	.string	"attr"
 .LASF401:
 	.string	"blk_throtl_io_limit"
+.LASF1063:
+	.string	"/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/drivers/huawei_platform/net/hw_netfilter/nf_hw_common.c"
 .LASF672:
 	.string	"free_bitmap"
 .LASF195:
@@ -14400,7 +14413,7 @@ get_hash_id:
 	.string	"dfl_cftypes"
 .LASF635:
 	.string	"security"
-.LASF1030:
+.LASF1031:
 	.string	"elf_hwcap"
 .LASF722:
 	.string	"css_offline"
@@ -14548,7 +14561,7 @@ get_hash_id:
 	.string	"zone_start_pfn"
 .LASF465:
 	.string	"sa_handler"
-.LASF1044:
+.LASF1046:
 	.string	"system_wq"
 .LASF613:
 	.string	"nr_leaves_on_tree"
@@ -14606,7 +14619,7 @@ get_hash_id:
 	.string	"wps_disabled"
 .LASF786:
 	.string	"write"
-.LASF1056:
+.LASF1058:
 	.string	"snprintf"
 .LASF146:
 	.string	"stimescaled"
@@ -14714,7 +14727,7 @@ get_hash_id:
 	.string	"rlim_max"
 .LASF44:
 	.string	"next"
-.LASF1053:
+.LASF1055:
 	.string	"hex_string_to_value"
 .LASF551:
 	.string	"kcompactd"
@@ -14726,7 +14739,7 @@ get_hash_id:
 	.string	"key_perm_t"
 .LASF85:
 	.string	"dynamic_vip_start"
-.LASF1046:
+.LASF1048:
 	.string	"percpu_counter_batch"
 .LASF479:
 	.string	"nr_free"
@@ -14764,7 +14777,7 @@ get_hash_id:
 	.string	"task_cputime"
 .LASF143:
 	.string	"utime"
-.LASF1057:
+.LASF1059:
 	.string	"memcpy"
 .LASF437:
 	.string	"_sigval"
@@ -14810,6 +14823,8 @@ get_hash_id:
 	.string	"nr_migrate_unmovable_isolate2_block"
 .LASF105:
 	.string	"rcu_blocked_node"
+.LASF278:
+	.string	"__rb_parent_color"
 .LASF180:
 	.string	"wake_q"
 .LASF243:
@@ -14860,7 +14875,7 @@ get_hash_id:
 	.string	"id_free"
 .LASF819:
 	.string	"notify_count"
-.LASF1040:
+.LASF1042:
 	.string	"init_user_ns"
 .LASF392:
 	.string	"task"
@@ -15016,11 +15031,11 @@ get_hash_id:
 	.string	"seq_file"
 .LASF846:
 	.string	"sum_sched_runtime"
-.LASF1031:
+.LASF1032:
 	.string	"cpu_hwcaps"
-.LASF1059:
+.LASF1061:
 	.string	"printk"
-.LASF1034:
+.LASF1036:
 	.string	"cpu_online_mask"
 .LASF274:
 	.string	"wait"
@@ -15036,11 +15051,11 @@ get_hash_id:
 	.string	"nr_isolate_pageblock"
 .LASF219:
 	.string	"default_timer_slack_ns"
-.LASF1050:
+.LASF1052:
 	.string	"static_key_initialized"
 .LASF149:
 	.string	"nvcsw"
-.LASF1037:
+.LASF1039:
 	.string	"kimage_voffset"
 .LASF272:
 	.string	"completion"
@@ -15074,8 +15089,8 @@ get_hash_id:
 	.string	"legacy_name"
 .LASF938:
 	.string	"dl_new"
-.LASF278:
-	.string	"__rb_parent_color"
+.LASF1064:
+	.string	"/home/jenkins1/slaves/workspace/chipset_dallas_B100_Release/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/out"
 .LASF858:
 	.string	"taskstats"
 .LASF335:
@@ -15090,7 +15105,7 @@ get_hash_id:
 	.string	"rename"
 .LASF648:
 	.string	"euid"
-.LASF1047:
+.LASF1049:
 	.string	"hrtimer_resolution"
 .LASF591:
 	.string	"nohz_active"
@@ -15168,8 +15183,6 @@ get_hash_id:
 	.string	"anon_vma"
 .LASF1015:
 	.string	"temp"
-.LASF1061:
-	.string	"/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/kernel/drivers/huawei_platform/net/hw_netfilter/nf_hw_common.c"
 .LASF513:
 	.string	"present_pages"
 .LASF1029:
@@ -15222,8 +15235,6 @@ get_hash_id:
 	.string	"fpsr"
 .LASF739:
 	.string	"broken_hierarchy"
-.LASF1062:
-	.string	"/home/jenkins1/slaves/workspace/chipset_dallas_RI_MSDP/opensource/component_code/vendor/huawei/extra/build/build_script/kirin_kernel_release/out"
 .LASF248:
 	.string	"perf_event"
 .LASF331:
@@ -15298,7 +15309,7 @@ get_hash_id:
 	.string	"tty_old_pgrp"
 .LASF612:
 	.string	"root"
-.LASF1043:
+.LASF1045:
 	.string	"timer_stats_active"
 .LASF370:
 	.string	"vm_userfaultfd_ctx"
@@ -15316,11 +15327,13 @@ get_hash_id:
 	.string	"rcu_data0"
 .LASF798:
 	.string	"action"
+.LASF1030:
+	.string	"kti_offset"
 .LASF958:
 	.string	"compat_robust_list_head"
 .LASF512:
 	.string	"spanned_pages"
-.LASF1036:
+.LASF1038:
 	.string	"memstart_addr"
 .LASF908:
 	.string	"nr_wakeups_affine_attempts"
@@ -15346,7 +15359,7 @@ get_hash_id:
 	.string	"nr_ptes"
 .LASF712:
 	.string	"subsys"
-.LASF1058:
+.LASF1060:
 	.string	"kfree"
 .LASF242:
 	.string	"suspended_step"
@@ -15356,7 +15369,7 @@ get_hash_id:
 	.string	"__kernel_time_t"
 .LASF959:
 	.string	"futex_pi_state"
-.LASF1035:
+.LASF1037:
 	.string	"cpu_bit_bitmap"
 .LASF443:
 	.string	"_upper"
@@ -15398,7 +15411,7 @@ get_hash_id:
 	.string	"_tid"
 .LASF807:
 	.string	"task_cputime_atomic"
-.LASF1049:
+.LASF1051:
 	.string	"cad_pid"
 .LASF121:
 	.string	"sched_contributes_to_load"
@@ -15452,9 +15465,9 @@ get_hash_id:
 	.string	"dfl_cgrp"
 .LASF369:
 	.string	"file"
-.LASF1048:
+.LASF1050:
 	.string	"cgroup_threadgroup_rwsem"
-.LASF1033:
+.LASF1035:
 	.string	"nr_cpu_ids"
 .LASF537:
 	.string	"nr_zones"
@@ -15484,6 +15497,8 @@ get_hash_id:
 	.string	"on_rq"
 .LASF990:
 	.string	"__jhash_nwords"
+.LASF1033:
+	.string	"kstack_offset"
 .LASF538:
 	.string	"node_mem_map"
 .LASF218:
@@ -15556,7 +15571,7 @@ get_hash_id:
 	.string	"files"
 .LASF493:
 	.string	"batch"
-.LASF1038:
+.LASF1040:
 	.string	"overflowuid"
 .LASF539:
 	.string	"node_start_pfn"
@@ -15860,7 +15875,7 @@ get_hash_id:
 	.string	"__kernel_long_t"
 .LASF237:
 	.string	"spinlock"
-.LASF1060:
+.LASF1062:
 	.ascii	"GNU C 4.9.x 20150123 (prerelease) -mbionic -mlittle-endian -"
 	.ascii	"mgeneral-regs-only -mabi=lp64 -g -O2 -std=gnu90 -fno-strict-"
 	.ascii	"aliasing -fno-c"
@@ -15909,7 +15924,7 @@ get_hash_id:
 	.string	"revoked_at"
 .LASF390:
 	.string	"vm_operations_struct"
-.LASF1051:
+.LASF1053:
 	.string	"_ctype"
 .LASF1020:
 	.string	"temhost1"
@@ -15969,7 +15984,7 @@ get_hash_id:
 	.string	"acct_rss_mem1"
 .LASF968:
 	.string	"open"
-.LASF1052:
+.LASF1054:
 	.string	"kmalloc_caches"
 .LASF84:
 	.string	"enqueue_time"
@@ -16015,7 +16030,7 @@ get_hash_id:
 	.string	"timeout"
 .LASF196:
 	.string	"acct_timexpd"
-.LASF1045:
+.LASF1047:
 	.string	"contig_page_data"
 .LASF811:
 	.string	"signal_struct"
@@ -16029,7 +16044,7 @@ get_hash_id:
 	.string	"supers"
 .LASF355:
 	.string	"_count"
-.LASF1063:
+.LASF1065:
 	.string	"__stack_chk_fail"
 .LASF247:
 	.string	"pollfd"
@@ -16057,7 +16072,7 @@ get_hash_id:
 	.string	"sum_sleep_runtime"
 .LASF545:
 	.string	"kswapd"
-.LASF1054:
+.LASF1056:
 	.string	"strlen"
 .LASF525:
 	.string	"percpu_drift_mark"

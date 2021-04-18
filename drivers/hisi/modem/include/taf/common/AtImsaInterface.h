@@ -91,9 +91,6 @@ extern "C" {
 
 /* 当前ims注册失败网侧上报最大字符串长度为255 */
 #define IMSA_AT_REG_FAIL_CAUSE_STR_MAX_LEN              (256)
-
-#define AT_IMSA_USER_AGENT_STR_LEN          (16)
-
 /*****************************************************************************
   2 枚举定义
 *****************************************************************************/
@@ -148,8 +145,6 @@ enum AT_IMSA_MSG_TYPE_ENUM
 
     ID_AT_IMSA_IMS_IP_CAP_SET_REQ           = 0x001C,
     ID_AT_IMSA_IMS_IP_CAP_QRY_REQ           = 0x001D,
-
-    ID_AT_IMSA_USER_AGENT_CFG_SET_REQ      = 0x0023,
 
     /* IMSA->AT */
     ID_IMSA_AT_CIREG_SET_CNF                = 0x1001,                           /* _H2ASN_MsgChoice IMSA_AT_CIREG_SET_CNF_STRU */
@@ -215,7 +210,6 @@ enum AT_IMSA_MSG_TYPE_ENUM
     ID_IMSA_AT_EMC_PDN_DEACTIVATE_IND       = 0x1029,                           /* _H2ASN_MsgChoice IMSA_AT_EMC_PDN_DEACTIVATE_IND_STRU */
     ID_IMSA_AT_CALL_ALT_SRV_IND             = 0x102A,                           /* _H2ASN_MsgChoice IMSA_AT_CALL_ALT_SRV_IND_STRU */
 
-    ID_IMSA_AT_USER_AGENT_CFG_SET_CNF       = 0x1030,
     ID_AT_IMSA_MSG_BUTT
 };
 typedef  VOS_UINT32  AT_IMSA_MSG_TYPE_ENUM_UINT32;
@@ -2033,56 +2027,6 @@ typedef struct
     VOS_UINT32                              ulMsgId;                            /* _H2ASN_Skip */
     AT_APPCTRL_STRU                         stAppCtrl;
 } IMSA_AT_CALL_ALT_SRV_IND_STRU;
-
-/*****************************************************************************
- 结构名  : AT_IMSA_USER_AGENT_CFG_STRU
- 结构说明: User agent cfg信息结构体
-
- 修改历史      :
-  1.日    期   : 2017年08月17日
-    作    者   : m00217266
-    修改内容   : 新增结构
-*****************************************************************************/
-typedef struct
-{
-    VOS_UINT8                           aucPara1[AT_IMSA_USER_AGENT_STR_LEN + 1];
-    VOS_UINT8                           aucPara2[AT_IMSA_USER_AGENT_STR_LEN + 1];
-    VOS_UINT8                           aucPara3[AT_IMSA_USER_AGENT_STR_LEN + 1];
-    VOS_UINT8                           aucPara4[AT_IMSA_USER_AGENT_STR_LEN + 1];
-    VOS_UINT8                           aucPara5[AT_IMSA_USER_AGENT_STR_LEN + 1];
-    VOS_UINT8                           aucPara6[AT_IMSA_USER_AGENT_STR_LEN + 1];
-    VOS_UINT8                           aucReserved[2];
-} AT_IMSA_USER_AGENT_CFG_STRU;
-
-/*****************************************************************************
- 结构名  : AT_IMSA_USER_AGENT_CFG_SET_REQ_STRU
- 结构说明: 设置User agent cfg请求的结构体
-
- 修改历史      :
-  1.日    期   : 2017年08月17日
-    作    者   : m00217266
-    修改内容   : 新增结构
-*****************************************************************************/
-typedef struct
-{
-    VOS_MSG_HEADER                                                              /* _H2ASN_Skip */
-    VOS_UINT32                          ulMsgId;                                /* _H2ASN_Skip */
-    AT_APPCTRL_STRU                     stAppCtrl;
-
-    AT_IMSA_USER_AGENT_CFG_STRU         stUaCfgInfo;
-} AT_IMSA_USER_AGENT_CFG_SET_REQ_STRU;
-
-/*****************************************************************************
- 结构名  : IMSA_AT_USER_AGENT_CFG_SET_CNF_STRU
- 结构说明: 设置User agent cfg参数返回结果结构体
-
- 修改历史      :
-  1.日    期   : 2017年08月17日
-    作    者   : m00217266
-    修改内容   : 新增结构
-*****************************************************************************/
-typedef IMSA_AT_CNF_MSG_STRU IMSA_AT_USER_AGENT_CFG_SET_CNF_STRU;
-
 
 /*****************************************************************************
   4 宏定义

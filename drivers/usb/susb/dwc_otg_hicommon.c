@@ -326,14 +326,6 @@ int get_resource(struct otg_dev *dev)
 		ret = 0;
 	}
 
-	/*
-	 * get device usb support voltage check
-	 */
-	if(of_property_read_u32(base_dev->of_node, "usb_support_check_voltage", &(dev->check_voltage))){
-		usb_dbg("usb driver not usb_support_check_voltage!!!\n");
-		dev->check_voltage = 0;
-	}
-
 	if (!dev->usb_ahbif_base || !dev->pericrg_base || !dev->pctrl_reg_base) {
 		usb_err("get registers base address failed![a:%pK],[peri:%pK],[pctrl:%pK]\n", dev->usb_ahbif_base, dev->pericrg_base, dev->pctrl_reg_base);
 		return -ENXIO;
@@ -1060,10 +1052,6 @@ static int off_to_device(struct otg_dev *p)
 
 	/* disable usb core interrupt */
 	dwc_otg_disable_global_interrupts(dwc_otg_dev->core_if);
-
-	/*if the platform support,it need check voltage*/
-	if(p->usb_phy_ops->check_voltage)
-		p->usb_phy_ops->check_voltage(p);
 
 	/* Get charger type. */
 	detect_charger_type(p);

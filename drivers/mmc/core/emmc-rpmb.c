@@ -19,7 +19,7 @@ void emmc_get_rpmb_info(struct mmc_card *card, u8 *ext_csd)
 		int i;
 #ifdef CONFIG_HISI_MMC_RPMB_AUTO_RESIZE
 		struct device_node *np = NULL;
-		const char *value = NULL;
+		char *value;
 #endif
 
 		rpmb_config.rpmb_unit_size = MAX_RPMB_REGION_UNIT_SIZE;

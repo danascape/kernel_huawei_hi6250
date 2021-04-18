@@ -81,7 +81,6 @@ extern int lcdkit_jdi_nt36860_5p88_gamma_reg_read(struct hisi_fb_data_type* hisi
 extern void lcdkit_get_pdev(struct platform_device **pdev);
 extern void lcdkit_set_pdev(struct platform_device *pdev);
 extern int hostprocessing_read_ddic(uint8_t *out, struct lcdkit_dsi_panel_cmds *cmds, struct hisi_fb_data_type *hisifd, int max_out_size);
-extern int lcdkit_check_mipi_fifo_empty(char __iomem *dsi_base);
 
 struct lcdkit_vsp_vsn_voltage{
     u32 voltage;

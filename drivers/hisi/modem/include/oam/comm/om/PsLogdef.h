@@ -356,7 +356,6 @@ typedef enum
 /* 490  */      PS_FILE_ID_DH_R_DH_C,
 /* 491  */      PS_FILE_ID_DH_AES_UTIL_C,
 /* 492  */      PS_FILE_ID_SC_PERSEXERN_C,
-/* 493  */      PS_FILE_ID_SC_PERSNEW_C,
 /* 494  */      PS_FILE_ID_SC_IMEI_C,
 
                  PAM_FILE_ID_BUTT

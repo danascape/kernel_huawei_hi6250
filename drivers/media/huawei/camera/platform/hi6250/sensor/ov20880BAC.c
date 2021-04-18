@@ -411,10 +411,9 @@ int ov20880BAC_config(hwsensor_intf_t *si, void  *argp)
                     ret=-EINVAL;
                 }else{
                     ret = si->vtbl->power_down(si);
-                    if(0 != ret){
-                        cam_err("%s. power_down fail.", __func__);
+                    if(0 == ret){
+                        s_ov20880BAC_power_on = false;
                     }
-                    s_ov20880BAC_power_on = false;
                 }
             }
             /*lint -e455 -esym(455,*)*/

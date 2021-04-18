@@ -474,8 +474,7 @@ struct hi6522_device_info {
 #define IIN_LIMIT_OPTION_DEFAULT        (4)
 #define DPM_VALID_CHECK_COUNT           (5)
 #define ICO_HIG_THR_COUNT_MAX           (4)
-#define BAT_TEMP_50                     (50)
-#define BAT_TEMP_0                      (0)
+
 #define HIZ_IIN_FLAG_TRUE                (1)
 #define HIZ_IIN_FLAG_FALSE               (0)
 

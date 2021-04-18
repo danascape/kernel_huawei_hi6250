@@ -39,8 +39,6 @@
 #include "clock.h"
 
 /*lint -e429 -e514 -e574*/
-#define USB_REQ_SET_VOLUME 0x2
-
 struct usbaudio_pcm_cfg {
 	u64 formats;			/* ALSA format bits */
 	unsigned int channels;		/* # channels */
@@ -992,40 +990,10 @@ bool is_special_usbid(u32 usb_id)
 	return false;
 }
 
-static void _customsized_headset_volume_set(struct usb_device *dev, u32 usb_id)
-{
-	int i;
-	int ret;
-	char result = 0;
-
-	for (i = 0; i < ARRAY_SIZE(customsized_usb_ids); i++) {
-		if (usb_id == customsized_usb_ids[i]) {
-			pr_info("huawei headset 0x%x\n", usb_id);
-			ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), /*lint !e648 */
-				USB_REQ_SET_VOLUME,
-				USB_DIR_IN | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-				0, 0, &result, 1, 3000);
-			if (ret > 0) {
-				pr_info("result 0x%02x\n", result);
-				if (1 == result)
-					pr_info("volume set success\n");
-				else
-					pr_info("do not set volume\n");
-			} else {
-				pr_err("control msg send fail :%d\n", ret);
-			}
-			break;
-		}
-	}
-}
-
 bool controller_switch(struct usb_device *dev, u32 usb_id, struct usb_host_interface *ctrl_intf, int ctrlif, struct usbaudio_pcms *pcms)
 {
 	int ret = 0;
 	if ((!hisi_usb_using_hifi_usb(dev)) && is_usbaudio_device(dev) && !is_special_usbid(usb_id) && is_match_hifi_format(dev, usb_id, ctrl_intf, ctrlif, pcms)) {
-		/* set volume for huawei headset */
-		_customsized_headset_volume_set(dev, usb_id);
-
 		ret = usbaudio_nv_check();
 		if (ret == 0) {
 			/* Some special device need reset power */

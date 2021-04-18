@@ -348,10 +348,9 @@ ov12870E3_config(
 		if (s_ov12870E3_power_on)
 		{
 			ret = si->vtbl->power_down(si);
-            if (ret != 0) {
-                cam_err("%s. power_down fail.", __func__);
+            if (ret == 0) {
+               s_ov12870E3_power_on = false;
             }
-            s_ov12870E3_power_on = false;
 		}
 		/*lint -e455 -esym(455,*)*/
         mutex_unlock(&ov12870E3_power_lock);

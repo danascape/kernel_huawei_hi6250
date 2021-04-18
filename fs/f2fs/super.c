@@ -1397,9 +1397,6 @@ static void f2fs_put_super(struct super_block *sb)
 	/* our cp_error case, we can wait for any writeback page */
 	f2fs_flush_merged_bios(sbi);
 
-	/* the print info of sbi is destroyed from here */
-	sbi->print_sbi_safe = false;
-
 	iput(sbi->node_inode);
 	iput(sbi->meta_inode);
 
@@ -2660,6 +2657,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
 	return 0;
 }
 
+int f2fs_fill_super_done = 0;
 static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
 {
 	struct f2fs_sb_info *sbi;
@@ -2682,7 +2680,6 @@ try_onemore:
 	sbi = kzalloc(sizeof(struct f2fs_sb_info), GFP_KERNEL);
 	if (!sbi)
 		return -ENOMEM;
-	sbi->print_sbi_safe = false;
 
 #ifdef CONFIG_F2FS_STAT_FS
 	sbi->bd_info = kzalloc(sizeof(struct f2fs_bigdata_info), GFP_KERNEL);
@@ -2879,9 +2876,6 @@ try_onemore:
 
 	f2fs_join_shrinker(sbi);
 
-	/* all the print info of sbi is created and ready now */
-	sbi->print_sbi_safe = true;
-
 	/* if there are nt orphan nodes free them */
 	err = recover_orphan_inodes(sbi);
 	if (err)
@@ -2997,6 +2991,7 @@ skip_recovery:
 				cur_cp_version(F2FS_CKPT(sbi)));
 	f2fs_update_time(sbi, CP_TIME);
 	f2fs_update_time(sbi, REQ_TIME);
+	f2fs_fill_super_done = 1;
 	return 0;
 
 free_kobj:

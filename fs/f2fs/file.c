@@ -377,11 +377,7 @@ flush_out:
 	clear_inode_flag(inode, FI_UPDATE_WRITE);
 	if (S_ISDIR(inode->i_mode) && !is_sbi_flag_set(sbi, SBI_IS_DIRTY))
 		goto out;
-#ifdef CONFIG_F2FS_CLOSE_FUA
-	if (!atomic || blk_flush_async_support(sbi->sb->s_bdev)) {
-#else
 	if (!atomic) {
-#endif
 		flush_begin = local_clock();
 		ret = f2fs_issue_flush(sbi);
 		flush_end = local_clock();

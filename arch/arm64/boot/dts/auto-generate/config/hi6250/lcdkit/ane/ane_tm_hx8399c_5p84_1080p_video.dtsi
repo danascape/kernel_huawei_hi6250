@@ -176,7 +176,7 @@
 		pinctrl-1 = <&gpio015_pmx_idle &gpio206_pmx_idle &gpio020_pmx_idle &gpio058_pmx_idle &gpio067_pmx_idle &gpio015_cfg_idle &gpio206_cfg_idle &gpio020_cfg_idle &gpio058_cfg_idle &gpio067_cfg_idle>;
 		pinctrl-names = "default","idle";
 		status = "disabled";
-		hw,lcdkit-sbl-support = <0>;
+		hw,lcdkit-sbl-support = <1>;
 		hw,lcdkit-gamma-support = <1>;
 		hw,lcdkit-gmp-support = <0>;
 		hw,lcdkit-color-temp-support = <1>;

@@ -60,7 +60,6 @@ static struct work_struct redetect_work;
 static const char *str_soft_para = "softiron_parameter";
 
 int akm_cal_algo;
-int mag_threshold_for_als_calibrate = 0;
 int akm_current_x_fac = 0;
 int akm_current_y_fac = 0;
 int akm_current_z_fac = 0;
@@ -75,14 +74,11 @@ extern int avago_rgb_flag;
 extern int txc_ps_flag;
 extern int ams_tmd2620_ps_flag;
 extern int avago_apds9110_ps_flag;
-extern int ltr578_ps_external_ir_calibrate_flag;
 extern int g_iom3_state;
 extern int iom3_power_state;
 extern char *sar_calibrate_order;
 extern int send_para_flag;
 extern struct charge_device_ops *g_ops;
-extern struct ps_external_ir_param ps_external_ir_param;
-extern struct ps_extend_platform_data ps_extend_platform_data;
 #ifdef CONFIG_HUAWEI_CHARGER_SENSORHUB
 extern irqreturn_t fsa9685_irq_sh_handler(int irq, void *dev_id);
 #endif
@@ -672,11 +668,6 @@ static void read_mag_data_from_dts(struct device_node *dn)
 			mag_data.charger_trigger);
 	}
 
-	if (of_property_read_u32(dn, "threshold_for_als_calibrate", &temp))
-		hwlog_err("%s:read mag threshold_for_als_calibrate fail\n", __func__);
-	else
-		mag_threshold_for_als_calibrate =  temp;
-
 	if (of_property_read_u32(dn, "akm_cal_algo", &temp)) {
 		hwlog_err("%s:read mag akm_cal_algo fail\n", __func__);
 		akm_cal_algo = 0;
@@ -823,17 +814,6 @@ static void read_ps_data_from_dts(struct device_node *dn)
 			  temp);
 	}
 
-	if (!strncmp(sensor_chip_info[PS], "huawei,ltr578_ps",
-	     sizeof("huawei,ltr578_ps"))) {
-		if (of_property_read_u32(dn, "external_ir", &temp))
-			hwlog_err("%s:read mag min_proximity_value fail\n", __func__);
-		else if(temp == 1) {
-			ltr578_ps_external_ir_calibrate_flag = 1;
-			hwlog_err("%s:ltr578_ps_external_ir_calibrate_flag  suc,%d \n", __func__,
-			  temp);
-		}
-	}
-
 	temp = of_get_named_gpio(dn, "gpio_int1", 0);
 	if (temp < 0)
 		hwlog_err("%s:read gpio_int1 fail\n", __func__);
@@ -842,119 +822,23 @@ static void read_ps_data_from_dts(struct device_node *dn)
 
 	if (of_property_read_u32(dn, "min_proximity_value", &temp))
 		hwlog_err("%s:read mag min_proximity_value fail\n", __func__);
-	else {
+	else
 		ps_data.min_proximity_value = temp;
-		ps_external_ir_param.internal_ir_min_proximity_value = temp;
-	}
 
 	if (of_property_read_u32(dn, "pwindows_value", &temp))
 		hwlog_err("%s:read pwindows_value fail\n", __func__);
-	else {
+	else
 		ps_data.pwindows_value = temp;
-		ps_external_ir_param.internal_ir_pwindows_value = temp;
-	}
 
 	if (of_property_read_u32(dn, "pwave_value", &temp))
 		hwlog_err("%s:read pwave_value fail\n", __func__);
-	else {
+	else
 		ps_data.pwave_value = temp;
-		ps_external_ir_param.internal_ir_pwave_value = temp;
-	}
 
 	if (of_property_read_u32(dn, "threshold_value", &temp))
 		hwlog_err("%s:read threshold_value fail\n", __func__);
-	else {
+	else
 		ps_data.threshold_value = temp;
-		ps_external_ir_param.internal_ir_threshold_value = temp;
-	}
-
-	if (of_property_read_u32(dn, "external_ir", &temp))
-		hwlog_err("%s:read mag min_proximity_value fail\n", __func__);
-	else if(temp == 1) {
-		ps_external_ir_param.external_ir = temp;
-		hwlog_err("%s:external_ir set value\n", __func__);
-
-		if (of_property_read_u32(dn, "external_ir_min_proximity_value", &temp))
-			hwlog_err("%s:read mag min_proximity_value fail\n", __func__);
-		else
-			ps_external_ir_param.external_ir_min_proximity_value = temp;
-
-		if (of_property_read_u32(dn, "external_ir_pwindows_value", &temp))
-			hwlog_err("%s:read pwindows_value fail\n", __func__);
-		else
-			ps_external_ir_param.external_ir_pwindows_value = temp;
-
-		if (of_property_read_u32(dn, "external_ir_pwave_value", &temp))
-			hwlog_err("%s:read pwave_value fail\n", __func__);
-		else
-			ps_external_ir_param.external_ir_pwave_value = temp;
-
-		if (of_property_read_u32(dn, "external_ir_threshold_value", &temp))
-			hwlog_err("%s:read threshold_value fail\n", __func__);
-		else
-			ps_external_ir_param.external_ir_threshold_value = temp;
-
-		if (of_property_read_u32(dn, "external_ir_enable_gpio", &temp))
-			hwlog_err("%s:read threshold_value fail\n", __func__);
-		else
-			ps_external_ir_param.external_ir_enable_gpio = temp;
-
-		if (of_property_read_u32(dn, "external_ir_avg_algo", &temp))
-			hwlog_err("%s:read external_ir_avg_algo fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_avg_algo = temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_noise_max", &temp))
-			hwlog_err("%s:read external_ir_calibrate_noise_max fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_noise_max = temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_noise_min", &temp))
-			hwlog_err("%s:read external_ir_calibrate_noise_min fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_noise_min = temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_far_threshold_max", &temp))
-			hwlog_err("%s:read external_ir_calibrate_far_threshold_max fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_far_threshold_max = temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_far_threshold_min", &temp))
-			hwlog_err("%s:read external_ir_calibrate_far_threshold_min fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_far_threshold_min = temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_near_threshold_max", &temp))
-			hwlog_err("%s:read external_ir_calibrate_near_threshold_max fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_near_threshold_max = temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_near_threshold_min", &temp))
-			hwlog_err("%s:read external_ir_calibrate_near_threshold_min fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_near_threshold_min = temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_pwindows_max", &temp))
-			hwlog_err("%s:read external_ir_calibrate_pwindows_max fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_pwindows_max = temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_pwindows_min", &temp))
-			hwlog_err("%s:read external_ir_calibrate_pwindows_min fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_pwindows_min= temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_pwave_max", &temp))
-			hwlog_err("%s:read external_ir_calibrate_pwave_max fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_pwave_max = temp;
-
-		if (of_property_read_u32(dn, "external_ir_calibrate_pwave_min", &temp))
-			hwlog_err("%s:read external_ir_calibrate_pwave_min fail\n", __func__);
-		else
-			ps_extend_platform_data.external_ir_calibrate_pwave_min = temp;
-
-	}
 
 	if (of_property_read_u32(dn, "rdata_under_sun", &temp))
 		hwlog_err("%s:read rdata_under_sun fail\n", __func__);
@@ -1102,6 +986,12 @@ static void read_capprox_data_from_dts(struct device_node *dn)
 			 0x000f000C, 0x007a8000};
 	read_chip_info(dn, CAP_PROX);
 
+	temp = of_get_named_gpio(dn, "gpio_int", 0);
+	if (temp < 0)
+		hwlog_err("%s:read gpio_int1 fail\n", __func__);
+	else
+		sar_pdata.gpio_int = (uint8_t) temp;
+
 	if (of_property_read_u32(dn, "poll_interval", &temp))
 		hwlog_err("%s:read poll_interval fail\n", __func__);
 	else
@@ -1174,10 +1064,6 @@ static void read_capprox_data_from_dts(struct device_node *dn)
 		}
 		hwlog_info("  modem:%u %u %u\n", *threshold_to_modem, *(threshold_to_modem+1), *(threshold_to_modem+2));
 	}else if (!strncmp(sensor_chip_info[CAP_PROX], "huawei,semtech-sx9323", strlen("huawei,semtech-sx9323"))){
-		if (of_property_read_u32(dn, "stage_number", &temp))
-			sar_pdata.stage_num = 1;
-		else
-			sar_pdata.stage_num = (uint8_t)temp;
 		if (of_property_read_u16(dn, "to_ap_threshold", &threshold_to_ap))
 			sar_pdata.sar_datas.semteck_data.threshold_to_ap = 0xC8;
 		else
@@ -1191,20 +1077,12 @@ static void read_capprox_data_from_dts(struct device_node *dn)
 		hwlog_info("read threshold_to_modem %u %u %u\n", *threshold_to_modem, *(threshold_to_modem+1), *(threshold_to_modem+7));
 
 		init_reg_val = sar_pdata.sar_datas.semteck_data.init_reg_val;
-		if(sar_pdata.stage_num == 2){//sar double stage
-		       if (of_property_read_u32_array(dn, "init_reg_val", init_reg_val, 17)) {//sar init param num
-			    hwlog_err("%s:read init_reg_val fail\n", __func__);
-			    memcpy(init_reg_val, init_reg_val_default, sizeof(init_reg_val_default));
-		       }
-		       hwlog_info("init_reg_val:%8x %8x\n", *init_reg_val, *(init_reg_val+16));//print sar last init param
+		if (of_property_read_u32_array(dn, "init_reg_val", init_reg_val, 6)) {
+			hwlog_err("%s:read init_reg_val fail\n", __func__);
+			memcpy(init_reg_val, init_reg_val_default, sizeof(init_reg_val_default));
 		}
-		else{
-		       if (of_property_read_u32_array(dn, "init_reg_val", init_reg_val, 6)) {
-		            hwlog_err("%s:read init_reg_val fail\n", __func__);
-		            memcpy(init_reg_val, init_reg_val_default, sizeof(init_reg_val_default));
-		       }
-		       hwlog_info("init_reg_val:%8x %8x\n", *init_reg_val, *(init_reg_val+5));
-		}
+		hwlog_info("init_reg_val:%8x %8x\n", *init_reg_val, *(init_reg_val+5));
+
 		if (of_property_read_u32(dn, "ph", &ph))
 		{
 			sar_pdata.sar_datas.semteck_data.ph= 0x2f;
@@ -1216,24 +1094,12 @@ static void read_capprox_data_from_dts(struct device_node *dn)
 			hwlog_info("%s:read ph:0x%x\n",__func__,sar_pdata.sar_datas.semteck_data.ph);
 		}
 		calibrate_thred = sar_pdata.sar_datas.semteck_data.calibrate_thred;
-		if (sar_pdata.stage_num == 2){//sar double stage
-		        if (of_property_read_u16_array(dn, "calibrate_thred", calibrate_thred, 4)) {//sar calibrate_thred num
-			     hwlog_err("%s:read calibrate_thred fail\n", __func__);
-			     *calibrate_thred = 0;//sar calibrate_thred0 init
-			     *(calibrate_thred+1) = 0;//sar calibrate_thred1 init
-			     *(calibrate_thred+2) = 0;//sar calibrate_thred2 init
-			     *(calibrate_thred+3) = 0;//sar calibrate_thred3 init
-		        }
-		        hwlog_info("calibrate_thred:%d %d %d %d\n", *calibrate_thred, *(calibrate_thred+1),*(calibrate_thred+2),*(calibrate_thred+3));//print calibrate_thred
+		if (of_property_read_u16_array(dn, "calibrate_thred", calibrate_thred, 2)) {
+			hwlog_err("%s:read calibrate_thred fail\n", __func__);
+			*calibrate_thred = 0;
+			*(calibrate_thred+1) = 0;
 		}
-		else{
-		        if (of_property_read_u16_array(dn, "calibrate_thred", calibrate_thred, 2)) {
-			     hwlog_err("%s:read calibrate_thred fail\n", __func__);
-			     *calibrate_thred = 0;
-			     *(calibrate_thred+1) = 0;
-		        }
-		        hwlog_info("calibrate_thred:%d %d\n", *calibrate_thred, *(calibrate_thred+1));
-		}
+		hwlog_info("calibrate_thred:%d %d\n", *calibrate_thred, *(calibrate_thred+1));
 	}
 	read_sensorlist_info(dn, CAP_PROX);
 }

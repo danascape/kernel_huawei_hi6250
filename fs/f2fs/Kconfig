@@ -16,19 +16,6 @@ config F2FS_FS
 
 	  If unsure, say N.
 
-config F2FS_CLOSE_FUA
-	bool "F2FS closes FUA to improve performance for atomic write"
-	depends on F2FS_FS
-	default n
-	help
-	  Close FUA to make flush reduce work correctly, which can improve
-	  performance of atomic write. This should only be used in poor
-	  phone which requires performance more than stability. Otherwise,
-	  FUA should keep open to ensure stability of atomic write all the
-	  time.
-
-	  If unsure, say N.
-
 config F2FS_STAT_FS
 	bool "F2FS Status Information"
 	depends on F2FS_FS && DEBUG_FS

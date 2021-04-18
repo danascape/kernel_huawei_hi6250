@@ -2260,10 +2260,7 @@ static int hi6522_input_current_optimize(struct ico_input *input, struct ico_out
     struct hi6522_device_info *di = g_hi6522_dev;
     int bat_voltage = hisi_battery_voltage();
     int bat_exist = is_hisi_battery_exist();
-    int bat_temp = hisi_battery_temperature();
     int avg_voltage = 0;
-    int ret = 0;
-    unsigned int state = 0;
 
     if((di == NULL) || (input == NULL) || (output == NULL))
     {
@@ -2271,17 +2268,6 @@ static int hi6522_input_current_optimize(struct ico_input *input, struct ico_out
     }
     if((!bat_exist) || (input->charger_type != CHARGER_TYPE_STANDARD))
     {
-        return -1;
-    }
-    ret = hi6522_get_charge_state(&state);
-    if(ret < 0)
-    {
-        SCHARGER_ERR("[%s]:get_charge_state fail!!\n",__func__);
-        return -1;
-    }
-    if(bat_temp > BAT_TEMP_50 || bat_temp < BAT_TEMP_0 || (state & CHAGRE_STATE_CHRG_DONE))
-    {
-        SCHARGER_ERR("[%s]:batt_temp=%d,charge_state=%d\n",__func__,bat_temp,state);
         return -1;
     }
     avg_voltage = mt_battery_average_method(&batteryVoltageBuffer[0],bat_voltage);

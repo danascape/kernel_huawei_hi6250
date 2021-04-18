@@ -2667,8 +2667,6 @@ VOS_UINT32 AT_HandleFacAuthPubKeyExCmd(
     VOS_UINT32                          ulResult;
     VOS_UINT32                          ulFirstParaVal;
     VOS_UINT32                          ulSecParaVal;
-    VOS_UINT32                          ulTimerName;
-    VOS_UINT32                          ulTempIndex;
     VOS_UINT16                          usCmdlen;
     VOS_UINT16                          usPos;
     VOS_UINT16                          usLoop;
@@ -2679,11 +2677,6 @@ VOS_UINT32 AT_HandleFacAuthPubKeyExCmd(
     VOS_UINT16                          usSecondParaLen;
     VOS_UINT16                          usThirdParaLen;
     VOS_INT8                            cRet;
-
-    ulTempIndex  = (VOS_UINT32)ucIndex;
-    ulTimerName  = AT_AUTH_PUBKEY_TIMER;
-    ulTimerName |= AT_INTERNAL_PROCESS_TYPE;
-    ulTimerName |= (ulTempIndex<<12);
 
     pstAuthPubKeyCtx = AT_GetAuthPubkeyExCmdCtxAddr();
 
@@ -2767,7 +2760,8 @@ VOS_UINT32 AT_HandleFacAuthPubKeyExCmd(
         PS_MEM_FREE(WUEPS_PID_AT, pucDataPara);
         At_FormatResultData(ucIndex, AT_CME_INCORRECT_PARAMETERS);
         AT_ClearAuthPubkeyCtx();
-        (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+        (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
         return AT_SUCCESS;
     }
 
@@ -2783,7 +2777,8 @@ VOS_UINT32 AT_HandleFacAuthPubKeyExCmd(
         PS_MEM_FREE(WUEPS_PID_AT, pucDataPara);
         At_FormatResultData(ucIndex, AT_CME_INCORRECT_PARAMETERS);
         AT_ClearAuthPubkeyCtx();
-        (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+        (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
         return AT_SUCCESS;
     }
 
@@ -2794,7 +2789,8 @@ VOS_UINT32 AT_HandleFacAuthPubKeyExCmd(
         PS_MEM_FREE(WUEPS_PID_AT, pucDataPara);
         At_FormatResultData(ucIndex, AT_CME_INCORRECT_PARAMETERS);
         AT_ClearAuthPubkeyCtx();
-        (VOS_VOID)AT_StopRelTimer(ulTimerName, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+        (VOS_VOID)AT_StopRelTimer(AT_AUTH_PUBKEY_TIMER, &(pstAuthPubKeyCtx->hAuthPubkeyProtectTimer));
+
         return AT_SUCCESS;
     }
 
@@ -2802,12 +2798,12 @@ VOS_UINT32 AT_HandleFacAuthPubKeyExCmd(
     g_stATParseCmd.ucCmdOptType = AT_CMD_OPT_SET_PARA_CMD;
     gucAtCmdFmtType = AT_EXTEND_CMD_TYPE;
 
-    printk(KERN_ERR "\n AT_HandleFacAuthPubKeyExCmd enter \n");
+    printk(KERN_ERR "\n AT_HandleFacAuthPub***ExCmd enter (AT^FACAUTHPUB***EX) %u \n", VOS_GetSlice());
 
     ulResult = AT_SetFacAuthPubkeyExPara(ucIndex, ulFirstParaVal, ulSecParaVal, usThirdParaLen, (pucData + usSecCommaPos));
     if (AT_WAIT_ASYNC_RETURN != ulResult)
     {
-        printk(KERN_ERR "\n AT_HandleFacAuthPubKeyExCmd return OK \n");
+        printk(KERN_ERR "\n AT_HandleFacAuthPub***ExCmd return OK (AT^FACAUTHPUB***EX) %u \n", VOS_GetSlice());
 
         At_FormatResultData(ucIndex, ulResult);
     }
@@ -2924,12 +2920,12 @@ VOS_UINT32 AT_HandleSimLockDataWriteCmd(
     g_stATParseCmd.ucCmdOptType = AT_CMD_OPT_SET_PARA_CMD;
     gucAtCmdFmtType = AT_EXTEND_CMD_TYPE;
 
-    printk(KERN_ERR "\n AT_HandleSimLockDataWriteCmd enter\n");
+    printk(KERN_ERR "\n AT_HandleSimLockDataW***Cmd enter (AT^SIMLOCKDATAW***) %u \n", VOS_GetSlice());
 
     ulResult = AT_SetSimlockDataWritePara(ucIndex, pstSimlockDataWrite);
     if (AT_WAIT_ASYNC_RETURN != ulResult)
     {
-        printk(KERN_ERR "\n AT_HandleSimLockDataWriteCmd return OK\n");
+        printk(KERN_ERR "\n AT_HandleSimLockDataW***Cmd return OK (AT^SIMLOCKDATAW***) %u \n", VOS_GetSlice());
 
         At_FormatResultData(ucIndex, ulResult);
     }

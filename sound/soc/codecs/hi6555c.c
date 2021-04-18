@@ -58,9 +58,7 @@
 #include <linux/hisi/hilog.h>
 #include <soc_crgperiph_interface.h>
 #include <linux/pm_runtime.h>
-#ifdef CONFIG_HUAWEI_DSM
-#include <dsm_audio/dsm_audio.h>
-#endif
+
 /* HI6555C CODEC */
 static struct snd_soc_codec *g_codec;
 
@@ -92,10 +90,8 @@ static inline void hi6555c_irqs_clr(unsigned int irqs);
 static inline void hi6555c_irqs_mask_clr(unsigned int irqs);
 
 static int classd_voltage = CLASSD_4500mV_VOL;
-static bool HSLR_GAIN_RECONFIGURE_FLAG = false;
+
 #define HAC_ENABLE                   1
-#define HS_ENABLE                    1
-#define HS_DISABLE                   0
 #define GPIO_PULL_UP                 1
 #define GPIO_PULL_DOWN               0
 #define CLASSK_MODE_CHANGE_DELAY    1000  //units:us
@@ -110,26 +106,6 @@ static int hac_switch = 0;
 static int classk_en_gpio = CLASSK_GPIO_NUM_DEFAULT;
 
 static int classk_mode = CLASSK_MODE0;
-
-#define MBHC_TYPE_FAIL_MAX_TIMES             (5)
-#define MBHC_TYPE_REPORT_MAX_TIMES           (20)
-static unsigned int mbhc_type_fail_times = 0;
-static unsigned int mbhc_type_report_times = MBHC_TYPE_REPORT_MAX_TIMES;
-
-static void hi6555_mbhc_dmd_fail_report(int adc)
-{
-	mbhc_type_fail_times ++;
-	if ((mbhc_type_fail_times >= MBHC_TYPE_FAIL_MAX_TIMES) && (mbhc_type_report_times > 0)) {
-		mbhc_type_fail_times = 0;
-		mbhc_type_report_times --;
-#ifdef CONFIG_HUAWEI_DSM
-		audio_dsm_report_info(AUDIO_CODEC, DSM_HI6402_MBHC_HS_ERR_TYPE, "abnormal headset-type [%s]! adc = [%d], total times = [%d]\n", (adc < 2650 ? "invert-hs":"lineout"), adc,
-							(MBHC_TYPE_REPORT_MAX_TIMES - mbhc_type_report_times)*MBHC_TYPE_FAIL_MAX_TIMES);
-#endif
-	}
-	return;
-}
-
 /*****************************************************************************
  *
  * CODEC REGISTER OPERATION AREA BEGIN
@@ -563,67 +539,6 @@ static int hac_switch_put(struct snd_kcontrol *kcontrol,
 /*****************************************************************************
  *
  * HAC AREA END
- *
- *****************************************************************************/
- /*****************************************************************************
- *
- * HS AREA BEGIN
- *
- *****************************************************************************/
-static int hs_gpio_switch(int hs_cmd)
-{
-	struct hi6555c_priv *priv = snd_soc_codec_get_drvdata(g_codec);
-
-	if(priv == NULL) {
-		return 0;
-	}
-	if (!gpio_is_valid(priv->hs_en_gpio)) {
-		logd("Failed to get the hs gpio");
-		return 0;
-	}
-	gpio_set_value(priv->hs_en_gpio, hs_cmd);
-
-	return hs_cmd;
-}
-static const char * const hs_switch_text[] = {"OFF", "ON"};
-
-static const struct soc_enum hs_switch_enum[] = {
-	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(hs_switch_text), hs_switch_text),
-};
-static int hs_switch_get(struct snd_kcontrol *kcontrol,
-					struct snd_ctl_elem_value *ucontrol)
-{
-	struct hi6555c_priv *priv = snd_soc_codec_get_drvdata(g_codec);
-
-	if (NULL == kcontrol || NULL == ucontrol || NULL == priv) {
-		loge("input pointer is null\n");
-		return 0;
-	}
-
-	ucontrol->value.integer.value[0] = priv->hs_en_value;
-
-	return 0;
-}
-
-static int hs_switch_put(struct snd_kcontrol *kcontrol,
-					struct snd_ctl_elem_value *ucontrol)
-{
-	int ret = 0;
-	struct hi6555c_priv *priv = snd_soc_codec_get_drvdata(g_codec);
-
-	if (NULL == kcontrol || NULL == ucontrol || NULL == priv) {
-		loge("input pointer is null\n");
-		return ret;
-	}
-
-	priv->hs_en_value = ucontrol->value.integer.value[0];
-	ret = hs_gpio_switch(priv->hs_en_value);
-
-	return ret;
-}
-  /*****************************************************************************
- *
- * HS AREA END
  *
  *****************************************************************************/
 /*****************************************************************************
@@ -1575,8 +1490,6 @@ static const struct snd_kcontrol_new hi6555c_snd_controls[] = {
 
 	SOC_ENUM_EXT("CLASSK_MODE",
 			classk_mode_enum[0], classk_mode_get, classk_mode_put),
-	SOC_ENUM_EXT("HS_SWTICH",
-			hs_switch_enum[0], hs_switch_get, hs_switch_put),
 
 	SOC_SINGLE_EXT("CLASSD_VOLTAGE_CONFIG", HI6555C_DDR_CODEC_VIR2_ADDR, 0, 0xffff, 0,
 			classd_voltage_get, classd_voltage_put),
@@ -1728,12 +1641,12 @@ static int hi6555c_smt_hslr_pd_outdrv_power_mode_event(struct snd_soc_dapm_widge
 {
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
-		if (HSLR_GAIN_RECONFIGURE_FLAG) {
-			hi6555c_reg_write(g_codec, HI6555C_SMT_CODEC_ANA_RW17_ADDR, 0x5C);
-			hi6555c_reg_write(g_codec, HI6555C_SMT_CODEC_ANA_RW18_ADDR, 0x5C);
-		} else {
+		if (classk_en_gpio < 0) {
 			hi6555c_reg_write(g_codec, HI6555C_SMT_CODEC_ANA_RW17_ADDR, 0x58);
 			hi6555c_reg_write(g_codec, HI6555C_SMT_CODEC_ANA_RW18_ADDR, 0x58);
+		} else {
+			hi6555c_reg_write(g_codec, HI6555C_SMT_CODEC_ANA_RW17_ADDR, 0x5C);
+			hi6555c_reg_write(g_codec, HI6555C_SMT_CODEC_ANA_RW18_ADDR, 0x5C);
 		}
 		hi6555c_clr_reg_bits(HI6555C_SMT_CODEC_ANA_RW03_ADDR,
 				(0x01 << HI6555C_SMT_HSR_PD_BIT_START)|(0x01 << HI6555C_SMT_HSL_PD_BIT_START));
@@ -1743,24 +1656,6 @@ static int hi6555c_smt_hslr_pd_outdrv_power_mode_event(struct snd_soc_dapm_widge
 		hi6555c_set_reg_bits(HI6555C_SMT_CODEC_ANA_RW03_ADDR,
 				(0x01 << HI6555C_SMT_HSR_PD_BIT_START)|(0x01 << HI6555C_SMT_HSL_PD_BIT_START));
 		msleep(100);
-		break;
-	default:
-		loge("event=%d\n", event);
-		break;
-	}
-
-	return 0;
-}
-
-static int hi6555c_smt_spk_pd_outdrv_power_mode_event(struct snd_soc_dapm_widget *w,
-		struct snd_kcontrol *kcontrol, int event)
-{
-	switch (event) {
-	case SND_SOC_DAPM_PRE_PMU:
-		hi6555c_reg_write(g_codec, HI6555C_SMT_CODEC_ANA_RW17_ADDR, 0x58);
-		hi6555c_reg_write(g_codec, HI6555C_SMT_CODEC_ANA_RW18_ADDR, 0x58);
-		break;
-	case SND_SOC_DAPM_POST_PMD:
 		break;
 	default:
 		loge("event=%d\n", event);
@@ -1994,13 +1889,6 @@ int hi6555c_fm_mode_event(struct snd_soc_dapm_widget *w,
 
 static void hi6555c_reuse(struct snd_soc_codec *codec)
 {
-	struct hi6555c_priv *priv = snd_soc_codec_get_drvdata(codec);
-
-	if (NULL == priv) {
-		loge("%s:priv is NULL!", __FUNCTION__);
-		return;
-	}
-
 	/* asp codec reset leave */
 	hi6555c_set_reg_bits((PAGE_ASPCFG + ASP_CFG_SOFT_RST_REG_OFFSET), ASP_CODEC_SOFT_RST_VALUE);
 
@@ -2022,18 +1910,11 @@ static void hi6555c_reuse(struct snd_soc_codec *codec)
 	hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x34), 0x1);
 	hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x38), 0x1);
 
-	/* I2S 2 Pin multiplexing or not, base on dts config */
-	if(priv->i2s2_disabled) {
-	    hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x3c), 0x0);
-	    hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x40), 0x0);
-	    hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x44), 0x0);
-	    hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x48), 0x0);
-	} else {
-	    hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x3c), 0x1);
-	    hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x40), 0x1);
-	    hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x44), 0x1);
-	    hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x48), 0x1);
-	}
+	/* I2S 2 Pin multiplexing*/
+	hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x3c), 0x1);
+	hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x40), 0x1);
+	hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x44), 0x1);
+	hi6555c_reg_write(codec, (PAGE_AO_IOC + 0x48), 0x1);
 
 	/* I2S 1 Pin multiplexing */
 	hi6555c_reg_write(codec, (PAGE_IOC + 0x20), 0x3);
@@ -3637,15 +3518,6 @@ static const struct snd_soc_dapm_widget hi6555c_dapm_widgets[] = {
 				hi6555c_smt_hslr_pd_outdrv_power_mode_event,
 				(SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD)),
 
-		SND_SOC_DAPM_OUT_DRV_E("SMT_SPK PGA",
-				HI6555C_DDR_CODEC_VIR1_ADDR,
-				DDR_CODEC_BIT9,
-				0/*not INVERT */,
-				NULL,
-				0,
-				hi6555c_smt_spk_pd_outdrv_power_mode_event,
-				(SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD)),
-
 		SND_SOC_DAPM_OUT_DRV_E("PMU_CLASSD_PU PGA",
 				SND_SOC_NOPM,
 				0,
@@ -3719,8 +3591,7 @@ static const struct snd_soc_dapm_route hi6555c_route_map[] = {
 	{"SMT_MIXOUT_HSLR_PD MIXER",              "DACLR",               "SMT_MIXEROUT_DAC_PATH DAC"},
 	{"SMT_MIXOUT_HSLR_PD MIXER",              "LINEINLR",            "SMT_MIXEROUT_LINEIN_PATH DAC"},
 	{"SMT_HSLR_PD PGA",                               NULL,                    "SMT_MIXOUT_HSLR_PD MIXER"},
-	{"SMT_SPK PGA",                               NULL,                    "SMT_MIXOUT_HSLR_PD MIXER"},
-	{"CLASSK SWITCH",                              "ON",                    "SMT_SPK PGA"},
+	{"CLASSK SWITCH",                              "ON",                    "SMT_HSLR_PD PGA"},
 	{"SPK",                                      NULL,                    "CLASSK SWITCH"},
 	{"SMT_HP_LR OUTPUT",                              NULL,                    "SMT_HSLR_PD PGA"},
 
@@ -4396,16 +4267,10 @@ static void hs_plug_in_detect_func(struct snd_soc_codec *codec)
 	} else if (hkadc_value >= HS_MAX_VOLTAGE) {
 		priv->hs_status = HI6555C_JACK_BIT_LINEOUT;
 		logi("headphone is lineout, saradc=%d\n", hkadc_value);
-#ifdef CONFIG_HUAWEI_DSM
-		hi6555_mbhc_dmd_fail_report(hkadc_value);
-#endif
 #endif
 	} else {
 		priv->hs_status = HI6555C_JACK_BIT_HEADSET_NO_MIC;
 		logi("headphone is set reserve 4 pole temparily second check, saradc=%d\n", hkadc_value);
-#ifdef CONFIG_HUAWEI_DSM
-		hi6555_mbhc_dmd_fail_report(hkadc_value);
-#endif
 	}
 
 	hi6555c_irqs_clr(IRQ_PLUG_OUT);
@@ -4947,10 +4812,6 @@ static void hi6555c_shutdown(struct platform_device *dev)
 		return;
 	}
 
-	if (classk_en_gpio >= 0) {
-		classk_mode_set(CLASSK_MODE0);
-	}
-
 	priv = snd_soc_codec_get_drvdata(g_codec);
 
 	if (!priv) {
@@ -5180,8 +5041,6 @@ static int hi6555c_soc_init(struct snd_soc_codec *codec)
 			goto modem0_clk_enabled;
 		}
 	}
-	priv->i2s2_disabled = of_property_read_bool(np, "i2s2-func-disabled");
-	logd("I2S-2 needed or not :%d\n", priv->i2s2_disabled);
 
 	/* codec init cfg */
 	hi6555c_reuse(codec);
@@ -5617,43 +5476,6 @@ static void hi6555c_spk_pa_uninit(struct snd_soc_codec *codec)
 	return;
 }
 
-static void hi6555c_hs_gpio_init(struct snd_soc_codec *codec)
-{
-	int gpio = -1;
-
-	struct hi6555c_priv *priv = snd_soc_codec_get_drvdata(codec);
-	struct device_node *node  = codec->dev->of_node;
-
-	if(node == NULL||codec == NULL)
-		return;
-
-	gpio = of_get_named_gpio(node, "hisilicon,hs_en_gpio", 0);
-	if(gpio < 0) {
-		logd("%s:hs_en_gpio of_get_named_gpio fail.\n", __FUNCTION__);
-		return;
-	} else {
-		priv->hs_en_gpio = gpio;
-		logi("%s:hs_en_gpio is %d.\n", __FUNCTION__, priv->hs_en_gpio);
-	}
-
-	if(!gpio_is_valid(priv->hs_en_gpio))
-	{
-		logi("%s:hs_en_gpio is valid.\n", __FUNCTION__);
-		gpio_free(priv->hs_en_gpio);
-		return;
-	}
-
-	if (gpio_request(priv->hs_en_gpio, "hs_en_gpio")) {
-		loge("%s:hs_en_gpio request failed!\n", __FUNCTION__);
-		return;
-	}
-
-	if (gpio_direction_output(priv->hs_en_gpio, 0)) {
-		loge("hs_en_gpio set output failed!\n");
-	}
-
-	return;
-}
 static void hi6555c_extern_classk_enable_func(struct work_struct *work)
 {
 	logi("in: mode is %d\n", classk_mode);
@@ -5768,17 +5590,12 @@ static int hi6555c_codec_probe(struct snd_soc_codec *codec)
 	}
 
 	hi6555c_spk_pa_init(codec);
-	hi6555c_hs_gpio_init(codec);
+
 	ret = hi6555c_extern_classk_init(codec);
 	if (0 != ret) {
 		loge("extern classk init error, errornum = %d\n", ret);
 		goto headset_err;
 	}
-
-	if (of_property_read_bool(np, "hslr_gain_reconfigue")) {
-		HSLR_GAIN_RECONFIGURE_FLAG = true;
-		logi("set hslr gain to -1.5db when headphone path is on.\n");
-    }
 
 	if (!of_property_read_u32(np, "hisilicon,hac_gpio", &val)) {
 		hac_en_gpio = (int)val;
@@ -5818,11 +5635,6 @@ end:
 
 static int hi6555c_codec_remove(struct snd_soc_codec *codec)
 {
-	struct hi6555c_priv *priv = snd_soc_codec_get_drvdata(codec);
-
-	if(priv == NULL) {
-		return 0;
-	}
 	/*TODO*/
 	hi6555c_free_resource(codec);
 
@@ -5830,9 +5642,6 @@ static int hi6555c_codec_remove(struct snd_soc_codec *codec)
 		gpio_free(hac_en_gpio);
 	}
 
-	if (gpio_is_valid(priv->hs_en_gpio)) {
-		gpio_free(priv->hs_en_gpio);
-	}
 	return 0;
 }
 

@@ -120,7 +120,7 @@ ENTRY(flush_icache_range)
  *	- start   - virtual start address of region
  *	- end     - virtual end address of region
  */
-ENTRY_NOTAG(__flush_cache_user_range)
+ENTRY(__flush_cache_user_range)
 	dcache_line_size x2, x3
 	sub	x3, x2, #1
 	bic	x4, x0, x3

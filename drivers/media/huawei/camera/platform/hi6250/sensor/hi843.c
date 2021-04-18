@@ -290,7 +290,6 @@ struct sensor_power_setting hi843_power_down_setting_dvdd120[] = {
 };
 
 struct mutex hi843_power_lock;
-atomic_t volatile hi843_powered = ATOMIC_INIT(0);
 static sensor_t s_hi843 =
 {
     .intf = { .vtbl = &s_hi843_vtbl, },
@@ -302,7 +301,6 @@ static sensor_t s_hi843 =
             .size = ARRAY_SIZE(hi843_power_down_setting),
             .power_setting = hi843_power_down_setting,
     },
-    .p_atpowercnt = &hi843_powered,
 
 };
 
@@ -451,10 +449,9 @@ int hi843_config(hwsensor_intf_t* si, void  *argp)
             mutex_lock(&hi843_power_lock);
             if(true == power_on_status){
                 ret = si->vtbl->power_down(si);
-                if(0 != ret){
-                    cam_err("%s. power_down fail.", __func__);
-                 }
-                power_on_status = false;
+                if(0 == ret){
+                    power_on_status = false;
+                }
             }
             /*lint -e455 -esym(455,*)*/
             mutex_unlock(&hi843_power_lock);

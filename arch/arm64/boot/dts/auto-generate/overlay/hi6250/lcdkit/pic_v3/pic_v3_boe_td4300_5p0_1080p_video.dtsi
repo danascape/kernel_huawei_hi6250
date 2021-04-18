@@ -166,7 +166,7 @@
 		hw,lcdkit-mipi-dsi-bit-clk-val-e = <0>;
 		hw,lcdkit-mipi-dsi-bit-clk-upt = <480>;
 		hw,lcdkit-mipi-rg-vcm-adjust = <0>;
-		hw,lcdkit-mipi-non-continue-enable = <0>;
+		hw,lcdkit-mipi-non-continue-enable = <1>;
 		hw,lcdkit-mipi-clk-post-adjust = <80>;
 		hw,lcdkit-mipi-lp11_flag = <0>;
 		hw,lcdkit-mipi-phy_update = <0>;

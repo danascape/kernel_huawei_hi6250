@@ -692,7 +692,6 @@ struct hisi_panel_info {
 	uint32_t bl_otm;
 	uint32_t bl_default;
 	uint32_t blpwm_precision_type;
-	uint32_t blpwm_preci_no_convert;
 	uint32_t blpwm_out_div_value;
 	uint32_t blpwm_input_ena;
 	uint32_t blpwm_in_num;

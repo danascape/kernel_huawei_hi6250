@@ -68,10 +68,10 @@ struct sensor_power_setting hw_ov16885_power_up_setting[] = {
         .delay        = 0,
     },
 
-    //SCAM DVDD 1.2V [LDO32]
+    //SCAM DVDD 1.1V [LDO32]
     {
         .seq_type     = SENSOR_DVDD2,
-        .config_val   = LDO_VOLTAGE_1P2V,
+        .config_val   = LDO_VOLTAGE_1P1V,
         .sensor_index = SENSOR_INDEX_INVALID,
         .delay        = POWER_DELAY_1,
     },
@@ -124,10 +124,10 @@ struct sensor_power_setting hw_ov16885_power_down_setting[] = {
         .delay        = POWER_DELAY_1,
     },
 
-    //SCAM DVDD 1.2V [LDO32]
+    //SCAM DVDD 1.05V [LDO32]
     {
         .seq_type     = SENSOR_DVDD2,
-        .config_val   = LDO_VOLTAGE_1P2V,
+        .config_val   = LDO_VOLTAGE_1P1V,
         .sensor_index = SENSOR_INDEX_INVALID,
         .delay        = POWER_DELAY_1,
     },

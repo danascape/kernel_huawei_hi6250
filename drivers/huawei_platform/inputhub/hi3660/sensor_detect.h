@@ -32,7 +32,6 @@ typedef enum {
 	MAGN_BRACKET,
 	PSEUDO_SAR,
 	RPC,
-	MOTION,
         SENSOR_MAX
 }SENSOR_DETECT_LIST;
 
@@ -88,5 +87,4 @@ int sensor_set_cfg_data(void);
 void sensor_redetect_enter(void);
 void sensor_redetect_init(void);
 int sensor_set_fw_load(void);
-int motion_set_cfg_data(void);
 #endif

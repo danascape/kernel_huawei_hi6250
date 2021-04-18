@@ -223,7 +223,7 @@ int focal_prase_ic_config_dts(
 	struct ts_kit_device_data *dev_data)
 {
 	int ret = 0;
-	int project_atm = 0;
+
 	focal_of_property_read_u32_default(np, FTS_REBOOT_DELAY,
 		&dev_data->reset_delay, 200);
 
@@ -248,25 +248,10 @@ int focal_prase_ic_config_dts(
 	} else {
 		TS_LOG_INFO("%s, power control by LCD, nothing to do\n",__func__);
 	}
-	ret = of_property_read_u32(np, FTS_PROJECT_ATM, &project_atm);
-	if(ret){
-		project_atm = 0;
-		TS_LOG_INFO("%s:project_atm is not exist,use default value ret=%d\n", __func__, ret);
-	}
+
 	ret = of_property_read_u32(np, FTS_IC_TYPES, &dev_data->ic_type);
 	if (ret) {
 		TS_LOG_ERR("%s:get ic_type fail, ret=%d\n", __func__, ret);
-	}
-	if(project_atm == PROJECT_ATM){
-		if(g_tskit_ic_type == ONCELL){
-			dev_data->ic_type = FOCAL_FT5X46;
-		}
-		else if(g_tskit_ic_type == TDDI){
-			dev_data->ic_type = FOCAL_FT8716;
-		}
-		else{
-			TS_LOG_INFO("%s:tskit_ic_type is not exist, g_tskit_ic_type=%d\n", __func__, g_tskit_ic_type);
-		}
 	}
 	TS_LOG_INFO("%s: ic_type = %d\n", __func__, dev_data->ic_type);
 
@@ -312,7 +297,7 @@ int focal_parse_dts(
 	struct focal_platform_data *focal_pdata)
 {
 	int ret = 0;
-	int project_atm = 0;
+
 	const char *str_value = NULL;
 	struct ts_glove_info *glove_info = NULL;
 	struct ts_holster_info *holster_info = NULL;
@@ -340,20 +325,12 @@ int focal_parse_dts(
 		return -ENODATA;
 	}
 
-	ret = of_property_read_u32(np, FTS_PROJECT_ATM, &project_atm);
-	if(ret){
-		project_atm = 0;
-		TS_LOG_INFO("%s:project_atm is not exist, use default value ret=%d\n", __func__, ret);
-	}
 	ret = of_property_read_u32(np, FTS_PRAM_PROJECTID_ADDR, &focal_pdata->pram_projectid_addr);
 	if (ret) {
 		focal_pdata->pram_projectid_addr = FTS_BOOT_PROJ_CODE_ADDR2;
 		TS_LOG_INFO("%s:get pram_projectid_addr from dts failed ,use default FT8716 pram addr\n", __func__);
 	}
-	if((g_tskit_ic_type == TDDI) &&(project_atm == PROJECT_ATM))
-	{
-		focal_pdata->pram_projectid_addr = FTS_BOOT_PROJ_CODE_ADDR2;
-	}
+
 	/* get tp color flag */
 	ret = of_property_read_u32(np,  "support_get_tp_color", &focal_pdata->support_get_tp_color);
 	if (ret) {
@@ -374,17 +351,6 @@ int focal_parse_dts(
 	if (ret) {
 		focal_pdata->focal_device_data->is_in_cell = true;
 		TS_LOG_INFO("%s:get is_in_cell from dts failed ,use default \n", __func__);
-	}
-	if(project_atm == PROJECT_ATM){
-		if(g_tskit_ic_type == ONCELL){
-			focal_pdata->focal_device_data->is_in_cell = false;
-		}
-		else if(g_tskit_ic_type == TDDI){
-			focal_pdata->focal_device_data->is_in_cell = true;
-		}
-		else{
-			TS_LOG_INFO("%s:tskit_ic_type not exist, g_tskit_ic_type=%d\n", __func__, g_tskit_ic_type);
-		}
 	}
 	TS_LOG_INFO("%s:get is_in_cell from dts:%d \n", __func__, focal_pdata->focal_device_data->is_in_cell );
 
@@ -455,16 +421,7 @@ int focal_parse_dts(
 	if (ret) {
 		TS_LOG_INFO("%s get touch_switch_flag from dts failed, use default(0).\n", __func__);
 		focal_pdata->focal_device_data->touch_switch_flag = 0;
-	} else {
-		if (TS_SWITCH_TYPE_GAME == (focal_pdata->focal_device_data->touch_switch_flag & TS_SWITCH_TYPE_GAME)) {
-			ret = of_property_read_u32(np, FTS_TOUCH_SWITCH_GAME_REG, &focal_pdata->touch_switch_game_reg);
-			if (ret) {
-				TS_LOG_INFO("%s get touch_switch_game_reg from dts failed, use default(0).\n", __func__);
-				focal_pdata->touch_switch_game_reg = 0;
-			}
-		}
 	}
-
 
 	/*
 	 * 0 is cover without glass,
@@ -512,13 +469,6 @@ int focal_parse_dts(
 	TS_LOG_INFO("%s:,roi_info=%d,roi_control_addr=0x%04x\n",__func__,
 		roi_info->roi_supported,
 		roi_info->roi_control_addr);
-	/*special proc printf*/
-	ret = of_property_read_u32(np, IS_IC_RAWDATA_PROC_PRINTF, (u32*)&focal_pdata->focal_device_data->is_ic_rawdata_proc_printf);
-	if (ret) {
-		focal_pdata->focal_device_data->is_ic_rawdata_proc_printf = false;
-		TS_LOG_INFO("%s:get is_ic_rawdata_proc_printf from dts failed ,use default \n", __func__);
-	}
-	TS_LOG_INFO("%s:get is_ic_rawdata_proc_printf from dts:%d \n", __func__, focal_pdata->focal_device_data->is_ic_rawdata_proc_printf );
 
 	return NO_ERR;
 }
@@ -626,11 +576,7 @@ int focal_parse_cap_test_config(
 
 	if (FTS_THRESHOLD_IN_CSV_FILE == params->in_csv_file) {
 		TS_LOG_INFO("%s: cap threshold in csv file\n", __func__);
-		if (FOCAL_FT8201 == g_focal_dev_data->ic_type) {
-			focal_8201_prase_threshold_for_csv(fts_pdata->project_id, &params->threshold, params);
-		} else {
-			focal_prase_threshold_for_csv(fts_pdata->project_id, &params->threshold, params);
-		}
+		focal_prase_threshold_for_csv(fts_pdata->project_id, &params->threshold, params);
 	} else {
 		TS_LOG_INFO("%s: cap threshold in dts file\n", __func__);
 		focal_prase_test_threshold(np, &params->threshold);

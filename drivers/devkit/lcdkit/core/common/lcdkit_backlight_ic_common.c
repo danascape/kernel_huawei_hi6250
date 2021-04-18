@@ -5,14 +5,11 @@
 #if defined (CONFIG_HUAWEI_DSM)
 #include <dsm/dsm_pub.h>
 extern struct dsm_client *lcd_dclient;
-#define OVP_FAULT_BIT_SET     0x01
-#define OCP_FAULT_BIT_SET     0x02
-#define TSD_FAULT_BIT_SET     0x04
 #endif
 #define  NUMOFELEMENT 4
 static struct lcdkit_bl_ic_device * plcdkit_bl_ic = NULL;
 static char chip_name[LCD_BACKLIGHT_IC_NAME_LEN] = "default";
-struct lcdkit_bl_ic_info g_bl_config = {0};
+static struct lcdkit_bl_ic_info g_bl_config = {0};
 struct class *backlight_class = NULL;
 static bool bl_ic_init_status = false;
 
@@ -1002,46 +999,22 @@ static const struct attribute_group backlight_group = {
     .attrs = backlight_attributes,
 };
 #if defined (CONFIG_HUAWEI_DSM)
-void lcdkit_backlight_ic_ovp_check(void)
+static void lcdkit_backlight_ic_ovp_check(void)
 {
     unsigned char val = 0;
     int ret = 0;
-    char tmp_name[LCD_BACKLIGHT_IC_NAME_LEN] = {0};
-
-    LCDKIT_INFO("backlight lcdkit_backlight_ic_ovp_check REG_FAULT_FLAG start!\n");
 
     ret = lcdkit_backlight_ic_fault_check(&val);
     if(ret > 0)
     {
         ret = dsm_client_ocuppy(lcd_dclient);
-        if (!ret)
+        if (!ret) 
         {
-            LCDKIT_ERR( "fail : REG_FAULT_FLAG statues error ,reg val 0x%x=0x%x!\n", plcdkit_bl_ic->bl_config.bl_fault_flag_cmd.cmd_reg, val);
-            ret = lcdkit_get_backlight_ic_name(tmp_name,sizeof(tmp_name));
-            if(0 != ret)
-            {
-                LCDKIT_ERR( "get chip name fail!\n");
-                return;
-            }
-            if(OVP_FAULT_BIT_SET == (val & OVP_FAULT_BIT_SET))
-            {
-                dsm_client_record(lcd_dclient, "%s : reg val 0x%x=0x%x!\n", tmp_name, plcdkit_bl_ic->bl_config.bl_fault_flag_cmd.cmd_reg, val);
-                dsm_client_notify(lcd_dclient, DSM_LCD_OVP_ERROR_NO);
-            }
-
-            if(OCP_FAULT_BIT_SET == (val & OCP_FAULT_BIT_SET))
-            {
-                dsm_client_record(lcd_dclient, "%s : reg val 0x%x=0x%x!\n", tmp_name, plcdkit_bl_ic->bl_config.bl_fault_flag_cmd.cmd_reg, val);
-                dsm_client_notify(lcd_dclient, DSM_LCD_BACKLIGHT_OCP_ERROR_NO);
-            }
-
-            if(TSD_FAULT_BIT_SET == (val & TSD_FAULT_BIT_SET))
-            {
-                dsm_client_record(lcd_dclient, "%s : reg val 0x%x=0x%x!\n", tmp_name, plcdkit_bl_ic->bl_config.bl_fault_flag_cmd.cmd_reg, val);
-                dsm_client_notify(lcd_dclient, DSM_LCD_BACKLIGHT_TSD_ERROR_NO);
-            }
-        }
-        else
+            LCDKIT_ERR( "fail : REG_FAULT_FLAG statues error 0X%x=%d!\n", plcdkit_bl_ic->bl_config.bl_fault_flag_cmd.cmd_reg, val);
+            dsm_client_record(lcd_dclient, "REG_FAULT_FLAG statues error 0X%x=%d!\n", plcdkit_bl_ic->bl_config.bl_fault_flag_cmd.cmd_reg, val);
+            dsm_client_notify(lcd_dclient, DSM_LCD_OVP_ERROR_NO);
+        } 
+        else 
         {
             LCDKIT_ERR("dsm_client_ocuppy fail:  ret=%d!\n", ret);
         }

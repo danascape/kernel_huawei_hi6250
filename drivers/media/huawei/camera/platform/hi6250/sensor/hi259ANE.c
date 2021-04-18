@@ -16,7 +16,6 @@
 #define POWER_DELAY_0        0//delay 0 ms
 #define POWER_DELAY_1        1//delay 1 ms
 #define POWER_DELAY_2        2//delay 2 ms
-#define POWER_DELAY_5        5//delay 5 ms
 
 static hwsensor_vtbl_t s_hi259ANE_vtbl;
 static bool power_on_status = false;//false: power off, true:power on
@@ -74,7 +73,7 @@ struct sensor_power_setting hi259ANE_power_up_setting[] = {
         .seq_type = SENSOR_PWDN,
         .config_val = SENSOR_GPIO_LOW,
         .sensor_index = SENSOR_INDEX_INVALID,
-        .delay = POWER_DELAY_5,
+        .delay = POWER_DELAY_1,
     },
     //MCAM1 RST [GPIO209]
     {

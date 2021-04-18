@@ -899,18 +899,18 @@ static int hisi_effect_alloc_and_copy(uint32_t **table_dst, uint32_t *table_src,
 			HISI_FB_ERR("failed to kmalloc lut_table!\n");
 			return -EINVAL;
 		}
-	}
 
-	if (copy_user) {
-		if (copy_from_user(*table_dst, table_src, table_size)) {
-			HISI_FB_ERR("failed to copy table from user\n");
-			if (table_new)
-				kfree(table_new);
-			*table_dst = NULL;
-			return -EINVAL;
+		if (copy_user) {
+			if (copy_from_user(*table_dst, table_src, table_size)) {
+				HISI_FB_ERR("failed to copy table from user\n");
+				if (table_new)
+					kfree(table_new);
+				*table_dst = NULL;
+				return -EINVAL;
+			}
+		} else {
+			memcpy(*table_dst, table_src, table_size);
 		}
-	} else {
-		memcpy(*table_dst, table_src, table_size);
 	}
 
 	return 0;

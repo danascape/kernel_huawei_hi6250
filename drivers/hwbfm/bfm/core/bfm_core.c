@@ -1412,14 +1412,13 @@ __out:
 
 static int bfm_process_upper_layer_boot_fail(void *param)
 {
-    bfm_process_bootfail_param_t *pparam = NULL;
+    bfm_process_bootfail_param_t *pparam = (bfm_process_bootfail_param_t*)param;
 
     if (unlikely(NULL == param))
     {
         BFMR_PRINT_INVALID_PARAMS("param: %p\n", param);
         goto __out;
     }
-    pparam = (bfm_process_bootfail_param_t*)param;
 
     if ((0 != strlen(pparam->user_log_path)) && (pparam->user_space_read_len <= 0))
     {

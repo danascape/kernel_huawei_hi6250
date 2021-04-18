@@ -642,7 +642,6 @@ struct lcdkit_panel_infos
     int cabc_mode;
     u8 rgbw_support;
     u8 bias_change_lm36274_from_panel_support;
-    u8 init_lm36923_after_panel_power_on_support;
     u8 hbm_support;
 
     /*mipi tr inversion*/
@@ -978,9 +977,6 @@ struct lcdkit_panel_infos
     uint32_t delay_af_vsn_on;
     uint32_t delay_af_LP11;
     uint32_t delay_af_tp_reset;
-    u8 rst_after_vbat_flag;
-    u8 lcdrst_after_tprst_flag;
-    u8 lcdph_delay_set_flag;
 
     uint32_t delay_af_vsn_off;
     uint32_t delay_af_vsp_off;

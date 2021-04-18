@@ -2056,7 +2056,6 @@ static void mmc_detect(struct mmc_host *host)
 #define CONVERTED_CID_LEN	12
 static u8 micron_mmc_pon_cid1[MICRON_3D_CID_MASK_LEN] = {0x13, 0x01, 0x4e, 0x53, 0x30, 0x4a, 0x39, 0x46, 0x38};
 static u8 micron_mmc_pon_cid2[MICRON_3D_CID_MASK_LEN] = {0x13, 0x01, 0x4e, 0x53, 0x30, 0x4a, 0x39, 0x42, 0x37};
-static u8 micron_mmc_pon_cid3[MICRON_3D_CID_MASK_LEN] = {0x13, 0x01, 0x4e, 0x53, 0x30, 0x4a, 0x33, 0x38, 0x59};
 static bool mmc_abort_send_pon(struct mmc_card *card)
 {
 	char converted_cid[CONVERTED_CID_LEN] = {0};
@@ -2070,8 +2069,7 @@ static bool mmc_abort_send_pon(struct mmc_card *card)
 	((int *)converted_cid)[2] = be32_to_cpu(card->raw_cid[2]);
 
 	return !memcmp(converted_cid, micron_mmc_pon_cid1, MICRON_3D_CID_MASK_LEN) ||
-		   !memcmp(converted_cid, micron_mmc_pon_cid2, MICRON_3D_CID_MASK_LEN) ||
-		   !memcmp(converted_cid, micron_mmc_pon_cid3, MICRON_3D_CID_MASK_LEN);
+		   !memcmp(converted_cid, micron_mmc_pon_cid2, MICRON_3D_CID_MASK_LEN);
 }
 /*suspend operation on hisi platform, conclude disable cmdq
  *swich to normal partion and so on

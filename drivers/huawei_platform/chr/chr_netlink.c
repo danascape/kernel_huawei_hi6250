@@ -25,6 +25,7 @@ MODULE_LICENSE("GPL");
 						MOCRO   DEFINES
 *************************************************************/
 DEFINE_MUTEX(chr_receive_sem);
+DEFINE_MUTEX(chr_send_sem);
 
 /********************************
     netlink variables for
@@ -51,7 +52,6 @@ static unsigned int g_chr_timer_state;
 static struct semaphore g_chr_netlink_sync_sema;
 /*this lock is used to protect global variable.*/
 static spinlock_t dest_addr_timer_lock;
-static spinlock_t chr_send_lock;
 static struct timer_list g_chr_netlink_timer;
 /*send a msg with server's address and port.*/
 void notify_chr_thread_to_send_msg(unsigned int dst_addr, unsigned int src_addr)
@@ -268,7 +268,6 @@ static void chr_netlink_init(void)
 		hwlog_info("%s: chr_netlink_init success\n", __func__);
 	sema_init(&g_chr_netlink_sync_sema, 0);
 	spin_lock_init(&dest_addr_timer_lock);
-	spin_lock_init(&chr_send_lock);
 	init_timer(&g_chr_netlink_timer);
 	g_chr_netlink_timer.data = 0;
 	g_chr_netlink_timer.function = chr_netlink_timer;
@@ -305,7 +304,7 @@ int chr_notify_event(int event, int pid,
 	struct nlmsghdr *nlh = NULL;
 	struct chr_nl_packet_msg *packet = NULL;
 
-	spin_lock_bh(&chr_send_lock);
+	mutex_lock(&chr_send_sem);
 	if (!pid || !g_chr_nlfd) {
 		hwlog_err("%s: cannot notify event, pid = %d\n",
 			__func__,
@@ -345,7 +344,7 @@ int chr_notify_event(int event, int pid,
 	goto end;
 
 end:
-	spin_unlock_bh(&chr_send_lock);
+	mutex_unlock(&chr_send_sem);
 	return ret;
 }
 

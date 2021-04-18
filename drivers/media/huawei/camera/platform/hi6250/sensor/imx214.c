@@ -183,7 +183,6 @@ struct sensor_power_setting hw_imx214_power_down_setting[] = {
 };
 
 struct mutex imx214_power_lock;
-atomic_t volatile imx214_powered = ATOMIC_INIT(0);
 static sensor_t s_imx214 =
 {
     .intf = { .vtbl = &s_imx214_vtbl, },
@@ -195,7 +194,6 @@ static sensor_t s_imx214 =
             .size = ARRAY_SIZE(hw_imx214_power_down_setting),
             .power_setting = hw_imx214_power_down_setting,
     },
-    .p_atpowercnt = &imx214_powered,
 
 };
 
@@ -463,11 +461,10 @@ imx214_config(
 			mutex_lock(&imx214_power_lock);
 			if(true == power_on_status){
 				ret = si->vtbl->power_down(si);
-				if (0 != ret)
+				if (0 == ret)
 				{
-					cam_err("%s. power_down fail.", __func__);
+					power_on_status = false;
 				}
-				power_on_status = false;
 			}
 			/*lint -e455 -esym(455,*)*/
 			mutex_unlock(&imx214_power_lock);

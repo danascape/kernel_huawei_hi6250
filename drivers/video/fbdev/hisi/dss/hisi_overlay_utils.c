@@ -6570,8 +6570,6 @@ static void get_use_comm_mmbuf(int *use_comm_mmbuf,
 				&& offline_mmbuf[i].size) {
 				if (use_comm_mmbuf) {
 					*use_comm_mmbuf |= 1 << online_mmbuf[j].ov_idx;
-					online_mmbuf[j].mmbuf.addr = 0;
-					online_mmbuf[j].mmbuf.size = 0;
 					break;
 				}
 			}
@@ -6608,7 +6606,7 @@ static void hisi_dss_check_use_comm_mmbuf(uint32_t display_id,
 		if (!has_rot) {
 			memset(g_external_online_mmbuf, 0x0, sizeof(g_external_online_mmbuf));
 		}
-	}
+	} 
 
 	if (g_debug_dump_mmbuf) {
 		for (i = 0; i < DSS_CHN_MAX_DEFINE; i++) {
@@ -7723,6 +7721,7 @@ int hisi_overlay_on(struct hisi_fb_data_type *hisifd, bool fastboot_enable)
 	hisifd->ov_req.frame_no = 0xFFFFFFFF;
 	memset(&hisifd->acm_ce_info, 0, sizeof(hisifd->acm_ce_info));
 	memset(&hisifd->prefix_ce_info, 0, sizeof(hisifd->prefix_ce_info));
+	memset(&hisifd->effect_updated_flag, 0, sizeof(struct dss_module_update));
 
 	g_offline_cmdlist_idxs = 0;
 
@@ -8036,8 +8035,6 @@ int hisi_overlay_off(struct hisi_fb_data_type *hisifd)
 	hisifb_dss_overlay_info_init(&hisifd->ov_req);
 	hisifb_dss_overlay_info_init(&hisifd->ov_req_prev);
 	hisifb_dss_overlay_info_init(&hisifd->ov_req_prev_prev);
-
-	memset(&hisifd->effect_updated_flag, 0, sizeof(struct dss_module_update));
 
 	HISI_FB_DEBUG("fb%d, -\n", hisifd->index);
 	return 0;

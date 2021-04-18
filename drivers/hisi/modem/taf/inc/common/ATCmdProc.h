@@ -386,7 +386,9 @@ typedef TAF_UINT8   AT_MSG_DELETE_ENUM_U8;
 
 #define AT_AUTH_PUBKEY_PROTECT_TIMER_LEN    (3000)
 
-#define AT_SIMLOCK_WRITE_EX_PROTECT_TIMER_LEN    (15000)
+#if ((FEATURE_ON == FEATURE_SC_DATA_STRUCT_EXTERN) || (FEATURE_ON == FEATURE_BOSTON_AFTER_FEATURE))
+#define AT_SIMLOCK_WRITE_EX_PROTECT_TIMER_LEN    (3000)
+#endif
 
 #define AT_BCD_HEX(x) ((TAF_UINT8)((TAF_UINT8)(((x) & 0xF0)>>4) + (TAF_UINT8)(((x) & 0x0F)*0x0A)))
 
@@ -476,13 +478,10 @@ typedef TAF_UINT8   AT_MSG_DELETE_ENUM_U8;
 #define AT_PORTCTRLTMP_PARA_LEN                             (16)        /* ^PORTCTRLTMP命令参数长度 */
 #define AT_PORTATTRIBSET_PARA_ONOFF_LEN                     (1)         /* ^PORTATTRIBSET端口状态参数长度 */
 #define AT_PERSONALIZATION_CODE_LEN                         (8)         /* 锁网锁卡通用锁网号段长度 */
-#define AT_PERSONALIZATION_CODE_LEN_EX                      (10)        /* 扩展后锁网锁卡通用锁网号段长度 */
-#define AT_PERSONALIZATION_CP_CODE_LEN                      (10)        /* 锁网锁卡CP类型锁网号段长度 */
 #define AT_PERSONALIZATION_NET_CODE_LEN                     (6)         /* 锁网锁卡NET类型锁网号段长度 */
 #define AT_PERSONALIZATION_NET_CODE_BCD_LEN                 (3)         /* 锁网锁卡NET类型锁网号段BCD编码的长度 */
 #define AT_PERSONALIZATION_SUBNET_CODE_BCD_LEN              (4)         /* 锁网锁卡NETSUB类型锁网号段BCD编码的长度 */
 #define AT_PERSONALIZATION_SP_CODE_BCD_LEN                  (4)         /* 锁网锁卡SP类型锁网号段BCD编码的长度 */
-#define AT_PERSONALIZATION_CP_CODE_BCD_LEN                  (5)         /* 锁网锁卡CP类型锁网号段BCD编码的长度 */
 #define AT_PERSONALIZATION_CODE_FOURTH_CHAR_INDEX           (3)         /* 锁网锁卡号段第四个字符的索引 */
 #define AT_NVWRSECCTRL_PARA_SECTYPE_LEN                     (1)         /* ^NVWRSECCTRL安全控制类型参数长度 */
 
@@ -1756,8 +1755,6 @@ typedef enum
     AT_CMD_CACDC,
     /* Added by wx270776 for 适配LNAS R13协议升级迭代开发, 2017-2-4, end */
 
-    AT_CMD_USERAGENTCFG,
-
     AT_CMD_COMM_BUTT,        /* ADD by c64416 for V9R1/V7R1 AT, 2013/09/18 */
 
 }AT_CMD_INDEX_ENUM;
@@ -2777,8 +2774,6 @@ typedef enum
 
     AT_CMD_RSRP_QRY,
     AT_CMD_RSRQ_QRY,
-
-    AT_CMD_USERAGENTCFG_SET,
 
     /* modify by c64416 for V9R1/V7R1 AT, 2013/09/18 */
     /* GU模AT命令和公共命令的当前处理ID，新增命令处理ID时要添加到此ID前 */
@@ -4203,6 +4198,7 @@ typedef struct
     VOS_CHAR                           *acStrUlSpeed;                           /* 理论最大上行速率 */
 }AT_DISPLAY_RATE_PAIR_STRU;
 
+#if ((FEATURE_ON == FEATURE_SC_DATA_STRUCT_EXTERN) || (FEATURE_ON == FEATURE_BOSTON_AFTER_FEATURE))
 /*****************************************************************************
  结构名    : AT_SIMLOCK_WRITE_EX_PARA_STRU
  结构说明  : 保存^SIMLOCKWRITEEX命令参数信息
@@ -4223,6 +4219,7 @@ typedef struct
     VOS_UINT8                           ucParaNum;
     VOS_UINT8                           aucReserve[7];
 }AT_SIMLOCK_WRITE_EX_PARA_STRU;
+#endif
 /*****************************************************************************
   4 全局变量声明
 *****************************************************************************/

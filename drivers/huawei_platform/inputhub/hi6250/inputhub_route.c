@@ -2700,7 +2700,7 @@ void inputhub_process_sensor_report(const pkt_header_t* head)
         }
         else if (sensor_event->cnt > 1)
         {
-            delta = (uint64_t)(sensor_event->sample_rate) * 1000000;
+            delta = sensor_event->sample_rate * 1000000;
             head_timestamp =
                 timestamp - (sensor_event->cnt - 1) * (int64_t)delta;
             //hwlog_info("head_timestamp is %llu delta is %lu\n",
@@ -2798,6 +2798,8 @@ void inputhub_process_sensor_report(const pkt_header_t* head)
             if (sensor_event->xyz[0].y == 1 && ps_value != 0)
             {
                 hwlog_info("ps don't get the point!\n");
+                __dmd_log_report(DSM_SHB_ERR_MCU_PS, __func__,
+                                 "gesture worked\n");
             }
         }
 
@@ -3397,7 +3399,6 @@ static int shb_recovery_notifier(struct notifier_block *nb, unsigned long foo,
 		wake_up_all(&iom3_rec_wq);
 		break;
 	default:
-	    mutex_unlock(&mutex_write_cmd);
 		hwlog_err("%s -unknow state %ld\n", __func__, foo);
 		break;
 	}

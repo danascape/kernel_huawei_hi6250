@@ -208,7 +208,6 @@
 #define DSM_TP_RAWDATA_ERROR_NO             (926004002)
 #define DSM_TP_FW_CRC_ERROR_NO              (926004003)
 #define DSM_TP_DEV_STATUS_ERROR_NO          (926004004)
-#define DSM_TP_FREEZE_ERROR_NO          (926004005)/*one possible reason:LCD can't send out TSVD/TSHD signal */
 #define DSM_TP_IN_MOISTURE_ERROR_NO         (926004008)
 #define DSM_TP_IN_VNOISE_ERROR_NO           (926004009)
 #define DSM_TP_ESD_ERROR_NO					(926004015)
@@ -260,8 +259,6 @@
 #define DSM_LCD_MDSS_MDP_BUSY_ERROR_NO		(922001031)
 #define DSM_LCD_FB0_CLOSE_ERROR_NO			(922001032)
 #define DSM_LCD_BTB_CHECK_ERROR_NO			(922001033)
-#define DSM_LCD_BACKLIGHT_OCP_ERROR_NO		(922001034)
-#define DSM_LCD_BACKLIGHT_TSD_ERROR_NO		(922001035)
 
 /* gpu */
 #define DSM_LCD_GPU_HANG_ERROR_NO           (922002000)
@@ -715,10 +712,6 @@ enum DSM_KEYS_TYPE{
 #ifdef CONFIG_HUAWEI_DATA_ACQUISITION
 #define DA_SENSOR_HUB_ERROR_NO	(924005001)
 #endif
-
-/******************DMD NUMBER FOR RTC BEGIN*************************/
-#define DSM_RTC_PMU_READCOUNT_ERROR_NO (925005000)
-#define DSM_RTC_SET_RTC_TMIE_WARNING_NO (925005001)
 
 struct dsm_client_ops{
 	int (*poll_state) (void);

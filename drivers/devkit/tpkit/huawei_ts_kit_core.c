@@ -719,18 +719,7 @@ static int rawdata_proc_show(struct seq_file *m, void *v)
 	}
 	seq_printf(m, "rx: %d, tx : %d\n", row_size, range_size);
 	if(g_ts_kit_platform_data.chip_data->is_parade_solution == 0){//Not Parade Solution, use default
-		if(g_ts_kit_platform_data.chip_data->is_ic_rawdata_proc_printf == 1){
-			if (!g_ts_kit_platform_data.chip_data->ops) {
-				TS_LOG_ERR("ops is NULL\n");
-				error = -ENOMEM;
-				goto out;
-			}
-			if(g_ts_kit_platform_data.chip_data->ops->chip_special_rawdata_proc_printf){
-				g_ts_kit_platform_data.chip_data->ops->chip_special_rawdata_proc_printf(m, info, range_size, row_size);
-			}
-		}else{
-			rawdata_proc_printf(m, info, range_size, row_size);
-		}
+		rawdata_proc_printf(m, info, range_size, row_size);
 	} else {
 		if (rawdata_proc_parade_printf(m, info, range_size, row_size) < 0) {
 			goto out;
@@ -2822,16 +2811,12 @@ static void ts_kit_status_check_init(void)
         TS_LOG_INFO("This chip need watch dog to check status\n");
         INIT_WORK(&(g_ts_kit_platform_data.watchdog_work), ts_watchdog_work);
         setup_timer(&(g_ts_kit_platform_data.watchdog_timer), ts_watchdog_timer, (unsigned long)(&g_ts_kit_platform_data));
+        if(!g_ts_kit_platform_data.chip_data->is_parade_solution){
+            ts_start_wd_timer(&g_ts_kit_platform_data);
+        }
     }
 	return ;
 }
-static void ts_kit_status_check_start(void)
-{
-    if (g_ts_kit_platform_data.chip_data->need_wd_check_status &&
-        !g_ts_kit_platform_data.chip_data->is_parade_solution)
-            ts_start_wd_timer(&g_ts_kit_platform_data);
-}
-
 static int ts_send_init_cmd(void)
 {
 	int error = NO_ERR;
@@ -2981,7 +2966,6 @@ int ts_kit_put_one_cmd(struct ts_cmd_node* cmd, int timeout)
             q = &g_ts_kit_platform_data.queue;
         }
     }
-    cmd->ts_cmd_check_key = TS_CMD_CHECK_KEY;
     spin_lock_irqsave(&q->spin_lock, flags);
     smp_wmb();
     if (q->cmd_count == q->queue_size)
@@ -3059,15 +3043,9 @@ static int ts_proc_command(struct ts_cmd_node* cmd)
 {
     int error = NO_ERR;
 
-    struct ts_cmd_sync* sync = NULL;
+    struct ts_cmd_sync* sync = cmd->sync;
     struct ts_cmd_node* proc_cmd = cmd;
     struct ts_cmd_node* out_cmd = &pang_cmd_buff;
-
-    if (!cmd || cmd->ts_cmd_check_key != TS_CMD_CHECK_KEY) {
-        TS_LOG_ERR("invalid cmd, no need to process\n");
-        goto out;
-    }
-    sync = cmd->sync;
 
     //discard timeout cmd to fix panic
     if (sync && atomic_read(&sync->timeout_flag) == TS_TIMEOUT)
@@ -3489,7 +3467,6 @@ static int ts_kit_init(void)
         TS_LOG_ERR("ts init input device register failed : %d\n", error);
         goto err_remove_sysfs;
     }
-    ts_kit_status_check_init();
     error = ts_kit_pm_init();
     if (error)
     {
@@ -3523,7 +3500,7 @@ static int ts_kit_init(void)
     }
 #endif
 
-    ts_kit_status_check_start();
+    ts_kit_status_check_init();
     error = NO_ERR;
     TS_LOG_INFO("ts_kit_init called out\n");
     goto out;

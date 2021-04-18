@@ -285,9 +285,10 @@ static int tee_calc_task_hash(unsigned char *digest, bool cfc_rehash);
 static char *get_process_path(struct task_struct *task, char *tpath)
 {
 	char *ret_ptr = NULL;
+	struct vm_area_struct *vma = NULL;
 	struct path base_path = {0};
 	struct mm_struct *mm = NULL;
-	struct file *exe_file;
+	bool find_path = false;
 	errno_t sret;
 
 	if (NULL == tpath || NULL == task)
@@ -302,20 +303,29 @@ static char *get_process_path(struct task_struct *task, char *tpath)
 	mm = get_task_mm(task);
 	if(!mm)
 		return NULL;
-	if (!mm->exe_file) {
+	if (mm->mmap) {
+		vma = mm->mmap;
+	} else {
 		mmput(mm);
 		return NULL;
 	}
-	exe_file = get_mm_exe_file(mm);
+	down_read(&mm->mmap_sem);
 
-	if (exe_file) {
-		base_path = exe_file->f_path;
-		path_get(&base_path);
+	while (vma) {
+		if ((vma->vm_flags & VM_EXEC) && vma->vm_file) {
+			base_path = vma->vm_file->f_path;
+			path_get(&base_path);
+			find_path = true;
+			break;
+		}
+		vma = vma->vm_next;
+	}
+	up_read(&mm->mmap_sem);
+	mmput(mm);
+	if (find_path){
 		ret_ptr = d_path(&base_path, tpath, MAX_PATH_SIZE);
 		path_put(&base_path);
-		fput(exe_file);
 	}
-	mmput(mm);
 	return ret_ptr;
 }
 

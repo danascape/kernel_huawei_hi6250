@@ -65,8 +65,6 @@ static char g_vbat_check_cycle;
 static char g_batt_ovp_cnt_1s;
 static int g_rboost_cnt;
 static int I_bias_all = 0;
-static int dm_array_len = 0;
-static int dp_array_len = 0;
 #if CONFIG_DIRECT_CHARGER
 static u32 scp_error_flag = 0;
 #endif
@@ -2234,27 +2232,12 @@ static int hi6523_apple_adapter_detect(int enable)
 **********************************************************/
 static bool is_dm_water_intrused(u32 dm_vol)
 {
-    int i = 0;
-    struct hi6523_device_info *di = g_hi6523_dev;
-    if (NULL == di) {
-        return FALSE;
-    }
-
-    if(0 == dm_array_len){
-        if (dm_vol > HI6523_DPDM_WATER_THRESH_1460MV && dm_vol < HI6523_DPDM_WATER_THRESH_1490MV)
+    if (dm_vol > HI6523_DPDM_WATER_THRESH_1460MV && dm_vol < HI6523_DPDM_WATER_THRESH_1490MV)
             return TRUE;
-        else if (dm_vol > HI6523_DPDM_WATER_THRESH_1560MV && dm_vol < HI6523_DPDM_WATER_THRESH_1590MV)
-            return TRUE;
-        else
+    else if (dm_vol > HI6523_DPDM_WATER_THRESH_1560MV && dm_vol < HI6523_DPDM_WATER_THRESH_1590MV)
+	    return TRUE;
+    else
             return FALSE;
-    }else{
-        for(i = 0; i < dm_array_len/WATER_VOLT_PARA; i++){
-            if(dm_vol > di->param_dts.scharger_check_vol.dm_vol_data[i].vol_min&&
-                dm_vol < di->param_dts.scharger_check_vol.dm_vol_data[i].vol_max)
-                return TRUE;
-        }
-            return FALSE;
-    }
 }
 
 /**********************************************************
@@ -2265,27 +2248,12 @@ static bool is_dm_water_intrused(u32 dm_vol)
 **********************************************************/
 static bool is_dp_water_intrused(u32 dp_vol)
 {
-    int i = 0;
-    struct hi6523_device_info *di = g_hi6523_dev;
-    if (NULL == di) {
-        return FALSE;
-    }
-
-    if(0 == dp_array_len){
-        if (dp_vol > HI6523_DPDM_WATER_THRESH_1460MV && dp_vol < HI6523_DPDM_WATER_THRESH_1490MV)
+    if (dp_vol > HI6523_DPDM_WATER_THRESH_1460MV && dp_vol < HI6523_DPDM_WATER_THRESH_1490MV)
             return TRUE;
-        else if (dp_vol > HI6523_DPDM_WATER_THRESH_1560MV && dp_vol < HI6523_DPDM_WATER_THRESH_1590MV)
-            return TRUE;
-        else
+    else if (dp_vol > HI6523_DPDM_WATER_THRESH_1560MV && dp_vol < HI6523_DPDM_WATER_THRESH_1590MV)
+	    return TRUE;
+    else
             return FALSE;
-    }else{
-        for(i = 0; i < dp_array_len/WATER_VOLT_PARA; i++){
-            if(dp_vol > di->param_dts.scharger_check_vol.dp_vol_data[i].vol_min&&
-                dp_vol < di->param_dts.scharger_check_vol.dp_vol_data[i].vol_max)
-                return TRUE;
-        }
-        return FALSE;
-    }
 }
 
 /**********************************************************
@@ -2482,14 +2450,12 @@ static int hi6523_fcp_cmd_transfer_check(void)
 	int i = 0;
 	int ret = 0;
 	u8 reg_val3 = 0;
-	u8 reg_val4 = 0;
 	/*read accp interrupt registers until value is not zero */
 	do {
 		usleep_range(12000, 13000);
 		ret |= hi6523_read_byte(CHG_FCP_ISR1_REG, &reg_val1);
 		ret |= hi6523_read_byte(CHG_FCP_ISR2_REG, &reg_val2);
 		ret |= hi6523_read_byte(CHG_FCP_IRQ3_REG, &reg_val3);
-		ret |= hi6523_read_byte(CHG_FCP_IRQ4_REG, &reg_val4);
 		if (ret) {
 			SCHARGER_ERR("%s : reg read failed!\n", __func__);
 			break;
@@ -2499,11 +2465,10 @@ static int hi6523_fcp_cmd_transfer_check(void)
 			    && (reg_val1 & CHG_FCP_CMDCPL)
 			    && !(reg_val2 & (CHG_FCP_CRCRX | CHG_FCP_PARRX))) {
 				return 0;
-			} else if (((reg_val1 & CHG_FCP_CRCPAR) || (reg_val3 & CHG_FCP_INIT_HAND_FAIL) || (reg_val4 & CHG_FCP_ENABLE_HAND_FAIL))
-			    && (reg_val2 & CHG_FCP_PROTSTAT)){
+			} else if ((reg_val1 & CHG_FCP_CRCPAR) && (reg_val2 & CHG_FCP_PROTSTAT)){
 				SCHARGER_INF
-				    ("%s :  FCP_TRANSFER_FAIL,slave status changed: ISR1=0x%x,ISR2=0x%x,ISR3=0x%x,ISR4=0x%x\n",
-				     __func__, reg_val1, reg_val2, reg_val3, reg_val4);
+				    ("%s :  FCP_TRANSFER_FAIL,slave status changed: ISR1=0x%x,ISR2=0x%x\n",
+				     __func__, reg_val1, reg_val2);
 				return -1;
 			}else if (reg_val1 & CHG_FCP_NACK) {
 				SCHARGER_INF
@@ -4165,8 +4130,6 @@ static irqreturn_t hi6523_interrupt(int irq, void *_di)
 static void parse_dts(struct device_node *np, struct hi6523_device_info *di)
 {
 	int ret = 0;
-	int i;
-	const char *chrg_vol_string = NULL;
 	struct device_node *batt_node;
 	di->param_dts.bat_comp = 80;
 	di->param_dts.vclamp = 224;
@@ -4184,63 +4147,6 @@ static void parse_dts(struct device_node *np, struct hi6523_device_info *di)
 		di->param_dts.dpm_en = DPM_DISABLE;
 	}
 	SCHARGER_INF("prase_dts dpm_en = %d\n", di->param_dts.dpm_en);
-
-	//scharger water check
-	dm_array_len = of_property_count_strings(np, "dm_water_vol");
-	if ((dm_array_len <= 0) || (dm_array_len % WATER_VOLT_PARA != 0)
-		|| (dm_array_len > WATER_VOLT_PARA_LEVEL * WATER_VOLT_PARA)) {
-		dm_array_len = 0;
-		SCHARGER_INF("dm_water_vol is invaild\n");
-	}else{
-		for (i = 0; i < dm_array_len; i++) {
-			ret = of_property_read_string_index(np, "dm_water_vol", i, &chrg_vol_string);
-			if (ret) {
-				SCHARGER_ERR("get dm_water_vol failed\n");
-				dm_array_len = 0;
-				break;
-			}
-
-			if(i%WATER_VOLT_PARA){
-				di->param_dts.scharger_check_vol.dm_vol_data[i/WATER_VOLT_PARA].vol_max
-				= simple_strtol(chrg_vol_string, NULL, 10);
-				SCHARGER_INF("prase_dts dm_volt_data[%d] vol_max = %d\n",
-				i/WATER_VOLT_PARA, di->param_dts.scharger_check_vol.dm_vol_data[i/WATER_VOLT_PARA].vol_max);
-			}else{
-				di->param_dts.scharger_check_vol.dm_vol_data[i/WATER_VOLT_PARA].vol_min
-				= simple_strtol(chrg_vol_string, NULL, 10);
-				SCHARGER_INF("prase_dts dm_volt_data[%d] vol_min = %d\n",
-				i/WATER_VOLT_PARA, di->param_dts.scharger_check_vol.dm_vol_data[i/WATER_VOLT_PARA].vol_min);
-			}
-		}
-	}
-
-	dp_array_len = of_property_count_strings(np, "dp_water_vol");
-	if ((dp_array_len <= 0) || (dp_array_len % WATER_VOLT_PARA != 0)
-		|| (dp_array_len > WATER_VOLT_PARA_LEVEL * WATER_VOLT_PARA)) {
-		dp_array_len = 0;
-		SCHARGER_INF("dp_water_vol is invaild\n");
-	}else{
-		for (i = 0; i < dp_array_len; i++) {
-			ret = of_property_read_string_index(np, "dp_water_vol", i, &chrg_vol_string);
-			if (ret) {
-				SCHARGER_ERR("get dp_arrary_len failed\n");
-				dp_array_len = 0;
-				break;
-			}
-
-			if(i%WATER_VOLT_PARA){
-				di->param_dts.scharger_check_vol.dp_vol_data[i/WATER_VOLT_PARA].vol_max
-				= simple_strtol(chrg_vol_string, NULL, 10);
-				SCHARGER_INF("prase_dts dp_volt_data[%d] vol_max = %d\n",
-				i/WATER_VOLT_PARA, di->param_dts.scharger_check_vol.dp_vol_data[i/WATER_VOLT_PARA].vol_max);
-			}else{
-				di->param_dts.scharger_check_vol.dp_vol_data[i/WATER_VOLT_PARA].vol_min
-				= simple_strtol(chrg_vol_string, NULL, 10);
-				SCHARGER_INF("prase_dts dp_volt_data[%d] vol_min = %d\n",
-				i/WATER_VOLT_PARA, di->param_dts.scharger_check_vol.dp_vol_data[i/WATER_VOLT_PARA].vol_min);
-			}
-		}
-	}
 
 	ret = of_property_read_u32(np, "bat_comp", (u32 *)&(di->param_dts.bat_comp));
 	if (ret) {

@@ -339,7 +339,6 @@ struct usb_phy_ops {
 	void (*close)(struct otg_dev *otg_device);
 	int (*enable_clk)(struct otg_dev *otg_device);
 	void (*disable_clk)(struct otg_dev *otg_device);
-	void (*check_voltage)(struct otg_dev *otg_device);
 };
 
 struct hiusb_event_queue {
@@ -402,7 +401,6 @@ struct otg_dev {
 	struct hiusb_event_queue event_queue;
 
 	unsigned int need_disable_vdp;
-	unsigned int check_voltage;
 };
 
 #ifdef CONFIG_PM

@@ -224,7 +224,7 @@ static int hw_mp3331_front_flash_mode(struct hw_flash_ctrl_t *flash_ctrl, int da
     }
     else
     {
-        if( data > MP3331_FRONT_FLASH_MAX_CUR_LEV * MP3331_FRONT_CUR_STEP_LEV / BASE){
+        if( data*BASE > MP3331_FRONT_FLASH_MAX_CUR_LEV * MP3331_FRONT_CUR_STEP_LEV){
             current_level = MP3331_FRONT_FLASH_DEFAULT_CUR_LEV;
         }
         else{
@@ -282,7 +282,7 @@ static int hw_mp3331_front_torch_mode(struct hw_flash_ctrl_t *flash_ctrl, int da
           flash mode current step is 31.7mA,
           use CONVERT2TORCH(x) to normalize current step*/
         data = CONVERT2TORCH(data);
-        if( data > MP3331_FRONT_TORCH_MAX_CUR_LEV * MP3331_FRONT_CUR_STEP_LEV / BASE){
+        if( data*BASE > MP3331_FRONT_TORCH_MAX_CUR_LEV * MP3331_FRONT_CUR_STEP_LEV){
             current_level = MP3331_FRONT_TORCH_MAX_CUR_LEV;
         }
         else{

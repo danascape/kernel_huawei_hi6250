@@ -67,10 +67,10 @@ struct sensor_power_setting hw_imx371ANE_power_up_setting[] = {
         .delay        = 0,
     },
 
-    //SCAM DVDD 1.1V [LDO32]
+    //SCAM DVDD 1.05V [LDO32]
     {
         .seq_type     = SENSOR_DVDD2,
-        .config_val   = LDO_VOLTAGE_1P1V,
+        .config_val   = LDO_VOLTAGE_1P05V,
         .sensor_index = SENSOR_INDEX_INVALID,
         .delay        = POWER_DELAY_1,
     },
@@ -122,10 +122,10 @@ struct sensor_power_setting hw_imx371ANE_power_down_setting[] = {
         .delay        = POWER_DELAY_1,
     },
 
-    //SCAM DVDD 1.1V [LDO32]
+    //SCAM DVDD 1.05V [LDO32]
     {
         .seq_type     = SENSOR_DVDD2,
-        .config_val   = LDO_VOLTAGE_1P1V,
+        .config_val   = LDO_VOLTAGE_1P05V,
         .sensor_index = SENSOR_INDEX_INVALID,
         .delay        = POWER_DELAY_1,
     },

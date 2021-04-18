@@ -1133,7 +1133,7 @@ irqreturn_t cmdq_irq(struct mmc_host *mmc, u32 intmask)
 			pr_err("%s: Dat err  tag: %lu\n", __func__, tag);
 			mrq = get_req_by_tag(cq_host, tag);
 			mrq->data->error = err;
-		} else {
+		} else if (!err_info) {
 			dbr_set = cmdq_readl(cq_host, CQTDBR);
 #ifdef CONFIG_EMMC_FAULT_INJECT
 			if (will_inj) {
@@ -1171,8 +1171,7 @@ irqreturn_t cmdq_irq(struct mmc_host *mmc, u32 intmask)
 			cmdq_disable_immediatly(mmc);
 
 		if (status & CQIS_RED) {
-			if(mrq && mrq->cmdq_req)
-				mrq->cmdq_req->resp_err = true;
+			mrq->cmdq_req->resp_err = true;/*lint !e644 *//* [false alarm]:if RED, errinfo will get mrq */
 			pr_err("%s: RED error %d !!!\n", mmc_hostname(mmc), status);
 			cmdq_dumpregs(cq_host);
 		}

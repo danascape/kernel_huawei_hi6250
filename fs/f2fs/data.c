@@ -128,9 +128,6 @@ static void f2fs_write_end_io(struct bio *bio)
 			WARN_ON(1);
 			f2fs_add_restart_wq();
 		}
-		if (page->mapping == NODE_MAPPING(sbi) &&
-					page->index != nid_of_node(page))
-			f2fs_bug_on(sbi, 1);
 		dec_page_count(sbi, type);
 		clear_cold_data(page);
 		end_page_writeback(page);

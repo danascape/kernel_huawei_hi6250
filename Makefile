@@ -25,7 +25,6 @@ export LC_COLLATE LC_NUMERIC
 unexport GREP_OPTIONS
 TARGET_BUILD_VARIANT := user
 export TARGET_BUILD_VARIANT
-export secdog=rsa2048
 
 # We are using a recursive build, so we need to do a little thinking
 # to get the ordering right.
@@ -694,15 +693,6 @@ endif
 
 ifneq ($(CONFIG_FRAME_WARN),0)
 KBUILD_CFLAGS += $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
-endif
-
-#KBUILD_CFLAGS += -fplugin=$(srctree)/../../prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/libexec/gcc/aarch64-linux-android/4.9.x/cfi.so -fplugin-arg-cfi-logfault
-ifdef CONFIG_HUAWEI_CFI
-KBUILD_CFLAGS += -fplugin=$(srctree)/../../prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/libexec/gcc/aarch64-linux-android/4.9.x/cfi.so -fplugin-arg-cfi-abortfn=__cfi_report
-KBUILD_CFLAGS += -fplugin-arg-cfi-tagvalue=$(CONFIG_HUAWEI_CFI_TAG)
-ifeq ($(CONFIG_HUAWEI_CFI_DEBUG),y)
-KBUILD_CFLAGS += -DHW_SAVE_CFI_LOG
-endif
 endif
 
 # Handle stack protector mode.

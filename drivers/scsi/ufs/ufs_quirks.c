@@ -104,12 +104,6 @@ static void ufs_set_sec_unique_number(struct ufs_hba *hba,
 	case UFS_VENDOR_HIVV:
 		memcpy(snum_buf, str_desc_buf + QUERY_DESC_HDR_SIZE, 12);
 		break;
-	case UFS_VENDOR_MICRON:
-		memcpy(snum_buf, str_desc_buf + QUERY_DESC_HDR_SIZE, 4);
-		for(i = 4; i < 12; i++) {
-			snum_buf[i] = 0;
-		}
-		break;
 	default:
 		dev_err(hba->dev, "unknown ufs manufacturer id\n");
 		break;

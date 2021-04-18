@@ -116,13 +116,11 @@ enum RNIC_RMNET_ID_ENUM
     RNIC_RMNET_ID_TUN03,
     RNIC_RMNET_ID_TUN04,
 
-#if (FEATURE_ON == FEATURE_MULTI_MODEM)
     RNIC_RMNET_ID_TUN10,                                                        /* modem1的隧道网卡，仅用来挂载IP地址 */
     RNIC_RMNET_ID_TUN11,
     RNIC_RMNET_ID_TUN12,
     RNIC_RMNET_ID_TUN13,
     RNIC_RMNET_ID_TUN14,
-#endif
 #endif
 
 #else

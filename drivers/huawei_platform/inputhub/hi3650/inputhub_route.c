@@ -2797,6 +2797,8 @@ void inputhub_process_sensor_report(const pkt_header_t* head)
             if (sensor_event->xyz[0].y == 1 && ps_value != 0)
             {
                 hwlog_info("ps don't get the point!\n");
+                __dmd_log_report(DSM_SHB_ERR_MCU_PS, __func__,
+                                 "gesture worked\n");
             }
         }
 

@@ -111,8 +111,8 @@
 #define WACOM_RUBBER_TO_PEN   250
 
 #define TS_ERR_NEST_LEVEL  5
-#define TS_RAWDATA_BUFF_MAX 6000
-#define TS_RAWDATA_RESULT_MAX	150
+#define TS_RAWDATA_BUFF_MAX 5000
+#define TS_RAWDATA_RESULT_MAX	100
 #define TS_FB_LOOP_COUNTS 100
 #define TS_FB_WAIT_TIME 5
 #define MAX_CAP_DATA_SIZE 6
@@ -255,8 +255,6 @@ HWLOG_REGIST();
 #define FINGER_REL_TIME     300  //the time pen checked after finger released shouldn't less than this value(ms)
 
 #define TP_3320_SHORT_ARRAY_NUM	4
-
-#define TS_CMD_CHECK_KEY 0X8080
 
 enum TP_ic_type
 {
@@ -830,7 +828,6 @@ struct ts_cmd_sync
 
 struct ts_cmd_node
 {
-    int ts_cmd_check_key;
     enum ts_cmd command;
     struct ts_cmd_sync* sync;
     struct ts_cmd_param cmd_param;
@@ -919,8 +916,6 @@ struct ts_device_ops
 	void (*chip_ghost_detect) (int value);
     void (*chip_touch_switch) (void);
     void (*chip_work_after_input) (void);
-    int (*chip_special_rawdata_proc_printf) (struct seq_file *m, struct ts_rawdata_info *info,
-					int range_size, int row_size);
 };
 struct anti_false_touch_param{
 	int feature_all;
@@ -968,7 +963,6 @@ struct anti_false_touch_param{
 struct ts_kit_device_data
 {
 	bool is_parade_solution;
-	bool is_ic_rawdata_proc_printf;
 	bool is_direct_proc_cmd;
 	bool support_s3320_short_test;
     bool is_i2c_one_byte;

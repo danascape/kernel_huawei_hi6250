@@ -1509,8 +1509,6 @@ struct parade_core_data {
 	int avoid_roi_switch_flag;
 	bool need_set_rst_after_iovcc_flag;
 	bool need_check_report_descriptor_flag;
-	bool fw_need_depend_on_lcd;
-	bool need_delay_after_power_off;
 };
 
 #endif

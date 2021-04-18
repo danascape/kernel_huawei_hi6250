@@ -11129,7 +11129,7 @@ VOS_UINT32 AT_QryPhoneSimlockInfoPara(VOS_UINT8 ucIndex)
         return AT_ERROR;
     }
 
-    printk(KERN_ERR "\n AT_QryPhoneSimlockInfoPara enter \n");
+    printk(KERN_ERR "\n AT_QryPhoneSimlock****Para enter (AT^PHONESIMLOCK****) %u \n", VOS_GetSlice());
 
     /* ·¢ËÍ¿çºËÏûÏ¢µ½CºË, ²éÑ¯ËøÍøËø¿¨ÐÅÏ¢ */
     ulResult = AT_FillAndSndAppReqMsg(gastAtClientTab[ucIndex].usClientId,
@@ -11179,7 +11179,7 @@ VOS_UINT32 AT_QrySimlockDataReadPara(VOS_UINT8 ucIndex)
         return AT_ERROR;
     }
 
-    printk(KERN_ERR "\n AT_QrySimlockDataReadPara enter \n");
+    printk(KERN_ERR "\n AT_QrySimlockDataR***Para enter (AT^SIMLOCKDATAR***) %u \n", VOS_GetSlice());
 
     /* ·¢ËÍ¿çºËÏûÏ¢µ½CºË, ²éÑ¯ËøÍøËø¿¨ÐÅÏ¢ */
     ulResult = AT_FillAndSndAppReqMsg(gastAtClientTab[ucIndex].usClientId,
@@ -11228,6 +11228,8 @@ VOS_UINT32 AT_QryPhonePhynumPara(VOS_UINT8 ucIndex)
     {
         return AT_ERROR;
     }
+
+    printk(KERN_ERR "\n AT_QryPhonePhyn**Para enter (AT^PHONEPHYN**) %u \n", VOS_GetSlice());
 
     /* ·¢ËÍ¿çºËÏûÏ¢µ½CºË, ²éÑ¯ËøÍøËø¿¨ÐÅÏ¢ */
     ulResult = AT_FillAndSndAppReqMsg(gastAtClientTab[ucIndex].usClientId,

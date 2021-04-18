@@ -2012,9 +2012,7 @@ static int mipi_dsi_on(struct platform_device *pdev)
 		mipi_dsi_on_sub1(hisifd, hisifd->mipi_dsi0_base);
 		if (is_dual_mipi_panel(hisifd))
 			mipi_dsi_on_sub1(hisifd, hisifd->mipi_dsi1_base);
-		if (hisifd->aod_function) {
-			mipi_dsi_ulps_cfg(hisifd, 1);
-		}
+
 	} else if (hisifd->index == EXTERNAL_PANEL_IDX) {
 		mipi_dsi_on_sub1(hisifd, hisifd->mipi_dsi1_base);
 	} else {
@@ -2068,12 +2066,7 @@ static int mipi_dsi_off(struct platform_device *pdev)
 	}
 
 	if (hisifd->index == PRIMARY_PANEL_IDX) {
-		if (hisifd->aod_function) {
-			mipi_dsi_ulps_cfg(hisifd, 0);
-			mipi_dsi_off_sub(hisifd, hisifd->mipi_dsi0_base);
-		} else {
-			mipi_dsi_off_sub(hisifd, hisifd->mipi_dsi0_base);
-		}
+		mipi_dsi_off_sub(hisifd, hisifd->mipi_dsi0_base);
 		if (is_dual_mipi_panel(hisifd))
 			mipi_dsi_off_sub(hisifd, hisifd->mipi_dsi1_base);
 	} else if (hisifd->index == EXTERNAL_PANEL_IDX) {

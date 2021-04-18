@@ -43,10 +43,6 @@
 
 #define NONSTAND_ICO_CNT 3
 #define USB_ICO_CNT 2
-/*charge threshold*/
-#define NO_CHG_TEMP_LOW     (0)
-#define NO_CHG_TEMP_HIGH    (50)
-#define DEFAULT_NORMAL_TEMP (25)
 
 #define CHARGER_NOT_DBC_CONTROL 2 /*0:dbc close charger,1:dbc open charger,2:dbc not control charger*/
 
@@ -148,10 +144,6 @@
 #define ADAPTOR_TEST_START          (1)
 #define MIN_ADAPTOR_TEST_INS_NUM    (0)
 #define MAX_ADAPTOR_TEST_INS_NUM    (5)
-
-/* vbus valid check timeout on powerdown charging  */
-#define VBUS_VALID_CHECK_WORK_TIMEOUT  (3000)
-
 /*************************struct define area***************************/
 enum usb_charger_type {
 	CHARGER_TYPE_USB = 0,	/*SDP*/
@@ -456,7 +448,6 @@ struct charge_device_info {
 #endif
 	int reset_adapter;
 	unsigned int charge_done_maintain_fcp;
-	struct delayed_work vbus_valid_check_work;
 };
 
 enum charge_wakelock_flag {

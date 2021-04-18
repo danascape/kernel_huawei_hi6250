@@ -237,14 +237,9 @@ static int focal_write_firmware_data(
 		}
 
 		if(true == focal_pdata->focal_device_data->is_in_cell){
-			if(FOCAL_FT8201 == g_focal_dev_data->ic_type){
-				ret = focal_wait_firmware_write_finish(focal_pdata,
-					command, FTS_FW_WRITE_STATUS_ADDR_START , start_write_addr, data_size);
-			}else{
-				ret = focal_wait_firmware_write_finish(focal_pdata,
-					command, start_addr , start_write_addr, data_size);
+			ret = focal_wait_firmware_write_finish(focal_pdata,
+				command, start_addr , start_write_addr, data_size);
 
-			}
 		}else{
 			ret = focal_wait_firmware_write_finish(focal_pdata,
 				command, FTS_FW_WRITE_STATUS_ADDR_START , start_write_addr, data_size);
@@ -280,38 +275,6 @@ static int focal_write_pram_data(
 	return focal_write_firmware_data(focal_pdata, fw_data, fw_length,
 		FTS_CMD_WRITE_PRAM, 0);
 }
-/*
- * description : 8201 pram data init
- *
- * param - fw_data : firmware data to write
- *
- * tmp_data : tmp data to write
- *
- * param - fw_length : firmware data length
- *
- * return : 0
- *
- *fw_data high bit and low bit storage reverse
- *
- *eg:fw_data 4321 ,tmp_data 1234
- */
-static void focal_8201_pram_data_reverse_init(
-    const u8 *fw_data,
-    u8 *tmp_data,
-    u32 fw_length)
-{
-    int i = 0;
-    int j = 0;
-	int tmpsum = 0;
-	int fwsum = 0;
-    for (i = 0; i < fw_length; i = i + 4) {
-        for (j = 0; j < 4; j++) {
-            tmpsum = i + 3 - j;
-            fwsum = i + j;
-            tmp_data[tmpsum] = fw_data[fwsum];
-        }
-    }
-}
 
 /*
  * description : write app data to ic
@@ -327,13 +290,8 @@ static int focal_write_app_data(
 	const u8 *fw_data,
 	u32 fw_length)
 {
-	if(FOCAL_FT8201 == g_focal_dev_data->ic_type){
-		return focal_write_firmware_data(focal_pdata, fw_data, fw_length,
-			FTS_CMD_WRITE_FLASH, FTS_8201_FW_IC_ADDR_START);
-	}else{
-		return focal_write_firmware_data(focal_pdata, fw_data, fw_length,
-			FTS_CMD_WRITE_FLASH, FTS_FW_IC_ADDR_START);
-	}
+	return focal_write_firmware_data(focal_pdata, fw_data, fw_length,
+		FTS_CMD_WRITE_FLASH, FTS_FW_IC_ADDR_START);
 }
 
 /*
@@ -515,36 +473,21 @@ static int focal_read_check_sum(
 	u8 *check_sum)
 {
 	int i = 0;
-	int j = 0;
 	int ret = 0;
 	u32 ic_status = 0;
 	u8 cmd[CHECK_SUM_I2C_WRITE_BUFF_LEN] = {0};
 	u8 reg_val = 0;
-	int packet_num = 0;
-	u32 packet_len = 0;
-	u32 remainder = 0;
-	u32 addr = 0;
-	u32 offset = 0;
 
 	if (!focal_pdata || !check_sum) {
 		TS_LOG_ERR("%s: find a null point !!\n", __func__);
 		return -EINVAL;
 	}
 
-	if(FOCAL_FT8201 == g_focal_dev_data->ic_type){
-		if (crc_length > FTS_8201_LEN_FLASH_ECC_MAX) {
-			TS_LOG_ERR("%s:%s, crc_length=%u, max=%d\n",
-				__func__, "crc length out of range",
-				crc_length, FTS_8201_LEN_FLASH_ECC_MAX);
-			return -EINVAL;
-		}
-	}else{
-		if (crc_length > LEN_FLASH_ECC_MAX) {
-			TS_LOG_ERR("%s:%s, crc_length=%u, max=%d\n",
-				__func__, "crc length out of range",
-				crc_length, LEN_FLASH_ECC_MAX);
-			return -EINVAL;
-		}
+	if (crc_length > LEN_FLASH_ECC_MAX) {
+		TS_LOG_ERR("%s:%s, crc_length=%u, max=%d\n",
+			__func__, "crc length out of range",
+			crc_length, LEN_FLASH_ECC_MAX);
+		return -EINVAL;
 	}
 
 	/* start verify */
@@ -558,87 +501,44 @@ static int focal_read_check_sum(
 
 	msleep(focal_pdata->delay_time->calc_crc_delay);
 
-	if(FOCAL_FT8201 == g_focal_dev_data->ic_type) {
-		packet_num = crc_length / LEN_FLASH_ECC_MAX;
-		remainder = crc_length % LEN_FLASH_ECC_MAX;
-		if (remainder)
-			packet_num++;
-		packet_len = LEN_FLASH_ECC_MAX;
-		TS_LOG_INFO("ecc calc num:%d, remainder:%d", packet_num, remainder);
-		for (i = 0; i < packet_num; i++) {
-			offset = LEN_FLASH_ECC_MAX * i;
-			addr = start_addr + offset;
-			cmd[0] = FTS_CMD_SET_CALC_ADDR;
-			cmd[1] = (u8)RIGHT_OFFSET_16BIT(addr);
-			cmd[2] = (u8)RIGHT_OFFSET_8BIT(addr);
-			cmd[3] = (u8)(addr);
-			if ((i == (packet_num - 1)) && remainder) {
-				packet_len = remainder;
-			}
-			cmd[4] = (u8)RIGHT_OFFSET_8BIT(packet_len);
-			cmd[5] = (u8)(packet_len);
-			ret = focal_write(cmd, CHECK_SUM_I2C_WRITE_BUFF_LEN);
-			if (ret) {
-				TS_LOG_ERR("%s:write verify parameter fail, ret=%d\n",
-					__func__, ret);
-				return ret;
-			}
-			msleep(packet_len / 256);/*delay times base on crc_length*/
-			for (j = 0; j < focal_pdata->delay_time->read_ecc_query_times; j++) {
-				ret = focal_get_status(&ic_status);
-				if (ret) {
-					TS_LOG_ERR("%s:get ic status fail, ret=%d\n",
-						__func__, ret);
-				} else {
-					if (FTS_ECC_OK_STATUS == ic_status)
-					break;
-				}
-				if (j == focal_pdata->delay_time->read_ecc_query_times - 1) {
-					TS_LOG_ERR("%s:%s, out of max retry times\n",
-						__func__, "status check fail");
-				}
-				msleep(1);
-			}
-		}
-	} else {
-		cmd[0] = FTS_CMD_SET_CALC_ADDR;
+	cmd[0] = FTS_CMD_SET_CALC_ADDR;
 
-		cmd[1] = (u8)RIGHT_OFFSET_16BIT(start_addr);
-		cmd[2] = (u8)RIGHT_OFFSET_8BIT(start_addr);
-		cmd[3] = (u8)(start_addr);
+	cmd[1] = (u8)RIGHT_OFFSET_16BIT(start_addr); 
+	cmd[2] = (u8)RIGHT_OFFSET_8BIT(start_addr);
+	cmd[3] = (u8)(start_addr);
 
-		cmd[4] = (u8)RIGHT_OFFSET_8BIT(crc_length);
-		cmd[5] = (u8)(crc_length);
+	cmd[4] = (u8)RIGHT_OFFSET_8BIT(crc_length);
+	cmd[5] = (u8)(crc_length);
 
-		ret = focal_write(cmd, CHECK_SUM_I2C_WRITE_BUFF_LEN);
+	ret = focal_write(cmd, CHECK_SUM_I2C_WRITE_BUFF_LEN);
+	if (ret) {
+		TS_LOG_ERR("%s:write verify parameter fail, ret=%d\n",
+			__func__, ret);
+		return ret;
+	}
+
+	msleep(crc_length / 256);/*delay times base on crc_length*/
+
+	cmd[0] = FTS_CMD_GET_STATUS;
+	for (i = 0; i < focal_pdata->delay_time->read_ecc_query_times; i++) {
+
+		ret = focal_get_status(&ic_status);
 		if (ret) {
-			TS_LOG_ERR("%s:write verify parameter fail, ret=%d\n",
+			TS_LOG_ERR("%s:get ic status fail, ret=%d\n",
 				__func__, ret);
-			return ret;
+		} else {
+			if (FTS_ECC_OK_STATUS == ic_status)
+				break;
 		}
 
-		msleep(crc_length / 256);/*delay times base on crc_length*/
-
-		cmd[0] = FTS_CMD_GET_STATUS;
-		for (i = 0; i < focal_pdata->delay_time->read_ecc_query_times; i++) {
-
-			ret = focal_get_status(&ic_status);
-			if (ret) {
-				TS_LOG_ERR("%s:get ic status fail, ret=%d\n",
-					__func__, ret);
-			} else {
-				if (FTS_ECC_OK_STATUS == ic_status)
-					break;
-			}
-
-			if (i == focal_pdata->delay_time->read_ecc_query_times - 1) {
-				TS_LOG_ERR("%s:%s, out of max retry times\n",
-					__func__, "status check fail");
-			}
-
-			msleep(1);
+		if (i == focal_pdata->delay_time->read_ecc_query_times - 1) {
+			TS_LOG_ERR("%s:%s, out of max retry times\n",
+				__func__, "status check fail");
 		}
-    }
+
+		msleep(1);
+	}
+
 	cmd[0] = FTS_CMD_READ_CRC;
 	ret = focal_read(cmd, 1, &reg_val, 1);
 	if (ret) {
@@ -707,9 +607,6 @@ static int focal_check_firmware_size_in_pram_model(u32 fw_len)
 		TS_LOG_ERR("%s:%s, flash_type=0x%X\n", __func__,
 			"no flash type maech, use default", flash_type);
 		max_fw_len = FTS_FLASH_MAX_LEN_WINBOND;
-	}
-	if(FOCAL_FT8201 == g_focal_dev_data->ic_type) {
-		max_fw_len = FTS_8201_FLASH_MAX_LEN;
 	}
 
 	TS_LOG_INFO("%s:fw_len=%u, max_fw_len=%u\n", __func__,
@@ -914,13 +811,8 @@ static int focal_firmware_update(
 		TS_LOG_INFO("%s:write app data success\n", __func__);
 	}
 
-	if(FOCAL_FT8201 == g_focal_dev_data->ic_type){
-		ret = focal_read_check_sum(focal_pdata, FTS_8201_FW_IC_ADDR_START,
-			fw_len, &check_sum_in_ic);
-	}else{
-		ret = focal_read_check_sum(focal_pdata, FTS_FW_IC_ADDR_START,
-			fw_len, &check_sum_in_ic);
-	}
+	ret = focal_read_check_sum(focal_pdata, FTS_FW_IC_ADDR_START,
+		fw_len, &check_sum_in_ic);
 	if (ret) {
 		TS_LOG_ERR("%s:read check sum in ic fail, ret=%d\n",
 			__func__, ret);
@@ -1119,8 +1011,8 @@ static int focal_start_pram(void)
 
 		ret = focal_read_chip_id_(&chip_id);
 		if (ret || chip_id == 0) {
-			TS_LOG_ERR("%s:chip id read fail,read chip id = %x,retry=%d\n",
-				__func__,chip_id,i);
+			TS_LOG_ERR("%s:chip id read fail, retry=%d\n",
+				__func__, i);
 			continue;
 		} else {
 			TS_LOG_INFO("%s:check chip id success\n",
@@ -1213,7 +1105,7 @@ static int focal_flash_pram(
 	int i = 0;
 	int ret = 0;
 	u8 *pcheck_buffer = NULL;
-	u8 *tmp_buffer = NULL;
+
 	TS_LOG_DEBUG("%s:pram file size is %lu\n", __func__, pram_size);
 	if (pram_size > FTS_MAX_PRAM_SIZE || pram_size == 0) {
 		TS_LOG_ERR("pram file size overflow %lu\n", pram_size);
@@ -1221,34 +1113,18 @@ static int focal_flash_pram(
 	}
 
 	TS_LOG_DEBUG("%s:write pram data\n", __func__);
-
-	if (FOCAL_FT8201 == g_focal_dev_data->ic_type) {
-		tmp_buffer = kmalloc(pram_size, GFP_ATOMIC);
-		if (NULL == tmp_buffer) {
-			TS_LOG_ERR("%s: malloc mem for tmp_buffer fail\n", __func__);
-			return -ENOMEM;
-		}
-		focal_8201_pram_data_reverse_init(pram_data, tmp_buffer, pram_size);
-		ret = focal_write_pram_data(focal_pdata, tmp_buffer, pram_size);
-		if (ret) {
-			TS_LOG_ERR("%s: write pram data fail, ret=%d\n", __func__, ret);
-			goto release_tmp_buffer;
-		}
-
-	} else {
-		ret = focal_write_pram_data(focal_pdata, pram_data, pram_size);
-		if (ret) {
-			TS_LOG_ERR("%s: write pram data fail, ret=%d\n", __func__, ret);
-			return ret;
-		}
+	ret = focal_write_pram_data(focal_pdata, pram_data, pram_size);
+	if (ret) {
+		TS_LOG_ERR("%s: write pram data fail, ret=%d\n", __func__, ret);
+		return ret;
 	}
+
 	msleep(100);
 
 	pcheck_buffer = kmalloc(pram_size, GFP_ATOMIC);
 	if (NULL == pcheck_buffer) {
 		TS_LOG_ERR("%s: malloc mem for pcheck_buffer fail\n", __func__);
-		ret = -ENOMEM;
-		goto release_tmp_buffer;
+		return -ENOMEM;
 	}
 
 	TS_LOG_DEBUG("%s:read pram data from ic\n", __func__);
@@ -1276,13 +1152,7 @@ release_pcheck_buffer:
 		kfree(pcheck_buffer);
 		pcheck_buffer = NULL;
 	}
-release_tmp_buffer:
-	if (FOCAL_FT8201 == g_focal_dev_data->ic_type) {
-		if (tmp_buffer != NULL) {
-			kfree(tmp_buffer);
-			tmp_buffer = NULL;
-		}
-	}
+
 	return ret;
 }
 

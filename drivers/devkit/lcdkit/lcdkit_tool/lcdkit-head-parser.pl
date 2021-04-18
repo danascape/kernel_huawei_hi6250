@@ -376,8 +376,6 @@ my @panel_mipi_attrs = (
     ["/hwlcd/PanelEntry/MipiDataTHsTrailAdjust",   "-n",    "",                   '-w', 0  ],
     ["/hwlcd/PanelEntry/MipiDataTlpxAdjust",       "-n",    "",                   '-w', 0  ],
     ["/hwlcd/PanelEntry/MipiRgVcmAdjust",          "-n",    "",                   '-w', 0  ],
-    ["/hwlcd/PanelEntry/MipiRgVcmClkAdjust",          "-n",    "",                   '-w', 0  ],
-    ["/hwlcd/PanelEntry/MipiRgVcmDataAdjust",          "-n",    "",                   '-w', 0  ],
     ["/hwlcd/PanelEntry/MipiPhyMode",              "-n",    "",                   '-w', 0  ],
     ["/hwlcd/PanelEntry/MipiLp11Flag",             "-n",    "",                   '-w', 0  ],
     ["/hwlcd/PanelEntry/MipiHsWrToTime",           "-n",    "",                   '-w', 0  ],
@@ -432,9 +430,7 @@ my @panel_misc_attrs = (
     ["/hwlcd/PanelEntry/UseGpioBl",                "-n",    "",                   '-w', 0  ],
     ["/hwlcd/PanelEntry/UseGpioBlPower",           "-n",    "",                   '-w', 0  ],
     ["/hwlcd/PanelEntry/PanelBiasChangeLm36274FromPanelSupport",         "-n",    "",                   '-w', 0  ],
-    ["/hwlcd/PanelEntry/PanelInitLm36923AfterPanelPowerOnSupport",         "-n",    "",                   '-w', 0  ],
-    ["/hwlcd/PanelEntry/PanelOTPSupport",          "-n",    "",                   '-w', 0  ],
-    ["/hwlcd/PanelEntry/LcdPullHighDelaySetFlag",          "-n",    "",                   '-w', 0  ]);
+    ["/hwlcd/PanelEntry/PanelOTPSupport",          "-n",    "",                   '-w', 0  ]);
 
 my @panel_delayctl_attrs = (
     ["/hwlcd/PanelEntry/DelayAfVciOn",             "-n",    "",                   '-w', 0  ],

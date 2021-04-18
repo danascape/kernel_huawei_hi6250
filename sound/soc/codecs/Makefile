@@ -417,5 +417,4 @@ obj-$(CONFIG_SND_SOC_HI6403)    += snd-soc-hi6403.o
 obj-$(CONFIG_SND_SOC_HI6403)    += snd-soc-hi6403es.o
 obj-$(CONFIG_HDMI_K3)           += snd-soc-hdmi-audio.o
 ccflags-$(CONFIG_SND_SOC_HI6403)  += -Idrivers/devkit/audiokit/
-ccflags-$(CONFIG_SND_SOC_CODEC_HI6555C)  += -Idrivers/devkit/audiokit/
 obj-$(CONFIG_SND_SOC_DP_AUDIO)    += snd-soc-dp-audio.o

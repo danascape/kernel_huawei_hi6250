@@ -565,8 +565,7 @@ struct smartstar_coul_device
     int soc_unlimited;
     int soc_monitor_flag;
     int soc_monitor_limit;
-    unsigned char last_ocv_level;
-    unsigned int low_vol_filter_cnt;
+	unsigned char last_ocv_level;
 #ifdef SMARTSTAR_DEBUG
     unsigned int dbg_ocv_cng_0; /*ocv change count by wake up*/
     unsigned int dbg_ocv_cng_1; /*ocv change count by full charged*/
